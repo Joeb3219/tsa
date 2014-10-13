@@ -22,6 +22,7 @@ public class Block {
 	public static Block wood = new Block("Wood", Block.loadTexture("wood.jpg"));
 	public static Block water = new Block("Water", Block.loadTexture("water.jpg"), false);
 	public static Block glass = new Block("Glass", Block.loadTexture("glass.png"));
+	public static Block boost = new Block("Boost Block", Block.loadTexture("boost.jpg"));
 
 	public Block(String name, boolean solid){
 		this.name = name;
@@ -51,6 +52,7 @@ public class Block {
 	
 	public void draw(float x, float y, float z){
 		if(texture == null) return;
+		int vectorLength = 2;
 		glPushMatrix();
 		glScalef(1f, 1.8f, 1f);
 		glTranslatef(x, y, z);
@@ -86,7 +88,7 @@ public class Block {
 		glTexCoord2f(0, 1); glVertex3f(1,1,-1);
 		glTexCoord2f(1, 1); glVertex3f(1,1,1);
 		glTexCoord2f(1, 0); glVertex3f(-1,1,1);
-		
+	
 		glEnd();
 		glPopMatrix();
 	}

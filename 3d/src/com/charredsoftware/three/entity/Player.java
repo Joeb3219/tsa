@@ -7,6 +7,7 @@ import com.charredsoftware.three.Main;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
+import com.charredsoftware.three.world.World;
 
 public class Player extends Mob{
 
@@ -44,6 +45,7 @@ public class Player extends Mob{
 		else if(isJumping){
 			jumpingTime += 0.1f; //Tenth of a second.
 			currentJumpingVelocity = jumpingVelocityStart + Main.DOWNWARD_ACCELERATION * jumpingTime; //Calculate final velocity
+			if((y - currentJumpingVelocity / 2) > Main.world.getNextHighestBlock(new Position(-x, -(y - currentJumpingVelocity / 2), -z)).y) currentJumpingVelocity /= 2;
 			y -= (currentJumpingVelocity);
 			if(y >  0 || standingOnSolid()){
 				y = (float) ((int) y);
@@ -54,6 +56,11 @@ public class Player extends Mob{
 			if(standingOnSolid() && y % 2 != 0) y += 1f;
 		}if(y > 50) health --;
 		
+		if(getBlockUnder().base == Block.boost){
+			y -= 20f;
+			isJumping = true;
+			currentJumpingVelocity = 8f;
+		}
 		
 	}
 	
@@ -76,12 +83,16 @@ public class Player extends Mob{
 		return false;
 	}
 	
-	public boolean standingOnSolid(){
+	public BlockInstance getBlockUnder(){
 		Position p = new Position(-x, -y - 2, -z);
 		p.normalizeCoords();
 		BlockInstance b = Main.world.getBlock(p);
 		
-		return b.base.solid;
+		return b;
+	}
+	
+	public boolean standingOnSolid(){
+		return getBlockUnder().base.solid;
 	}
 	
 }

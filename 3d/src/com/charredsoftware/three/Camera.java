@@ -30,6 +30,9 @@ public class Camera {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_NORMALIZE);
+		glCullFace(GL_FRONT_AND_BACK);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	

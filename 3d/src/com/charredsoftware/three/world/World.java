@@ -2,6 +2,8 @@ package com.charredsoftware.three.world;
 
 import java.util.ArrayList;
 
+import com.charredsoftware.three.Main;
+
 public class World {
 
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
@@ -35,7 +37,7 @@ public class World {
 		public BlockInstance getRelativeHighestSolidBlock(Position p){
 			p.normalizeCoords();
 			ArrayList<BlockInstance> inY = getBlocksInY(p.x, p.z);
-			BlockInstance highest = new BlockInstance(Block.air, 0, 0, 0);
+			BlockInstance highest = new BlockInstance(Block.air, 0, -4, 0);
 			for(BlockInstance b : inY){
 				if(b.base.solid && b.y > highest.y && b.y < p.y) highest = b;
 			}
@@ -81,7 +83,9 @@ public class World {
 	}
 	
 	public void render(){
-		for(BlockInstance b : blocks) b.draw();
+		for(BlockInstance b : blocks){
+			b.draw();
+		}
 	}
 	
 	public void dumpAllBlocks(){

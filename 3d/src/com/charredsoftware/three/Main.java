@@ -28,6 +28,7 @@ import org.newdawn.slick.TrueTypeFont;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
+import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Main {
@@ -40,6 +41,8 @@ public class Main {
 	public static World world;
 	private static int displayFPS = 0;
 	private static Random r = new Random();
+	
+	private static boolean RANDOM_MODE = false;
 	
 	public static void main(String[] args){
 		initializeDisplay();
@@ -57,21 +60,24 @@ public class Main {
 		try{
 			Display.setDisplayMode(new DisplayMode(1000, 1000 * 9 / 16));
 			Display.setResizable(true);
-			Display.setTitle("CharredSoftware: Bestest game evar");
+			Display.setTitle("CharredSoftware: A Game Demo [Joe B, 2014]");
 			Display.create();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
+ public static	float yOffset = 0f;
 	public static void tick(Camera camera){
 		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) camera.ry += 1.8f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) camera.ry -= 1.8;
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP) && camera.rx > -90f) camera.rx -= 1.8f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && camera.rx < 90f) camera.rx += 1.8f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_0)) RANDOM_MODE = !RANDOM_MODE;
 		//if(camera.ry > 180) camera.ry = -180 + (camera.ry - 180);
 		//if(camera.ry < -180) camera.ry = 180 - (camera.ry + 180);
 		player.update();
 		camera.x = player.x;
-		camera.y = player.y - 4;
+		yOffset = (float) ((5/3.0) * ((player.y % 2 == 0) ? player.y : player.y + 1));
+		camera.y = yOffset - 4;
 		if(camera.y % 2 != 0) camera.y --;
 		camera.z = player.z;
 	}
@@ -98,8 +104,8 @@ public class Main {
 		
 		//Display Text
 				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "}");
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "}");
-				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 2, -player.z).base.name);
+				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
+				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 2, -player.z).base.name + " {highest rel. solid: " + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "}");
 				font.drawString(5, 65, "fps: " + displayFPS);
 				font.drawString(5, 85, "Health: " + player.health);
 		
@@ -118,7 +124,7 @@ public class Main {
 		int roomSize = 32;
 		world = new World(roomSize);
 		
-		/*for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
+		for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
 			for(int y = -2; y < roomSize; y += 2){
 				world.blocks.add(new BlockInstance(Block.bricks, x, y, roomSize / 2));
 				world.blocks.add(new BlockInstance(Block.bricks, x, y, -roomSize / 2));
@@ -134,8 +140,8 @@ public class Main {
 		
 		for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
 			for(int z = -roomSize / 2; z < roomSize / 2; z += 2){
-				if(!(x == 4 && z == 4)) world.blocks.add(new BlockInstance(Block.grass, x, -2.0f, z));
-				world.blocks.add(new BlockInstance(Block.ceiling, x, roomSize, z));
+				world.blocks.add(new BlockInstance(Block.grass, x, -2.0f, z));
+				if(!(x == 0 && z == 0)) world.blocks.add(new BlockInstance(Block.ceiling, x, roomSize, z));
 			}
 		}
 		
@@ -145,8 +151,11 @@ public class Main {
 					world.blocks.add(new BlockInstance(Block.bricks, x, y, z));
 				}
 			}
-		}*/
+		}
 		
+		world.blocks.add(new BlockInstance(Block.boost, 10, 6, 10));
+
+		/*
 		for(int y = -2; y <= 0; y += 2){
 			for(int x = -50; x <= 50; x += 2){
 				for(int z = -50; z <= 50; z += 2){
@@ -154,15 +163,19 @@ public class Main {
 					else{
 						if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
 						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.bricks, x, y, z));
+						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.boost, x, y, z));
+						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.glass, x, y, z));
+						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.ceiling, x, y, z));
+						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.wood, x, y, z));
 						//else if(r.nextInt(5) == 1) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
 						else{} //Air
 					}
 				}
 			}
 		}
+		*/
 		
-		
-		/*world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
+		world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
 		world.blocks.add(new BlockInstance(Block.glass, 12, 2, -12));
 		world.blocks.add(new BlockInstance(Block.glass, 12, 4, -12));
 		
@@ -179,7 +192,7 @@ public class Main {
 				world.blocks.add(new BlockInstance(Block.bricks, x, 0, z));
 			}
 		}
-
+		
 		world.blocks.add(new BlockInstance(Block.wood, -6, 2, -6));
 		
 		for(int x = 4; x <= 12; x += 2){
@@ -187,9 +200,7 @@ public class Main {
 				world.blocks.add(new BlockInstance(Block.water, x, 0, z));
 			}
 		}
-		
-		*/
-		
+
 		world.dumpAllBlocks();
 		
 		long lastTime = System.nanoTime();
