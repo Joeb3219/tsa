@@ -52,42 +52,44 @@ public class Block {
 	
 	public void draw(float x, float y, float z){
 		if(texture == null) return;
-		int vectorLength = 2;
 		glPushMatrix();
-		glScalef(1f, 1.8f, 1f);
+		glScalef(1f / 1f, 2f / 1f, 1f / 1f);
 		glTranslatef(x, y, z);
 		texture.bind();
 		glBegin(GL_QUADS);
 		
-		glTexCoord2f(0, 0); glVertex3f(-1,-1,1);
-		glTexCoord2f(0, 1); glVertex3f(-1,1,1);
-		glTexCoord2f(1, 1); glVertex3f(1,1,1);
-		glTexCoord2f(1, 0); glVertex3f(1,-1,1);
+		float leftBound = -0.5f;
+		float rightBound = 0.5f;
+		
+		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,rightBound);
+		glTexCoord2f(0, 1); glVertex3f(leftBound,rightBound,rightBound);
+		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);
+		glTexCoord2f(1, 0); glVertex3f(rightBound,leftBound,rightBound);
 
-		glTexCoord2f(0, 0); glVertex3f(-1,-1,-1);
-		glTexCoord2f(0, 1); glVertex3f(-1,1,-1);
-		glTexCoord2f(1, 1); glVertex3f(1,1,-1);
-		glTexCoord2f(1, 0); glVertex3f(1,-1,-1);
+		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(0, 1); glVertex3f(leftBound,rightBound,leftBound);
+		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,leftBound);
+		glTexCoord2f(1, 0); glVertex3f(rightBound,leftBound,leftBound);
 
-		glTexCoord2f(0, 0); glVertex3f(-1,-1,-1);
-		glTexCoord2f(0, 1); glVertex3f(-1,-1,1);
-		glTexCoord2f(1, 1); glVertex3f(-1,1,1);
-		glTexCoord2f(1, 0); glVertex3f(-1,1,-1);
+		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(0, 1); glVertex3f(leftBound,leftBound,rightBound);
+		glTexCoord2f(1, 1); glVertex3f(leftBound,rightBound,rightBound);
+		glTexCoord2f(1, 0); glVertex3f(leftBound,rightBound,leftBound);
 
-		glTexCoord2f(0, 0); glVertex3f(1,-1,-1);
-		glTexCoord2f(0, 1); glVertex3f(1,-1,1);
-		glTexCoord2f(1, 1); glVertex3f(1,1,1);
-		glTexCoord2f(1, 0); glVertex3f(1,1,-1);
+		glTexCoord2f(0, 0); glVertex3f(rightBound,leftBound,leftBound);
+		glTexCoord2f(0, 1); glVertex3f(rightBound,leftBound,rightBound);
+		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);
+		glTexCoord2f(1, 0); glVertex3f(rightBound,rightBound,leftBound);
 
-		glTexCoord2f(0, 0); glVertex3f(-1,-1,-1);
-		glTexCoord2f(0, 1); glVertex3f(1,-1,-1);
-		glTexCoord2f(1, 1); glVertex3f(1,-1,1);
-		glTexCoord2f(1, 0); glVertex3f(-1,-1,1);
+		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(0, 1); glVertex3f(rightBound,leftBound,leftBound);
+		glTexCoord2f(1, 1); glVertex3f(rightBound,leftBound,rightBound);
+		glTexCoord2f(1, 0); glVertex3f(leftBound,leftBound,rightBound);
 
-		glTexCoord2f(0, 0); glVertex3f(-1,1,-1);
-		glTexCoord2f(0, 1); glVertex3f(1,1,-1);
-		glTexCoord2f(1, 1); glVertex3f(1,1,1);
-		glTexCoord2f(1, 0); glVertex3f(-1,1,1);
+		glTexCoord2f(0, 0); glVertex3f(leftBound,rightBound,leftBound);
+		glTexCoord2f(0, 1); glVertex3f(rightBound,rightBound,leftBound);
+		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);
+		glTexCoord2f(1, 0); glVertex3f(leftBound,rightBound,rightBound);
 	
 		glEnd();
 		glPopMatrix();

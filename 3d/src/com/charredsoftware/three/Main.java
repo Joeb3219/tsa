@@ -17,8 +17,6 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
 
-import java.util.Random;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -40,7 +38,6 @@ public class Main {
 	public static Camera camera;
 	public static World world;
 	private static int displayFPS = 0;
-	private static Random r = new Random();
 	
 	private static boolean RANDOM_MODE = false;
 	
@@ -76,9 +73,10 @@ public class Main {
 		//if(camera.ry < -180) camera.ry = 180 - (camera.ry + 180);
 		player.update();
 		camera.x = player.x;
-		yOffset = (float) ((5/3.0) * ((player.y % 2 == 0) ? player.y : player.y + 1));
+		yOffset = (float) ((6/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
+		if(player.isCrouching) yOffset += 2;
 		camera.y = yOffset - 4;
-		if(camera.y % 2 != 0) camera.y --;
+	//	if(camera.y % 2 != 0) camera.y --;
 		camera.z = player.z;
 	}
 	
@@ -103,12 +101,12 @@ public class Main {
 		glLoadIdentity();
 		
 		//Display Text
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "}");
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
 				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
-				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 2, -player.z).base.name + " {highest rel. solid: " + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "}");
+				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 				font.drawString(5, 65, "fps: " + displayFPS);
 				font.drawString(5, 85, "Health: " + player.health);
-		
+				
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -121,44 +119,45 @@ public class Main {
 		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 16);
 		font = new TrueTypeFont(awtFont, false);
 		
-		int roomSize = 32;
+		int roomSize = 24;
 		world = new World(roomSize);
 		
-		for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
-			for(int y = -2; y < roomSize; y += 2){
+		
+		for(int x = -roomSize / 2; x < roomSize / 2; x ++ ){
+			for(int y = 0; y < roomSize; y ++){
 				world.blocks.add(new BlockInstance(Block.bricks, x, y, roomSize / 2));
 				world.blocks.add(new BlockInstance(Block.bricks, x, y, -roomSize / 2));
 			}
 		}
 		
-		for(int z = -roomSize / 2; z < roomSize / 2; z += 2){
-			for(int y = -2; y < roomSize; y += 2){
+		for(int z = -roomSize / 2; z < roomSize / 2; z ++){
+			for(int y = 0; y < roomSize; y ++){
 				world.blocks.add(new BlockInstance(Block.bricks, roomSize / 2, y, z));
 				world.blocks.add(new BlockInstance(Block.bricks, -roomSize / 2, y, z));
 			}
 		}
 		
-		for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
-			for(int z = -roomSize / 2; z < roomSize / 2; z += 2){
-				world.blocks.add(new BlockInstance(Block.grass, x, -2.0f, z));
+		for(int x = -roomSize / 2; x < roomSize / 2; x ++){
+			for(int z = -roomSize / 2; z < roomSize / 2; z ++){
+				world.blocks.add(new BlockInstance(Block.grass, x, -1.0f, z));
 				if(!(x == 0 && z == 0)) world.blocks.add(new BlockInstance(Block.ceiling, x, roomSize, z));
 			}
 		}
 		
-		for(int x = 6; x < 12; x += 2){
-			for(int z = 6; z < 12; z += 2){
-				for(int y = -2; y < 6; y += 2){
+		for(int x = 6; x < 12; x ++){
+			for(int z = 6; z < 12; z ++){
+				for(int y = 0; y < 3; y ++){
 					world.blocks.add(new BlockInstance(Block.bricks, x, y, z));
 				}
 			}
 		}
 		
-		world.blocks.add(new BlockInstance(Block.boost, 10, 6, 10));
-
+		world.blocks.add(new BlockInstance(Block.boost, 10, 3, 10));
+		
 		/*
-		for(int y = -2; y <= 0; y += 2){
-			for(int x = -50; x <= 50; x += 2){
-				for(int z = -50; z <= 50; z += 2){
+		for(int y = -2; y <= 0; y ++){
+			for(int x = -25; x <= 25; x ++){
+				for(int z = -25; z <= 25; z ++){
 					if(y == -2) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
 					else{
 						if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
@@ -175,32 +174,34 @@ public class Main {
 		}
 		*/
 		
+		
 		world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
 		world.blocks.add(new BlockInstance(Block.glass, 12, 2, -12));
 		world.blocks.add(new BlockInstance(Block.glass, 12, 4, -12));
 		
 		
 		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 6));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 2, 8));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 4, 10));
+		world.blocks.add(new BlockInstance(Block.wood, 4, 1, 8));
+		world.blocks.add(new BlockInstance(Block.wood, 4, 2, 10));
 		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 8));
 		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 10));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 2, 10));
+		world.blocks.add(new BlockInstance(Block.wood, 4, 1, 10));
 		
-		for(int x = -8; x <= -4; x += 2){
-			for(int z = -8; z <= -4; z += 2){
+		for(int x = -8; x <= -4; x ++){
+			for(int z = -8; z <= -4; z ++){
 				world.blocks.add(new BlockInstance(Block.bricks, x, 0, z));
 			}
 		}
 		
-		world.blocks.add(new BlockInstance(Block.wood, -6, 2, -6));
+		world.blocks.add(new BlockInstance(Block.wood, -6, 1, -6));
 		
-		for(int x = 4; x <= 12; x += 2){
-			for(int z = -12; z <= -4; z += 2){
+		for(int x = 4; x <= 12; x ++){
+			for(int z = -12; z <= -4; z ++){
 				world.blocks.add(new BlockInstance(Block.water, x, 0, z));
 			}
 		}
 
+		
 		world.dumpAllBlocks();
 		
 		long lastTime = System.nanoTime();

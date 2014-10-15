@@ -24,9 +24,6 @@ public class Position {
 		if(this.z > 0) this.z = (float) ((int) (z + 0.5));
 		else this.z = (float) ((int) (z - 0.5));
 		
-		if(this.x % 2 != 0) this.x --;
-		if(this.y % 2 != 0) this.y --;
-		if(this.z % 2 != 0) this.z --;
 	}
 	
 	public int hashCode(){

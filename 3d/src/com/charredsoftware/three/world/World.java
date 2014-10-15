@@ -26,11 +26,17 @@ public class World {
 		y = (float) ((int) y);
 		z = (float) ((int) (z));
 		
-		if(x % 2 != 0) x --;
-		if(y % 2 != 0) y --;
-		if(z % 2 != 0) z --;
-		
 		return getBlock(new Position(x, y, z));
+	}
+	
+	public BlockInstance getClosestSolidRoofBlock(Position p){
+		p.normalizeCoords();
+		ArrayList<BlockInstance> inY = getBlocksInY(p.x, p.z);
+		BlockInstance lowest = new BlockInstance(Block.air, 0, 1000, 0);
+		for(BlockInstance b : inY){
+			if(b.base.solid && b.y < lowest.y && b.y > p.y) lowest = b;
+		}
+		return lowest;
 	}
 	
 	//Gets highest **solid** block that is less than current y.
@@ -58,8 +64,6 @@ public class World {
 	public BlockInstance getHighestBlock(float x, float z){
 		x = (float) ((int) (x));
 		z = (float) ((int) (z));
-		if(x % 2 != 0) x --;
-		if(z % 2 != 0) z --;
 		
 		ArrayList<BlockInstance> inY = getBlocksInY(x, z);
 		if(inY.size() == 0) return new BlockInstance(Block.air, 0, 0, 0);
@@ -73,8 +77,6 @@ public class World {
 	public ArrayList<BlockInstance> getBlocksInY(float x, float z){
 		x = (float) ((int) (x));
 		z = (float) ((int) (z));
-		if(x % 2 != 0) x --;
-		if(z % 2 != 0) z --;
 		ArrayList<BlockInstance> inY = new ArrayList<BlockInstance>();
 		for(BlockInstance b : blocks){
 			if(b.x == x && b.z == z) inY.add(b);
