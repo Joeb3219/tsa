@@ -22,8 +22,8 @@ public class Camera {
 	}
 	
 	private void initializeProjection(){
-		gluOrtho2D(0, Display.getWidth(), 0, Display.getHeight());
 		glMatrixMode(GL_PROJECTION);
+		gluOrtho2D(0, Display.getWidth(), 0, Display.getHeight());
 		glLoadIdentity();
 		gluPerspective(fov, aspectRatio, nearClip, farClip);
 		glMatrixMode(GL_MODELVIEW);
@@ -38,7 +38,7 @@ public class Camera {
 	
 	public void resetAspectRatio(float aspectRatio){
 		this.aspectRatio = aspectRatio;
-		gluPerspective(fov, aspectRatio, nearClip, farClip);
+		initializeProjection();
 	}
 	
 	public void move(float dir, float speed){

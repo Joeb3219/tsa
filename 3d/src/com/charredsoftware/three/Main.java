@@ -17,7 +17,10 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import java.util.Random;
+
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
@@ -38,12 +41,14 @@ public class Main {
 	public static Camera camera;
 	public static World world;
 	private static int displayFPS = 0;
+	private static Random r = new Random();
+	public static float yOffset = 0f;
 	
-	private static boolean RANDOM_MODE = false;
+	private static boolean RANDOM_MODE, DISPLAY_INFO = true;
 	
 	public static void main(String[] args){
 		initializeDisplay();
-		camera = new Camera(70, Display.getWidth() / Display.getHeight(), 0.3f, 150f);
+		camera = new Camera(70, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 150f);
 		player = new Player(camera);
 		loop();
 		cleanDisplay();
@@ -55,27 +60,29 @@ public class Main {
 	
 	private static void initializeDisplay(){
 		try{
-			Display.setDisplayMode(new DisplayMode(1000, 1000 * 9 / 16));
+			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
 			Display.setResizable(true);
 			Display.setTitle("CharredSoftware: A Game Demo [Joe B, 2014]");
 			Display.create();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
- public static	float yOffset = 0f;
+ 
 	public static void tick(Camera camera){
-		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) camera.ry += 1.8f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) camera.ry -= 1.8;
-		if(Keyboard.isKeyDown(Keyboard.KEY_UP) && camera.rx > -90f) camera.rx -= 1.8f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && camera.rx < 90f) camera.rx += 1.8f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) camera.ry += 1.8f * 2f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) camera.ry -= 1.8 * 2f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_UP) && camera.rx > -90f) camera.rx -= 1.8f * 2f;
+		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && camera.rx < 90f) camera.rx += 1.8f * 2f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_0)) RANDOM_MODE = !RANDOM_MODE;
+		if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
+		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), -player.x + 1, -player.y, -player.z + 1));
 		//if(camera.ry > 180) camera.ry = -180 + (camera.ry - 180);
 		//if(camera.ry < -180) camera.ry = 180 - (camera.ry + 180);
 		player.update();
 		camera.x = player.x;
-		yOffset = (float) ((6/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
-		if(player.isCrouching) yOffset += 2;
-		camera.y = yOffset - 4;
+		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
+		if(player.isCrouching) yOffset += 1;
+		camera.y = yOffset - 2;
 	//	if(camera.y % 2 != 0) camera.y --;
 		camera.z = player.z;
 	}
@@ -101,11 +108,13 @@ public class Main {
 		glLoadIdentity();
 		
 		//Display Text
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
-				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
-				font.drawString(5, 65, "fps: " + displayFPS);
-				font.drawString(5, 85, "Health: " + player.health);
+		if(DISPLAY_INFO){
+			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
+			font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
+			font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
+			font.drawString(5, 65, "fps: " + displayFPS);
+			font.drawString(5, 85, "Health: " + player.health);
+		}
 				
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -193,7 +202,7 @@ public class Main {
 			}
 		}
 		
-		world.blocks.add(new BlockInstance(Block.wood, -6, 1, -6));
+		world.blocks.add(new BlockInstance(Block.wall, -6, 1, -6));
 		
 		for(int x = 4; x <= 12; x ++){
 			for(int z = -12; z <= -4; z ++){
@@ -202,7 +211,7 @@ public class Main {
 		}
 
 		
-		world.dumpAllBlocks();
+		//world.dumpAllBlocks();
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
@@ -222,7 +231,7 @@ public class Main {
 		while(!Display.isCloseRequested()){
 			if(Display.wasResized()){
 				glViewport(0, 0, Display.getWidth(), Display.getHeight());
-				camera.resetAspectRatio(Display.getWidth() / Display.getHeight());
+				camera.resetAspectRatio(Display.getWidth() * 1.0f / Display.getHeight());
 			}
 			long now = System.nanoTime();
 			delta+= (now - lastTime) / nanoSeconds;

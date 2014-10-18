@@ -1,5 +1,7 @@
 package com.charredsoftware.three.entity;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Keyboard;
 
 import com.charredsoftware.three.Camera;
@@ -7,7 +9,6 @@ import com.charredsoftware.three.Main;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
-import com.charredsoftware.three.world.World;
 
 public class Player extends Mob{
 
@@ -19,7 +20,7 @@ public class Player extends Mob{
 		super();
 		this.camera = camera;
 		health = 20;
-		movingSpeed = 0.4f;
+		movingSpeed = 0.35f;
 	}
 	
 	public void update(){
@@ -49,16 +50,17 @@ public class Player extends Mob{
 		else if(isJumping){
 			jumpingTime += 0.1f; //Tenth of a second.
 			currentJumpingVelocity = ( (isCrouching) ? jumpingVelocityStart / 1.25f : jumpingVelocityStart) + Main.DOWNWARD_ACCELERATION * jumpingTime; //Calculate final velocity
-			if((y - currentJumpingVelocity / 2) > Main.world.getRelativeHighestSolidBlock(new Position(-x, -(y - currentJumpingVelocity / 2), -z)).y) currentJumpingVelocity /= 4;
-			y -= (currentJumpingVelocity);
+			checkCanJump(currentJumpingVelocity);
+			//if(currentJumpingVelocity <= 0 && (y - currentJumpingVelocity / 4) > Main.world.getRelativeHighestSolidBlock(new Position(-x, (-y - currentJumpingVelocity / 4), -z)).y) currentJumpingVelocity /= 8;
+			//if(currentJumpingVelocity >= 0 && (y - currentJumpingVelocity / 4) > Main.world.getClosestSolidRoofBlock(new Position(-x, (-y - (currentJumpingVelocity / 4) + 1), -z)).y) currentJumpingVelocity /= 8;
+			//y -= (currentJumpingVelocity);
 			if(y >  0 || standingOnSolid()){
 				y = (float) ((int) y);
 				isJumping = false;
 			}
-			if((y - currentJumpingVelocity / 2) > Main.world.getClosestSolidRoofBlock(new Position(-x, (-y - (currentJumpingVelocity / 2) + 2), -z)).y) currentJumpingVelocity /= 4;
 		}if(!isJumping && !standingOnSolid()){
-			y += 1f;
-			if(y % 1 != 0 && standingOnSolid()) y = (float) ((int) y - 0.5);
+			y += 0.5f;
+			if(y % 1 != 0) y = (float) ((int) y - 0.5);
 		}if(y > 50) health --;
 		
 		if(getBlockUnder().base == Block.boost){
@@ -71,6 +73,33 @@ public class Player extends Mob{
 		if(stuckInBlock()) y -= 0.5f;
 		
 		
+	}
+	
+	public void checkCanJump(float dY){
+		float fY = y - dY;
+		ArrayList<BlockInstance>  blocks = Main.world.getBlocksInRange(-x, -z, -y, -dY);
+		if(dY > 0){
+			for(int i = 0; i <= blocks.size() - 1; i ++){
+				System.out.println("CHECKING ABOVE! " + blocks.get(i).y);
+				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
+					currentJumpingVelocity = 0f;
+					y = -blocks.get(i).y + 2;
+					System.out.println("Hit head!! on " + blocks.get(i).base.name);
+					return;
+				}
+			}
+		}else{
+			for(int i = blocks.size() - 1; i >= 0; i --){
+				System.out.println("CHECKING BELOW! " + blocks.get(i).y);
+				if(blocks.get(i).y < fY && blocks.get(i).base.solid){
+					currentJumpingVelocity = 0f;
+					y = -blocks.get(i).y - 1;
+					System.out.println("Broken feet! on " + blocks.get(i).base.name);
+					return;
+				}
+			}
+		}
+		y = fY;
 	}
 	
 	public void move(float dX, float dY, float dZ){
@@ -104,6 +133,12 @@ public class Player extends Mob{
 		BlockInstance b = Main.world.getBlock(p);
 		
 		return b;
+	}
+
+	public BlockInstance getBlockLookingAt(){
+		
+		
+		return new BlockInstance(Block.air, -x, -2, -z);
 	}
 	
 	public boolean standingOnSolid(){

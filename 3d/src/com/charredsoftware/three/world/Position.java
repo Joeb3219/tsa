@@ -23,7 +23,6 @@ public class Position {
 		this.y = (float) ((int) y);
 		if(this.z > 0) this.z = (float) ((int) (z + 0.5));
 		else this.z = (float) ((int) (z - 0.5));
-		
 	}
 	
 	public int hashCode(){

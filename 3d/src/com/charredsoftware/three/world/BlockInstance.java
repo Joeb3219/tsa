@@ -7,11 +7,13 @@ public class BlockInstance {
 	
 	public BlockInstance(Block base, float x, float y, float z){
 		this.base = base;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		Position p = new Position(x, y, z);
+		p.normalizeCoords();
+		this.x = p.x;
+		this.y = p.y;
+		this.z = p.z;
 	}
-
+	
 	public Position getPosition(){
 		return new Position(x, y, z);
 	}

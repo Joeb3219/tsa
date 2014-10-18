@@ -2,8 +2,6 @@ package com.charredsoftware.three.world;
 
 import java.util.ArrayList;
 
-import com.charredsoftware.three.Main;
-
 public class World {
 
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
@@ -27,6 +25,16 @@ public class World {
 		z = (float) ((int) (z));
 		
 		return getBlock(new Position(x, y, z));
+	}
+	
+	public ArrayList<BlockInstance> getBlocksInRange(float x, float z, float yCurrent, float dY){
+		ArrayList<BlockInstance> inRange = getBlocksInY(x, z);
+		ArrayList<BlockInstance> inRangeVertically = new ArrayList<BlockInstance>();
+		for(BlockInstance b : inRange){
+			if(dY > 0 && b.y < yCurrent && b.y > yCurrent - dY) inRangeVertically.add(b);
+			else if(dY < 0 && b.y > yCurrent && b.y < yCurrent - dY) inRangeVertically.add(b);
+		}
+		return inRangeVertically;
 	}
 	
 	public BlockInstance getClosestSolidRoofBlock(Position p){
