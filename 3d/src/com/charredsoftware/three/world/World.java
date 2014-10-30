@@ -2,10 +2,13 @@ package com.charredsoftware.three.world;
 
 import java.util.ArrayList;
 
+import com.charredsoftware.three.Main;
+
 public class World {
 
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public int size = 0;
+	public float renderedBlocks = 0f;
 	
 	public World(int size){
 		this.size = size;
@@ -92,8 +95,20 @@ public class World {
 		return inY;
 	}
 	
+	
+	//Implementing frustum cullung via http://www.lighthouse3d.com/tutorials/view-frustum-culling
 	public void render(){
+		//float nearH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.nearClip);
+		//float nearW = nearH * Main.camera.aspectRatio;
+	//	float farH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.farClip);
+	//	float farW = farH * Main.camera.aspectRatio;
+		renderedBlocks = 0f;
+		
 		for(BlockInstance b : blocks){
+			if(!Main.camera.frustum.BlockInFrustum(b)) continue;
+		//	if(Math.abs(Main.player.x - b.x) > 20) continue;
+		//	if(Math.abs(b.z - Main.player.z) > 20) continue;
+			renderedBlocks ++;
 			b.draw();
 		}
 	}

@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glFrustum;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
@@ -75,16 +76,16 @@ public class Main {
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && camera.rx < 90f) camera.rx += 1.8f * 2f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_0)) RANDOM_MODE = !RANDOM_MODE;
 		if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
-		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), -player.x + 1, -player.y, -player.z + 1));
-		//if(camera.ry > 180) camera.ry = -180 + (camera.ry - 180);
-		//if(camera.ry < -180) camera.ry = 180 - (camera.ry + 180);
+		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), -player.x, -player.y - 1, -player.z));
 		player.update();
 		camera.x = player.x;
 		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
 		if(player.isCrouching) yOffset += 1;
 		camera.y = yOffset - 2;
-	//	if(camera.y % 2 != 0) camera.y --;
 		camera.z = player.z;
+		
+		if(camera.ry < 0) camera.ry = 360 + camera.ry;
+		if(camera.ry >= 360) camera.ry = 360 - camera.ry;
 	}
 	
 	public static void render(Camera camera){
@@ -112,7 +113,7 @@ public class Main {
 			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
 			font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
 			font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
-			font.drawString(5, 65, "fps: " + displayFPS);
+			font.drawString(5, 65, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
 			font.drawString(5, 85, "Health: " + player.health);
 		}
 				
@@ -120,7 +121,6 @@ public class Main {
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
-		
 
 	}
 	
@@ -131,6 +131,7 @@ public class Main {
 		int roomSize = 24;
 		world = new World(roomSize);
 		
+		/*
 		
 		for(int x = -roomSize / 2; x < roomSize / 2; x ++ ){
 			for(int y = 0; y < roomSize; y ++){
@@ -162,8 +163,8 @@ public class Main {
 		}
 		
 		world.blocks.add(new BlockInstance(Block.boost, 10, 3, 10));
+		*/
 		
-		/*
 		for(int y = -2; y <= 0; y ++){
 			for(int x = -25; x <= 25; x ++){
 				for(int z = -25; z <= 25; z ++){
@@ -181,7 +182,8 @@ public class Main {
 				}
 			}
 		}
-		*/
+		
+		/*
 		
 		
 		world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
@@ -202,7 +204,8 @@ public class Main {
 			}
 		}
 		
-		world.blocks.add(new BlockInstance(Block.wall, -6, 1, -6));
+		world.blocks.add(new BlockInstance(Block.computer, -6, 1, -6));
+		//world.blocks.add(new BlockInstance(Block.computer, -5, 1, -6));
 		
 		for(int x = 4; x <= 12; x ++){
 			for(int z = -12; z <= -4; z ++){
@@ -210,7 +213,7 @@ public class Main {
 			}
 		}
 
-		
+		*/
 		//world.dumpAllBlocks();
 		
 		long lastTime = System.nanoTime();

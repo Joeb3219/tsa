@@ -1,14 +1,6 @@
 package com.charredsoftware.three.world;
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 
@@ -32,6 +24,7 @@ public class Block {
 	public static Block glass = new Block("Glass", Block.loadTexture("glass.png"));
 	public static Block boost = new Block("Boost Block", Block.loadTexture("boost.jpg"));
 	public static Block wall = new Block("Wall", Block.loadTexture("wall.jpg"));
+	public static Block computer = new Block("Computer", Block.loadTexture("computer.jpg"));
 
 	public Block(String name, boolean solid){
 		this.name = name;
@@ -72,31 +65,37 @@ public class Block {
 		float leftBound = -0.5f;
 		float rightBound = 0.5f;
 		
-		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(0, 1); glVertex3f(leftBound,rightBound,rightBound);
-		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);
-		glTexCoord2f(1, 0); glVertex3f(rightBound,leftBound,rightBound);
+		//Front
+		glTexCoord2f(0, 1/3f); glVertex3f(leftBound,leftBound,rightBound);
+		glTexCoord2f(1/3f, 1/3f); glVertex3f(leftBound,rightBound,rightBound);
+		glTexCoord2f(1/3f, 2/3f); glVertex3f(rightBound,rightBound,rightBound);
+		glTexCoord2f(0, 2/3f); glVertex3f(rightBound,leftBound,rightBound);
 
+		//Right
 		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
 		glTexCoord2f(0, 1); glVertex3f(leftBound,rightBound,leftBound);
 		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,leftBound);
 		glTexCoord2f(1, 0); glVertex3f(rightBound,leftBound,leftBound);
 
+		//Left
 		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
 		glTexCoord2f(0, 1); glVertex3f(leftBound,leftBound,rightBound);
 		glTexCoord2f(1, 1); glVertex3f(leftBound,rightBound,rightBound);
 		glTexCoord2f(1, 0); glVertex3f(leftBound,rightBound,leftBound);
 
+		//Back
 		glTexCoord2f(0, 0); glVertex3f(rightBound,leftBound,leftBound);
 		glTexCoord2f(0, 1); glVertex3f(rightBound,leftBound,rightBound);
 		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);
 		glTexCoord2f(1, 0); glVertex3f(rightBound,rightBound,leftBound);
 
+		//Bottom
 		glTexCoord2f(0, 0); glVertex3f(leftBound,leftBound,leftBound);
 		glTexCoord2f(0, 1); glVertex3f(rightBound,leftBound,leftBound);
 		glTexCoord2f(1, 1); glVertex3f(rightBound,leftBound,rightBound);
 		glTexCoord2f(1, 0); glVertex3f(leftBound,leftBound,rightBound);
 
+		//Top
 		glTexCoord2f(0, 0); glVertex3f(leftBound,rightBound,leftBound);
 		glTexCoord2f(0, 1); glVertex3f(rightBound,rightBound,leftBound);
 		glTexCoord2f(1, 1); glVertex3f(rightBound,rightBound,rightBound);

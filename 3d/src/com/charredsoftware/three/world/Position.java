@@ -1,5 +1,7 @@
 package com.charredsoftware.three.world;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class Position {
 
 	public float x, y, z;
@@ -38,6 +40,10 @@ public class Position {
 	
 	public void printLocation(){
 		System.out.println(x + "," + y + "," +  z);
+	}
+	
+	public Vector3f toVector3f(){
+		return new Vector3f(x, y, z);
 	}
 	
 }

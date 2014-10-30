@@ -20,7 +20,7 @@ public class Player extends Mob{
 		super();
 		this.camera = camera;
 		health = 20;
-		movingSpeed = 0.35f;
+		movingSpeed = 0.15f;
 	}
 	
 	public void update(){
@@ -51,9 +51,6 @@ public class Player extends Mob{
 			jumpingTime += 0.1f; //Tenth of a second.
 			currentJumpingVelocity = ( (isCrouching) ? jumpingVelocityStart / 1.25f : jumpingVelocityStart) + Main.DOWNWARD_ACCELERATION * jumpingTime; //Calculate final velocity
 			checkCanJump(currentJumpingVelocity);
-			//if(currentJumpingVelocity <= 0 && (y - currentJumpingVelocity / 4) > Main.world.getRelativeHighestSolidBlock(new Position(-x, (-y - currentJumpingVelocity / 4), -z)).y) currentJumpingVelocity /= 8;
-			//if(currentJumpingVelocity >= 0 && (y - currentJumpingVelocity / 4) > Main.world.getClosestSolidRoofBlock(new Position(-x, (-y - (currentJumpingVelocity / 4) + 1), -z)).y) currentJumpingVelocity /= 8;
-			//y -= (currentJumpingVelocity);
 			if(y >  0 || standingOnSolid()){
 				y = (float) ((int) y);
 				isJumping = false;
@@ -80,21 +77,21 @@ public class Player extends Mob{
 		ArrayList<BlockInstance>  blocks = Main.world.getBlocksInRange(-x, -z, -y, -dY);
 		if(dY > 0){
 			for(int i = 0; i <= blocks.size() - 1; i ++){
-				System.out.println("CHECKING ABOVE! " + blocks.get(i).y);
+			//	System.out.println("CHECKING ABOVE! " + blocks.get(i).y);
 				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
 					y = -blocks.get(i).y + 2;
-					System.out.println("Hit head!! on " + blocks.get(i).base.name);
+					//System.out.println("Hit head!! on " + blocks.get(i).base.name);
 					return;
 				}
 			}
 		}else{
 			for(int i = blocks.size() - 1; i >= 0; i --){
-				System.out.println("CHECKING BELOW! " + blocks.get(i).y);
+				//System.out.println("CHECKING BELOW! " + blocks.get(i).y);
 				if(blocks.get(i).y < fY && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
 					y = -blocks.get(i).y - 1;
-					System.out.println("Broken feet! on " + blocks.get(i).base.name);
+					//System.out.println("Broken feet! on " + blocks.get(i).base.name);
 					return;
 				}
 			}

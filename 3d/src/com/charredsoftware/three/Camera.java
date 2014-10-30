@@ -5,12 +5,14 @@ import static org.lwjgl.util.glu.GLU.*;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
 	public float x = 0, y = -2, z = 0;
 	public float rx = 0, ry = 0, rz = 0;
 	public float fov, aspectRatio, nearClip, farClip;
+	public Frustum frustum = Frustum.getInstance();
 	
 	public Camera(float fov, float aspectRatio, float nearClip, float farClip){
 		this.fov = fov;
@@ -30,10 +32,9 @@ public class Camera {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_NORMALIZE);
-		glCullFace(GL_FRONT_AND_BACK);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		
+		frustum.calculateFrustum(fov, Display.getWidth() / Display.getHeight(), nearClip, farClip);
 	}
 	
 	public void resetAspectRatio(float aspectRatio){
@@ -47,6 +48,11 @@ public class Camera {
 	}
 	
 	public void useView(){
+		Vector3f camera = new Vector3f(-x, -y, -z);
+		Vector3f looking = new Vector3f((float) -Math.sin(Math.toRadians(360 - ry)) * farClip,  farClip * (float) -Math.cos(Math.toRadians(rx - 90)), (float) -Math.cos(Math.toRadians(360 - ry)) * farClip);
+		Vector3f up = new Vector3f(0, y + farClip * (float) -Math.cos(Math.toRadians(rx - 90)), 0);
+		frustum.setCamera(camera, looking, up);
+		
 		glLoadIdentity();
 		glRotatef(rx, 1, 0, 0);
 		glRotatef(ry, 0, 1, 0);
