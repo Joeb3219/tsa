@@ -18,8 +18,20 @@ public class BlockInstance {
 		return new Position(x, y, z);
 	}
 	
+	public void draw(int alpha){
+		base.draw(x, y, z, alpha);
+	}
+	
 	public void draw(){
 		base.draw(x, y, z);
+	}
+	
+	public boolean equals(Object o){
+		if(!(o instanceof BlockInstance)) return false;
+		BlockInstance b = ((BlockInstance) o);
+		if(b.base != base) return false;
+		if(b.x != x || b.y != y || b.z != z) return false;
+		return true;
 	}
 	
 }

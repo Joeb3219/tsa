@@ -3,6 +3,7 @@ package com.charredsoftware.three.entity;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.three.Camera;
 import com.charredsoftware.three.Main;
@@ -140,6 +141,10 @@ public class Player extends Mob{
 	
 	public boolean standingOnSolid(){
 		return getBlockUnder().base.solid;
+	}
+	
+	public Vector3f getLookingAt(){
+		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip,  Main.camera.farClip * (float) -Math.cos(Math.toRadians(Main.camera.rx - 90)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip);
 	}
 	
 }

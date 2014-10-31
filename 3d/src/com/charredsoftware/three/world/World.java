@@ -2,6 +2,8 @@ package com.charredsoftware.three.world;
 
 import java.util.ArrayList;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import com.charredsoftware.three.Main;
 
 public class World {
@@ -9,6 +11,7 @@ public class World {
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public int size = 0;
 	public float renderedBlocks = 0f;
+	public BlockInstance lookingAt;
 	
 	public World(int size){
 		this.size = size;
@@ -98,6 +101,7 @@ public class World {
 	
 	//Implementing frustum cullung via http://www.lighthouse3d.com/tutorials/view-frustum-culling
 	public void render(){
+		lookingAt = getBlockLookingAt();
 		//float nearH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.nearClip);
 		//float nearW = nearH * Main.camera.aspectRatio;
 	//	float farH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.farClip);
@@ -119,6 +123,23 @@ public class World {
 		}
 		
 		System.out.println("====TOTAL BLOCKS: " + blocks.size() + "=====");
+	}
+	
+	public BlockInstance getBlockLookingAt(){
+		Position player = new Position(-Main.player.x, -Main.player.y + 2, -Main.player.z);
+		player.normalizeCoords();
+		Vector3f v = new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)), (float) -Math.cos(Math.toRadians(Main.camera.rx - 90)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)));
+		
+		for(float x = 0f; x < 6f; x ++){
+			for(float z = 0f; z < 6f; z ++){
+				for(float y = 0f; y < 6f; y ++){
+					BlockInstance b = getBlock(-(float) (v.getX() * x * 1.0 - player.x), -(float) (1.0 * v.getY() * y - player.y), -(float) (1.0 * v.getZ() * z - player.z));
+					if(b.base != Block.air) return b;
+				}
+			}
+		}
+		
+		return new BlockInstance(Block.air, -(float) (v.getX() * 6.0 - player.x), -(float) (v.getY() * 6.0 - player.y), -(float) (v.getZ() * 6.0 - player.z));
 	}
 	
 	

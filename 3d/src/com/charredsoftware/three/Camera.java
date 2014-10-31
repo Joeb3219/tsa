@@ -49,7 +49,7 @@ public class Camera {
 	
 	public void useView(){
 		Vector3f camera = new Vector3f(-x, -y, -z);
-		Vector3f looking = new Vector3f((float) -Math.sin(Math.toRadians(360 - ry)) * farClip,  farClip * (float) -Math.cos(Math.toRadians(rx - 90)), (float) -Math.cos(Math.toRadians(360 - ry)) * farClip);
+		Vector3f looking = Main.player.getLookingAt();
 		Vector3f up = new Vector3f(0, y + farClip * (float) -Math.cos(Math.toRadians(rx - 90)), 0);
 		frustum.setCamera(camera, looking, up);
 		

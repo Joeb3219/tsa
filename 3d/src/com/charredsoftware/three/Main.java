@@ -1,22 +1,6 @@
 package com.charredsoftware.three;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glFrustum;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Random;
 
@@ -44,6 +28,8 @@ public class Main {
 	private static int displayFPS = 0;
 	private static Random r = new Random();
 	public static float yOffset = 0f;
+	public static float lastMX = 0, lastMY = 0, movementThreshold = 5f;
+	public static boolean menu = false;
 	
 	private static boolean RANDOM_MODE, DISPLAY_INFO = true;
 	
@@ -70,13 +56,34 @@ public class Main {
 	
  
 	public static void tick(Camera camera){
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) menu = !menu;
+		//if(!menu) Mouse.setGrabbed(true);
+		//else Mouse.setGrabbed(false);
 		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) camera.ry += 1.8f * 2f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) camera.ry -= 1.8 * 2f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP) && camera.rx > -90f) camera.rx -= 1.8f * 2f;
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && camera.rx < 90f) camera.rx += 1.8f * 2f;
+		
+		/*System.out.println(Mouse.getX() + " " + Mouse.getDX() + " " + Mouse.getEventX());
+		float deltaX = Mouse.getX() - Display.getWidth() / 2;
+		float deltaY = Mouse.getY() - Display.getHeight() / 2;
+		
+		if(Math.abs(lastMX - Mouse.getX()) >= movementThreshold){
+			if(deltaX > 0) camera.ry += 1.8f * 2f;
+			if(deltaX < 0) camera.ry -= 1.8f * 2f;
+		}
+		if(Math.abs(lastMY - Mouse.getY()) >= movementThreshold){
+			if(deltaY < 0 && camera.rx < 90f) camera.rx += 1.8f * 2f;
+			if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * 2f;
+		}
+		
+		lastMX = Mouse.getX();
+		lastMY = Mouse.getY();*/
+		
 		if(Keyboard.isKeyDown(Keyboard.KEY_0)) RANDOM_MODE = !RANDOM_MODE;
 		if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
-		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), -player.x, -player.y - 1, -player.z));
+		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), world.lookingAt.x, world.lookingAt.x, world.lookingAt.x));
+		System.out.println(world.lookingAt.x + " " + world.lookingAt.y + " " + world.lookingAt.z);
 		player.update();
 		camera.x = player.x;
 		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
@@ -86,6 +93,9 @@ public class Main {
 		
 		if(camera.ry < 0) camera.ry = 360 + camera.ry;
 		if(camera.ry >= 360) camera.ry = 360 - camera.ry;
+		if(camera.rx < -90f) camera.rx = -90f;
+		if(camera.rx > 90f) camera.rx = 90f;
+		
 	}
 	
 	public static void render(Camera camera){
@@ -101,13 +111,21 @@ public class Main {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		glOrtho(0, 800, 600, 0, 1, -1);
+		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST); 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
+		/*glBegin(GL_LINE);
+		glColor3f(1f, .1f, 1f);
+		glLineWidth(1f);
+		glVertex2d(Display.getWidth() / 2, 0);
+		glVertex2d(Display.getWidth() / 2, Display.getHeight());
+		glEnd();
+		glColor4f(1f, 1f, 1f, 1f);*/
+
 		//Display Text
 		if(DISPLAY_INFO){
 			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
@@ -116,7 +134,7 @@ public class Main {
 			font.drawString(5, 65, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
 			font.drawString(5, 85, "Health: " + player.health);
 		}
-				
+
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -125,13 +143,12 @@ public class Main {
 	}
 	
 	private static void loop(){
-		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 16);
+		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 20);
 		font = new TrueTypeFont(awtFont, false);
 		
 		int roomSize = 24;
 		world = new World(roomSize);
 		
-		/*
 		
 		for(int x = -roomSize / 2; x < roomSize / 2; x ++ ){
 			for(int y = 0; y < roomSize; y ++){
@@ -163,8 +180,8 @@ public class Main {
 		}
 		
 		world.blocks.add(new BlockInstance(Block.boost, 10, 3, 10));
-		*/
 		
+		/*
 		for(int y = -2; y <= 0; y ++){
 			for(int x = -25; x <= 25; x ++){
 				for(int z = -25; z <= 25; z ++){
@@ -182,8 +199,7 @@ public class Main {
 				}
 			}
 		}
-		
-		/*
+		*/
 		
 		
 		world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
@@ -213,7 +229,7 @@ public class Main {
 			}
 		}
 
-		*/
+		
 		//world.dumpAllBlocks();
 		
 		long lastTime = System.nanoTime();

@@ -54,6 +54,12 @@ public class Block {
 			return null;
 	}
 	
+	public void draw(float x, float y, float z, int alpha){
+		glColor4f(.1f, .1f, .1f, alpha);
+		draw(x, y, z);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_ALPHA);
+	}
 	
 	public void draw(float x, float y, float z){
 		if(texture == null) return;
