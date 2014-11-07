@@ -58,7 +58,6 @@ public class Player extends Mob{
 			}
 		}if(!isJumping && !standingOnSolid()){
 			y += 0.5f;
-			if(y % 1 != 0) y = (float) ((int) y - 0.5);
 		}if(y > 50) health --;
 		
 		if(getBlockUnder().base == Block.boost){
@@ -68,7 +67,7 @@ public class Player extends Mob{
 			jumpingTime = 0;
 		}
 		
-		if(stuckInBlock()) y -= 0.5f;
+		if(stuckInBlock()) y -= 1f;
 		
 		
 	}
@@ -78,21 +77,17 @@ public class Player extends Mob{
 		ArrayList<BlockInstance>  blocks = Main.world.getBlocksInRange(-x, -z, -y, -dY);
 		if(dY > 0){
 			for(int i = 0; i <= blocks.size() - 1; i ++){
-			//	System.out.println("CHECKING ABOVE! " + blocks.get(i).y);
 				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
 					y = -blocks.get(i).y + 2;
-					//System.out.println("Hit head!! on " + blocks.get(i).base.name);
 					return;
 				}
 			}
 		}else{
 			for(int i = blocks.size() - 1; i >= 0; i --){
-				//System.out.println("CHECKING BELOW! " + blocks.get(i).y);
 				if(blocks.get(i).y < fY && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
 					y = -blocks.get(i).y - 1;
-					//System.out.println("Broken feet! on " + blocks.get(i).base.name);
 					return;
 				}
 			}

@@ -55,10 +55,11 @@ public class Block {
 	}
 	
 	public void draw(float x, float y, float z, int alpha){
+		glPushAttrib(GL_CURRENT_BIT);
 		glColor4f(.1f, .1f, .1f, alpha);
 		draw(x, y, z);
-		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_ALPHA);
+		glPopAttrib();
 	}
 	
 	public void draw(float x, float y, float z){

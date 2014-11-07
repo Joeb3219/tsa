@@ -26,11 +26,23 @@ public class World {
 	}
 	
 	public BlockInstance getBlock(float x, float y, float z){
-		x = (float) (Math.floor(z));
-		y = (float) (Math.floor(z));
+		x = (float) (Math.floor(x));
+		y = (float) (Math.floor(y));
 		z = (float) (Math.floor(z));
 		
 		return getBlock(new Position(x, y, z));
+	}
+	
+	public void addBlock(BlockInstance block){
+		for(int i = 0; i < blocks.size() - 1; i ++){
+			BlockInstance b = blocks.get(i);
+			if(b.x == block.x && b.y == block.y && b.z == block.z){
+				if(b.base != Block.air) return;
+			}
+		}
+
+			System.out.println(block.base.name + " added @ " + block.x + ", " + block.y + ", " + block.z);
+			blocks.add(block);
 	}
 	
 	public ArrayList<BlockInstance> getBlocksInRange(float x, float z, float yCurrent, float dY){
@@ -89,8 +101,10 @@ public class World {
 	}
 	
 	public ArrayList<BlockInstance> getBlocksInY(float x, float z){
-		x = (float) ((int) (x));
-		z = (float) ((int) (z));
+		Position p = new Position(x, 0, z);
+		p.normalizeCoords();
+		x = p.x;
+		z = p.z;
 		ArrayList<BlockInstance> inY = new ArrayList<BlockInstance>();
 		for(BlockInstance b : blocks){
 			if(b.x == x && b.z == z) inY.add(b);
@@ -99,20 +113,14 @@ public class World {
 	}
 	
 	
-	//Implementing frustum cullung via http://www.lighthouse3d.com/tutorials/view-frustum-culling
 	public void render(){
-		//float nearH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.nearClip);
-		//float nearW = nearH * Main.camera.aspectRatio;
-	//	float farH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.farClip);
-	//	float farW = farH * Main.camera.aspectRatio;
 		renderedBlocks = 0f;
 		
 		for(BlockInstance b : blocks){
 			if(!Main.camera.frustum.BlockInFrustum(b)) continue;
-		//	if(Math.abs(Main.player.x - b.x) > 20) continue;
-		//	if(Math.abs(b.z - Main.player.z) > 20) continue;
 			renderedBlocks ++;
-			b.draw();
+			if(b == lookingAt) b.draw(100);
+			else b.draw();
 		}
 		lookingAt = getBlockLookingAt();
 	}
@@ -126,17 +134,16 @@ public class World {
 	}
 	
 	public BlockInstance getBlockLookingAt(){
-		for(float i = 6; i <= 6; i ++){
+		for(float i = -1; i < 6; i += 0.25f){
 			Vector3f looking = Main.player.getLookingAt(i);
-			BlockInstance b = getBlock((float) -(looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
-			
-			if(b.base == Block.grass) System.out.println((float) -(looking.getX() - (Main.player.x)) + " " + (float) (looking.getY() - Main.player.y) + " " + (float) -(looking.getZ() - (Main.player.z)));
+			looking.translate(0, 2f, 0);
+			BlockInstance b = getBlock(new Position((float) (looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) (looking.getZ() - (Main.player.z))));
 			
 			if(b.base != Block.air) return b;
 		}
 		
 		Vector3f looking = Main.player.getLookingAt(6);
-		return new BlockInstance(Block.air, (float) -(looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
+		return new BlockInstance(Block.air, (float) (looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
 	}
 	
 	public ArrayList<BlockInstance> getBlocksInChunk(float x, float z){
