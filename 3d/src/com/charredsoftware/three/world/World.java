@@ -26,9 +26,9 @@ public class World {
 	}
 	
 	public BlockInstance getBlock(float x, float y, float z){
-		x = (float) ((int) (x));
-		y = (float) ((int) y);
-		z = (float) ((int) (z));
+		x = (float) (Math.floor(z));
+		y = (float) (Math.floor(z));
+		z = (float) (Math.floor(z));
 		
 		return getBlock(new Position(x, y, z));
 	}
@@ -101,7 +101,6 @@ public class World {
 	
 	//Implementing frustum cullung via http://www.lighthouse3d.com/tutorials/view-frustum-culling
 	public void render(){
-		lookingAt = getBlockLookingAt();
 		//float nearH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.nearClip);
 		//float nearW = nearH * Main.camera.aspectRatio;
 	//	float farH = (float) (2 * Math.tan(Main.camera.fov / 2) * Main.camera.farClip);
@@ -115,6 +114,7 @@ public class World {
 			renderedBlocks ++;
 			b.draw();
 		}
+		lookingAt = getBlockLookingAt();
 	}
 	
 	public void dumpAllBlocks(){
@@ -126,20 +126,21 @@ public class World {
 	}
 	
 	public BlockInstance getBlockLookingAt(){
-		Position player = new Position(-Main.player.x, -Main.player.y + 2, -Main.player.z);
-		player.normalizeCoords();
-		Vector3f v = new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)), (float) -Math.cos(Math.toRadians(Main.camera.rx - 90)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)));
-		
-		for(float x = 0f; x < 6f; x ++){
-			for(float z = 0f; z < 6f; z ++){
-				for(float y = 0f; y < 6f; y ++){
-					BlockInstance b = getBlock(-(float) (v.getX() * x * 1.0 - player.x), -(float) (1.0 * v.getY() * y - player.y), -(float) (1.0 * v.getZ() * z - player.z));
-					if(b.base != Block.air) return b;
-				}
-			}
+		for(float i = 6; i <= 6; i ++){
+			Vector3f looking = Main.player.getLookingAt(i);
+			BlockInstance b = getBlock((float) -(looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
+			
+			if(b.base == Block.grass) System.out.println((float) -(looking.getX() - (Main.player.x)) + " " + (float) (looking.getY() - Main.player.y) + " " + (float) -(looking.getZ() - (Main.player.z)));
+			
+			if(b.base != Block.air) return b;
 		}
 		
-		return new BlockInstance(Block.air, -(float) (v.getX() * 6.0 - player.x), -(float) (v.getY() * 6.0 - player.y), -(float) (v.getZ() * 6.0 - player.z));
+		Vector3f looking = Main.player.getLookingAt(6);
+		return new BlockInstance(Block.air, (float) -(looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
+	}
+	
+	public ArrayList<BlockInstance> getBlocksInChunk(float x, float z){
+		return blocks;
 	}
 	
 	

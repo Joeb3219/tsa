@@ -83,7 +83,6 @@ public class Main {
 		if(Keyboard.isKeyDown(Keyboard.KEY_0)) RANDOM_MODE = !RANDOM_MODE;
 		if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
 		if(Mouse.isButtonDown(0)) world.blocks.add(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), world.lookingAt.x, world.lookingAt.x, world.lookingAt.x));
-		System.out.println(world.lookingAt.x + " " + world.lookingAt.y + " " + world.lookingAt.z);
 		player.update();
 		camera.x = player.x;
 		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
@@ -118,27 +117,38 @@ public class Main {
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
-		/*glBegin(GL_LINE);
-		glColor3f(1f, .1f, 1f);
-		glLineWidth(1f);
-		glVertex2d(Display.getWidth() / 2, 0);
-		glVertex2d(Display.getWidth() / 2, Display.getHeight());
+		glPushMatrix();
+		glColor3f(1f, 1f, 1f);
+		glLineWidth(4f);
+		glBegin(GL_LINE_STRIP);
+		glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 + 10);
+		glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 - 10);
 		glEnd();
-		glColor4f(1f, 1f, 1f, 1f);*/
+		glBegin(GL_LINE_STRIP);
+		glVertex2d(Display.getWidth() / 2 + 10, Display.getHeight() / 2);
+		glVertex2d(Display.getWidth() / 2 - 10, Display.getHeight() / 2);
+		glColor3f(1f, 1f, 1f);
+		glEnd();
+		glPopMatrix();
 
+		glLoadIdentity();
+		
 		//Display Text
 		if(DISPLAY_INFO){
 			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}");
 			font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
 			font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
-			font.drawString(5, 65, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
-			font.drawString(5, 85, "Health: " + player.health);
+			font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
+			font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
+			font.drawString(5, 105, "Health: " + player.health);
 		}
-
+		
+		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
+
 
 	}
 	

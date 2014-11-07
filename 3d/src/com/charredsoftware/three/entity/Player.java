@@ -128,9 +128,7 @@ public class Player extends Mob{
 	public BlockInstance getBlockUnder(){
 		Position p = new Position(-x, -y - 1, -z);
 		p.normalizeCoords();
-		BlockInstance b = Main.world.getBlock(p);
-		
-		return b;
+		return Main.world.getBlock(p);
 	}
 
 	public BlockInstance getBlockLookingAt(){
@@ -145,6 +143,10 @@ public class Player extends Mob{
 	
 	public Vector3f getLookingAt(){
 		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip,  Main.camera.farClip * (float) -Math.cos(Math.toRadians(Main.camera.rx - 90)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip);
+	}
+	
+	public Vector3f getLookingAt(float dist){
+		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist,  dist * (float) -Math.cos(Math.toRadians(Main.camera.rx - 90)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist);
 	}
 	
 }
