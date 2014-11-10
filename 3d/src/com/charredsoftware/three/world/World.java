@@ -8,7 +8,7 @@ import com.charredsoftware.three.Main;
 
 public class World {
 
-	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
+	public ArrayList<Region> regions = new ArrayList<Region>();
 	public int size = 0;
 	public float renderedBlocks = 0f;
 	public BlockInstance lookingAt;
@@ -17,32 +17,65 @@ public class World {
 		this.size = size;
 	}
 	
+	public void generate(){
+		for(int x = 0; x < size; x ++){
+			for(int z = 0; z < size; z ++){
+				findRegion(x * Region._SIZE, z * Region._SIZE);//.generate();
+			}
+		}
+		
+		System.out.println(regions.size() + " regions generated:");
+		for(Region r : regions){
+			System.out.println("Region @: " + r.toString());
+		}
+	}
+	
 	public BlockInstance getBlock(Position p){
 		p.normalizeCoords();
-		for(BlockInstance b : blocks){
+		for(BlockInstance b : findRegion(p.x, p.z).blocks){
 			if(b.x == p.x && b.y == p.y && b.z == p.z) return b;
 		}
 		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
 	public BlockInstance getBlock(float x, float y, float z){
-		x = (float) (Math.floor(x));
-		y = (float) (Math.floor(y));
-		z = (float) (Math.floor(z));
+		x = (float) ((int) (x));
+		y = (float) ((int) (y));
+		z = (float) ((int) (z));
 		
 		return getBlock(new Position(x, y, z));
 	}
 	
 	public void addBlock(BlockInstance block){
-		for(int i = 0; i < blocks.size() - 1; i ++){
-			BlockInstance b = blocks.get(i);
-			if(b.x == block.x && b.y == block.y && b.z == block.z){
-				if(b.base != Block.air) return;
-			}
+		findRegion(block.x, block.z).addBlock(block);
+	}
+	
+	public void removeBlock(BlockInstance block){
+		findRegion(block.x, block.z).removeBlock(block);
+	}
+	
+	public Region findRegion(float x, float z){
+		x /= Region._SIZE;
+		z /= Region._SIZE;
+		
+		x = (float) ((int) x);
+		z = (float) ((int) z);
+	
+		for(Region r : regions){
+			if(x == r.x && z == r.z) return r;
 		}
-
-			System.out.println(block.base.name + " added @ " + block.x + ", " + block.y + ", " + block.z);
-			blocks.add(block);
+		
+		Region r = new Region(x, z);
+		regions.add(r);
+		r.generate();
+		
+		System.out.println("Total regions: " + regions.size());
+		
+		return r;
+	}
+	
+	public Region findRegion(BlockInstance b){
+		return findRegion(b.x, b.z);
 	}
 	
 	public ArrayList<BlockInstance> getBlocksInRange(float x, float z, float yCurrent, float dY){
@@ -106,7 +139,7 @@ public class World {
 		x = p.x;
 		z = p.z;
 		ArrayList<BlockInstance> inY = new ArrayList<BlockInstance>();
-		for(BlockInstance b : blocks){
+		for(BlockInstance b : findRegion(p.x, p.z).blocks){
 			if(b.x == x && b.z == z) inY.add(b);
 		}
 		return inY;
@@ -115,22 +148,11 @@ public class World {
 	
 	public void render(){
 		renderedBlocks = 0f;
-		
-		for(BlockInstance b : blocks){
-			if(!Main.camera.frustum.BlockInFrustum(b)) continue;
-			renderedBlocks ++;
-			if(b == lookingAt) b.draw(100);
-			else b.draw();
+		for(Region r : regions){
+			r.render();
+			renderedBlocks += r.renderedBlocks;
 		}
 		lookingAt = getBlockLookingAt();
-	}
-	
-	public void dumpAllBlocks(){
-		for(BlockInstance b : blocks){
-			System.out.println(b.base.name + " @ " + b.x + "/" + b.y + "/" + b.z);
-		}
-		
-		System.out.println("====TOTAL BLOCKS: " + blocks.size() + "=====");
 	}
 	
 	public BlockInstance getBlockLookingAt(){
@@ -146,8 +168,8 @@ public class World {
 		return new BlockInstance(Block.air, (float) (looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
 	}
 	
-	public ArrayList<BlockInstance> getBlocksInChunk(float x, float z){
-		return blocks;
+	public ArrayList<BlockInstance> getBlocksInRegion(float x, float z){
+		return findRegion(x, z).blocks;
 	}
 	
 	

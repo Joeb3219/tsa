@@ -2,7 +2,7 @@ package com.charredsoftware.three.entity;
 
 public class Entity {
 
-	public float x, y, z = 0;
+	public float x = -2f, y = -1f, z = -2f;
 	public float currentVelocity = 0f, movingSpeed = 0.7f, jumpingVelocityStart = 1.75f, currentJumpingVelocity = 0f;
 
 	public Entity(){

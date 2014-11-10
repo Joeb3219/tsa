@@ -1,26 +1,6 @@
 package com.charredsoftware.three;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Random;
 
@@ -47,18 +27,20 @@ public class Main {
 	public static Camera camera;
 	public static World world;
 	private static int displayFPS = 0;
-	private static Random r = new Random();
 	public static float yOffset = 0f;
 	public static float lastMX = 0, lastMY = 0, movementThreshold = 2f;
 	public static boolean menu = false;
 	public static GameState gameState = GameState.GAME;
+	public static Block selectedBlock;
+	public static Random r = new Random();
 	
 	private static boolean RANDOM_MODE, DISPLAY_INFO = true;
 	
 	public static void main(String[] args){
 		initializeDisplay();
-		camera = new Camera(70, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 150f);
+		camera = new Camera(70, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
 		player = new Player(camera);
+		selectedBlock = Block.computer;
 		loop();
 		cleanDisplay();
 	}
@@ -79,7 +61,7 @@ public class Main {
 	private static float cooldown = 0f;
 	public static void tick(Camera camera){
 		if(cooldown > 0) cooldown --;
-		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0){
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
 			menu = !menu;
 			cooldown = 5f;
 		}
@@ -100,12 +82,21 @@ public class Main {
 				if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
 			}
 
-			System.out.println(deltaX + " " + deltaY);
-			
 			if(camera.ry < 0) camera.ry = 360 + camera.ry;
 			if(camera.ry >= 360) camera.ry = 360 - camera.ry;
 			if(camera.rx < -90f) camera.rx = -90f;
 			if(camera.rx > 90f) camera.rx = 90f;
+			
+			float dWheel = Mouse.getDWheel();
+			
+			if(dWheel > 0){
+				if(Block.blocks.indexOf(selectedBlock) < Block.blocks.size() - 1) selectedBlock = Block.blocks.get(Block.blocks.indexOf(selectedBlock) + 1);
+				else selectedBlock = Block.blocks.get(1);
+			}
+			if(dWheel < 0){
+				if(Block.blocks.indexOf(selectedBlock) > 1) selectedBlock = Block.blocks.get(Block.blocks.indexOf(selectedBlock) - 1);
+				else selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
+			}
 			
 			if(!menu) Mouse.setGrabbed(true);
 			else Mouse.setGrabbed(false);
@@ -118,15 +109,20 @@ public class Main {
 		camera.z = player.z;
 		
 		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1)) gameState = GameState.COMPUTER;
-		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid) world.addBlock(new BlockInstance(Block.blocks.get(r.nextInt(Block.blocks.size())), world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
-		if(Mouse.isButtonDown(0) && gameState == GameState.GAME) world.blocks.remove(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
+		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid) world.addBlock(new BlockInstance(selectedBlock, world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
+		if(Mouse.isButtonDown(0) && gameState == GameState.GAME) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(0, -1, 0);
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
+		if(Keyboard.isKeyDown(Keyboard.KEY_N)){
+			world = new World(1);
+			player.setPosition(-2f, -1f, -2f);
+		}
 		
 	}
 	
 	public static void render(Camera camera){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
 		glLoadIdentity();
 		camera.useView();
@@ -134,7 +130,6 @@ public class Main {
 		if(player.isInWater()) glColor3f(0.4f, 0.8f, 0.8f);
 		
 		world.render();
-		if(gameState == GameState.COMPUTER) new Computer().draw();
 		
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -146,8 +141,8 @@ public class Main {
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
+		if(gameState == GameState.COMPUTER) new Computer().draw();
 		
-		glPushMatrix();
 		glColor3f(1f, 1f, 1f);
 		glLineWidth(4f);
 		glBegin(GL_LINE_STRIP);
@@ -159,13 +154,12 @@ public class Main {
 		glVertex2d(Display.getWidth() / 2 - 10, Display.getHeight() / 2);
 		glColor3f(1f, 1f, 1f);
 		glEnd();
-		glPopMatrix();
 
 		glLoadIdentity();
 		
 		//Display Text
 		if(DISPLAY_INFO){
-			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
 			font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
 			font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 			font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
@@ -177,6 +171,15 @@ public class Main {
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
+		
+		glPushMatrix();
+		glViewport(10, 10, 74, 74);
+		glLoadIdentity();
+		glRotatef(60, 1, 0, 0);
+		glRotatef(60, 0, 1, 0);
+		glRotatef(60, 0, 0, 1);
+		selectedBlock.draw(0f,0f,0f);
+		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
 
 
@@ -186,108 +189,15 @@ public class Main {
 		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 20);
 		font = new TrueTypeFont(awtFont, false);
 		
-		int roomSize = 24;
+		int roomSize = 1;
 		world = new World(roomSize);
-		
-		
-		for(int x = -roomSize / 2; x < roomSize / 2; x ++ ){
-			for(int y = 0; y < roomSize; y ++){
-				world.blocks.add(new BlockInstance(Block.bricks, x, y, roomSize / 2));
-				world.blocks.add(new BlockInstance(Block.bricks, x, y, -roomSize / 2));
-			}
-		}
-		
-		for(int z = -roomSize / 2; z < roomSize / 2; z ++){
-			for(int y = 0; y < roomSize; y ++){
-				world.blocks.add(new BlockInstance(Block.bricks, roomSize / 2, y, z));
-				world.blocks.add(new BlockInstance(Block.bricks, -roomSize / 2, y, z));
-			}
-		}
-		
-		for(int x = -roomSize / 2; x < roomSize / 2; x ++){
-			for(int z = -roomSize / 2; z < roomSize / 2; z ++){
-				world.blocks.add(new BlockInstance(Block.grass, x, -1.0f, z));
-				if(!(x == 0 && z == 0)) world.blocks.add(new BlockInstance(Block.ceiling, x, roomSize, z));
-			}
-		}
-		
-		for(int x = 6; x < 12; x ++){
-			for(int z = 6; z < 12; z ++){
-				for(int y = 0; y < 3; y ++){
-					world.blocks.add(new BlockInstance(Block.bricks, x, y, z));
-				}
-			}
-		}
-		
-		world.blocks.add(new BlockInstance(Block.boost, 10, 3, 10));
-		
-		/*
-		for(int y = -2; y <= 0; y ++){
-			for(int x = -25; x <= 25; x ++){
-				for(int z = -25; z <= 25; z ++){
-					if(y == -2) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
-					else{
-						if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
-						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.bricks, x, y, z));
-						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.boost, x, y, z));
-						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.glass, x, y, z));
-						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.ceiling, x, y, z));
-						else if(r.nextInt(2) == 1) world.blocks.add(new BlockInstance(Block.wood, x, y, z));
-						//else if(r.nextInt(5) == 1) world.blocks.add(new BlockInstance(Block.grass, x, y, z));
-						else{} //Air
-					}
-				}
-			}
-		}
-		*/
-		
-		
-		world.blocks.add(new BlockInstance(Block.glass, 12, 0, -12));
-		world.blocks.add(new BlockInstance(Block.glass, 12, 2, -12));
-		world.blocks.add(new BlockInstance(Block.glass, 12, 4, -12));
-		
-		
-		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 6));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 1, 8));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 2, 10));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 8));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 0, 10));
-		world.blocks.add(new BlockInstance(Block.wood, 4, 1, 10));
-		
-		world.blocks.add(new BlockInstance(Block.wall, -3, 3, 11));
-		
-		for(int x = -8; x <= -4; x ++){
-			for(int z = -8; z <= -4; z ++){
-				world.blocks.add(new BlockInstance(Block.bricks, x, 0, z));
-			}
-		}
-		
-		world.blocks.add(new BlockInstance(Block.computer, -6, 1, -6));
-		//world.blocks.add(new BlockInstance(Block.computer, -5, 1, -6));
-		
-		for(int x = 4; x <= 12; x ++){
-			for(int z = -12; z <= -4; z ++){
-				world.blocks.add(new BlockInstance(Block.water, x, 0, z));
-			}
-		}
-
-		
-		//world.dumpAllBlocks();
+		world.generate();
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
 		final double nanoSeconds = 1000000000.0 / TPS;
 		double delta = 0;
 		int fps = 0, ticks = 0;
-		/*int roomSize = 26;
-		World world = new World(roomSize);
-		
-		for(int x = -roomSize / 2; x < roomSize / 2; x += 2){
-			for(int y = -2; y < roomSize; y += 2){
-				world.setBlock(new BlockInstance(test, x, y, roomSize / 2));
-				world.setBlock(new BlockInstance(test, x, y, -roomSize / 2));
-			}
-		}*/
 		
 		while(!Display.isCloseRequested()){
 			if(Display.wasResized()){

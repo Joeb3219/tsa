@@ -21,7 +21,6 @@ public class Block {
 	public static Block ceiling = new Block("Ceiling", Block.loadTexture("ceiling.jpg"));
 	public static Block wood = new Block("Wood", Block.loadTexture("wood.jpg"));
 	public static Block water = new Block("Water", Block.loadTexture("water.jpg"), false);
-	public static Block glass = new Block("Glass", Block.loadTexture("glass.png"));
 	public static Block boost = new Block("Boost Block", Block.loadTexture("boost.jpg"));
 	public static Block wall = new Block("Wall", Block.loadTexture("wall.jpg"));
 	public static Block computer = new Block("Computer", Block.loadTexture("computer.jpg"));

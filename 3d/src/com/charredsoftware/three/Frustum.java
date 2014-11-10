@@ -43,17 +43,17 @@ public class Frustum {
 	
 	public boolean BlockInFrustum(BlockInstance b){
 		Vector3f p = b.getPosition().toVector3f();
-		Vector3f.sub(p, cameraPos, p);
+		p = Vector3f.sub(p, cameraPos, null);
 		
 		float pcz = Vector3f.dot(p, z);
-		if (pcz > farClip || pcz < nearClip) return false;
+		if (Math.abs(pcz) > farClip || Math.abs(pcz) < nearClip) return false;
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
 	 	if (pcy > aux || pcy < -aux) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
-	 	aux = aux * ratio;
+	 	aux *= ratio;
 	 	if (pcx > aux || pcx < -aux) return false;
 
 		return true;
