@@ -1,6 +1,29 @@
 package com.charredsoftware.three;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glVertex2d;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.Random;
 
@@ -12,6 +35,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 
 import com.charredsoftware.three.computer.Computer;
+import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
@@ -20,7 +44,7 @@ import com.charredsoftware.three.world.World;
 
 public class Main {
 
-	private static Font font;
+	public static Font font;
 	public static Player player;
 	public static final int TPS = 30;
 	public static final float DOWNWARD_ACCELERATION = -9.8f / 4;
@@ -32,6 +56,7 @@ public class Main {
 	public static boolean menu = false;
 	public static GameState gameState = GameState.GAME;
 	public static Block selectedBlock;
+	public static Peripheral selectedPeripheral = null;
 	public static Random r = new Random();
 	
 	private static boolean RANDOM_MODE, DISPLAY_INFO = true;
@@ -98,7 +123,10 @@ public class Main {
 				else selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
 			}
 			
-			if(!menu) Mouse.setGrabbed(true);
+			if(!menu) {
+				Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+				Mouse.setGrabbed(true);
+			}
 			else Mouse.setGrabbed(false);
 		}
 		
@@ -108,7 +136,10 @@ public class Main {
 		camera.y = yOffset - 2;
 		camera.z = player.z;
 		
-		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1)) gameState = GameState.COMPUTER;
+		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1)){
+			selectedPeripheral = world.getPeripheral(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z);
+			gameState = GameState.COMPUTER;
+		}
 		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid) world.addBlock(new BlockInstance(selectedBlock, world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
 		if(Mouse.isButtonDown(0) && gameState == GameState.GAME) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
@@ -136,37 +167,40 @@ public class Main {
 		glLoadIdentity();
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST); 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
-		if(gameState == GameState.COMPUTER) new Computer().draw();
+		if(gameState == GameState.COMPUTER) selectedPeripheral.draw();
 		
-		glColor3f(1f, 1f, 1f);
-		glLineWidth(4f);
-		glBegin(GL_LINE_STRIP);
-		glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 + 10);
-		glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 - 10);
-		glEnd();
-		glBegin(GL_LINE_STRIP);
-		glVertex2d(Display.getWidth() / 2 + 10, Display.getHeight() / 2);
-		glVertex2d(Display.getWidth() / 2 - 10, Display.getHeight() / 2);
-		glColor3f(1f, 1f, 1f);
-		glEnd();
-
-		glLoadIdentity();
-		
-		//Display Text
-		if(DISPLAY_INFO){
-			font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-			font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
-			font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
-			font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
-			font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
-			font.drawString(5, 105, "Health: " + player.health);
+		if(gameState == GameState.GAME){
+			glPushMatrix();
+			glLineWidth(4f);
+			glColor4f(.9f, .9f, .9f, 1f);
+			glBegin(GL_LINE_STRIP);
+			glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 + 10);
+			glVertex2d(Display.getWidth() / 2, Display.getHeight() / 2 - 10);
+			glEnd();
+			glBegin(GL_LINE_STRIP);
+			glVertex2d(Display.getWidth() / 2 + 10, Display.getHeight() / 2);
+			glVertex2d(Display.getWidth() / 2 - 10, Display.getHeight() / 2);
+			glEnd();
+			glPopMatrix();
+	
+			glLoadIdentity();
+			
+			//Display Text
+			if(DISPLAY_INFO){
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
+				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
+				font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
+				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
+				font.drawString(5, 105, "Health: " + player.health);
+			}
 		}
-		
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

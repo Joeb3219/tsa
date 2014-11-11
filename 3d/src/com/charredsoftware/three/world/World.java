@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.computer.Peripheral;
 
 public class World {
 
@@ -58,8 +59,8 @@ public class World {
 		x /= Region._SIZE;
 		z /= Region._SIZE;
 		
-		x = (float) ((int) x);
-		z = (float) ((int) z);
+		x = (float) (Math.floor(x));
+		z = (float) (Math.floor(z));
 	
 		for(Region r : regions){
 			if(x == r.x && z == r.z) return r;
@@ -69,7 +70,7 @@ public class World {
 		regions.add(r);
 		r.generate();
 		
-		System.out.println("Total regions: " + regions.size());
+		System.out.println("Total regions: " + regions.size() + ": newest: " + x + "," + z);
 		
 		return r;
 	}
@@ -158,19 +159,27 @@ public class World {
 	public BlockInstance getBlockLookingAt(){
 		for(float i = -1; i < 6; i += 0.25f){
 			Vector3f looking = Main.player.getLookingAt(i);
-			looking.translate(0, 2f, 0);
-			BlockInstance b = getBlock(new Position((float) (looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) (looking.getZ() - (Main.player.z))));
+			looking.translate(0f, 2f, 0f);
+			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
 			if(b.base != Block.air) return b;
 		}
 		
 		Vector3f looking = Main.player.getLookingAt(6);
-		return new BlockInstance(Block.air, (float) (looking.getX() - (Main.player.x)), (float) (looking.getY() - Main.player.y), (float) -(looking.getZ() - (Main.player.z)));
+		looking.translate(0, 2f, 0);
+		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) -(looking.getZ()));
 	}
 	
 	public ArrayList<BlockInstance> getBlocksInRegion(float x, float z){
 		return findRegion(x, z).blocks;
 	}
 	
+	public Peripheral getPeripheral(float x, float y, float z){
+		for(Peripheral p : findRegion(x, z).peripherals){
+			if(p.x == x && p.y == y && p.z == z) return p;
+		}
+		
+		return null;
+	}
 	
 }

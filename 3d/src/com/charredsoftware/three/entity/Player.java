@@ -137,11 +137,11 @@ public class Player extends Mob{
 	}
 	
 	public Vector3f getLookingAt(){
-		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip,  Main.camera.farClip * (float) -Math.sin(Math.toRadians(Main.camera.rx)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip);
+		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip - x,  Main.camera.farClip * (float) -Math.sin(Math.toRadians(Main.camera.rx)) - y, (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip - z);
 	}
 	
 	public Vector3f getLookingAt(float dist){
-		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist,  dist * (float) -Math.sin(Math.toRadians(Main.camera.rx)), (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist);
+		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist - x, (float) Math.cos(Math.toRadians(Main.camera.rx + 90)) * dist - y, (float) -Math.cos(Math.toRadians(Main.camera.ry)) * dist - z);
 	}
 	
 }

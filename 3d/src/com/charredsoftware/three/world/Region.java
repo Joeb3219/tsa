@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.computer.Computer;
+import com.charredsoftware.three.computer.Peripheral;
 
 public class Region {
 
 	public static final float _SIZE = 16, _HEIGHT = 128;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
+	public ArrayList<Peripheral> peripherals = new ArrayList<Peripheral>();
 	public float x, z;
 	public float renderedBlocks = 0f; //Used to calculate # of blocks rendered per render.
 	
@@ -92,11 +95,32 @@ public class Region {
 			}
 		}
 		
+		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z));
+		
 		blocks.add(block);
 	}
-	
+
 	public void removeBlock(BlockInstance block){
-		if(blocks.contains(block)) blocks.remove(block);
+		if(blocks.contains(block)){
+			blocks.remove(block);
+			removePeripheral(new Peripheral(block.x, block.y, block.z));
+		}
+	}
+
+	public void addPeripheral(Peripheral peripheral){
+		if(peripherals.size() == 0) peripherals.add(peripheral);
+		for(int i = 0; i < blocks.size() - 1; i ++){
+			Peripheral p = peripherals.get(i);
+			if(p.x == peripheral.x && p.y == peripheral.y && p.z == peripheral.z){
+				return;
+			}
+		}
+		
+		peripherals.add(peripheral);
+	}
+	
+	public void removePeripheral(Peripheral p){
+		if(peripherals.contains(p)) peripherals.remove(p);
 	}
 	
 	public void render(){
