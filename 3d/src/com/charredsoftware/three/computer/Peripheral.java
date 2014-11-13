@@ -1,5 +1,7 @@
 package com.charredsoftware.three.computer;
 
+import com.charredsoftware.three.world.Position;
+
 public class Peripheral {
 
 	public float x, y, z;
@@ -20,6 +22,10 @@ public class Peripheral {
 	
 	public void draw(){
 		
+	}
+	
+	public Position getPosition(){
+		return new Position(x, y, z);
 	}
 	
 }

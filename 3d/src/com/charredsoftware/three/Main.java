@@ -26,6 +26,8 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -34,7 +36,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 
-import com.charredsoftware.three.computer.Computer;
 import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
@@ -59,7 +60,7 @@ public class Main {
 	public static Peripheral selectedPeripheral = null;
 	public static Random r = new Random();
 	
-	private static boolean RANDOM_MODE, DISPLAY_INFO = true;
+	private static boolean DISPLAY_INFO = true;
 	
 	public static void main(String[] args){
 		initializeDisplay();
@@ -136,18 +137,20 @@ public class Main {
 		camera.y = yOffset - 2;
 		camera.z = player.z;
 		
-		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1)){
+		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0){
 			selectedPeripheral = world.getPeripheral(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z);
 			gameState = GameState.COMPUTER;
 		}
-		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid) world.addBlock(new BlockInstance(selectedBlock, world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
-		if(Mouse.isButtonDown(0) && gameState == GameState.GAME) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
+		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid && cooldown == 0) world.addBlock(new BlockInstance(selectedBlock, world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
+		if(Mouse.isButtonDown(0) && gameState == GameState.GAME && cooldown == 0) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
 		if(Keyboard.isKeyDown(Keyboard.KEY_N)){
 			world = new World(1);
 			player.setPosition(-2f, -1f, -2f);
 		}
+		
+		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
 		
 	}
 	
@@ -225,9 +228,11 @@ public class Main {
 		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 20);
 		font = new TrueTypeFont(awtFont, false);
 		
-		int roomSize = 1;
 		world = new World();
 		world.generate();
+		
+		Timer t = new Timer();
+		//t.scheduleAtFixedRate(new TimerTask(){public void run(){world.save();}}, 5000, 5000);
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
@@ -261,6 +266,7 @@ public class Main {
 			Display.update();
 		}
 		
+		//t.cancel();
 		world.save();
 		
 		Display.destroy();

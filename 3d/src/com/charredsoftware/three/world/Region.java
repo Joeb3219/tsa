@@ -47,10 +47,23 @@ public class Region {
 				writer.println("</block>");
 			}
 			
+			writer.println("<block>");
+			writer.println("<position>" + x + ":-1000:" + z + "</position>");
+			writer.println("<data>0:0:0</data>");
+			writer.println("</block>");
+			
 			writer.println("</Blocks>");
 			
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}
+		
+		//Delete unused data folders
+		for(Peripheral p : peripherals){
+			if(p instanceof Computer){
+				Computer c = (Computer) p;
+				if(c.dir.exists() && c.dir.list().length == 0) c.dir.delete();
+			}
+		}
 	}
 	
 	public void generate(File file){
@@ -73,6 +86,7 @@ public class Region {
 					}else if(c.getNodeName().equals("data")){
 						bspecial = Float.parseFloat(value.split(":")[2]);
 						bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
+						if(bbase == Block.computer) System.out.println(bspecial);
 					}
 				}
 				BlockInstance b = new BlockInstance(bbase, bx, by, bz);
@@ -163,7 +177,10 @@ public class Region {
 			}
 		}
 		
+		int pSize = peripherals.size();
 		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z, block.special));
+		
+		if(pSize < peripherals.size()) block.special = peripherals.get(peripherals.size() - 1).special;
 		
 		blocks.add(block);
 	}
@@ -200,6 +217,10 @@ public class Region {
 			if(b == Main.world.lookingAt) b.draw(100);
 			else b.draw();
 		}
+	}
+	
+	public Position getPosition(){
+		return new Position(x, 0, z);
 	}
 	
 	public String toString(){

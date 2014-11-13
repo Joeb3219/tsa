@@ -1,23 +1,6 @@
 package com.charredsoftware.three.computer;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 
@@ -29,6 +12,7 @@ public class Computer extends Peripheral{
 
 	public int id;
 	public String mac;
+	public File dir;
 
 	public Computer(float x, float y, float z, float special){
 		super(x, y, z, special);
@@ -39,18 +23,23 @@ public class Computer extends Peripheral{
 	}
 	
 	public float generateSpecialId(){
-		if(special != -1) return special; //One is already assigned, everything is good.
-		File cDir = new File(Main.world.dir.getAbsolutePath(), "data/computers");
-		String[]entries = cDir.list();
+		if(special != -1){
+			dir = new File(Main.world.dir.getAbsolutePath(), "data/computers/" + special);
+			dir.mkdirs();
+			return special; //One is already assigned, everything is good.
+		}
+		dir = new File(Main.world.dir.getAbsolutePath(), "data/computers");
+		String[]entries = dir.list();
 		float highest = -1f;
 		for(String s : entries){
 			//Look for highest directory -> next id will be the highest + 1.
-			if(!new File(cDir, s).isDirectory()) continue;
+			if(!new File(dir, s).isDirectory()) continue;
 			float current = Float.parseFloat(s);
 			highest = Math.max(current, highest);
 		}
 		highest ++;
-		new File(cDir, highest + "").mkdir();
+		dir = new File(dir, highest + "");
+		dir.mkdirs();
 		return highest;
 	}
 	
@@ -76,10 +65,14 @@ public class Computer extends Peripheral{
 		
 		glEnd();
 		
-		
-		Main.font.drawString(5, 10, "X:" + x);
-		Main.font.drawString(5, 25, "Y:" + y);
-		Main.font.drawString(5, 40, "Z:" + z);
+		Main.font.drawString(15, 15, getPosition().toString());
+		Main.font.drawString(15, 30, "Computer ID: " + special);
+		Main.font.drawString(15, 45, "Programs: (" + dir.list().length + ")");
+		float yStringPos = 45;
+		for(String s : dir.list()){
+			yStringPos += 15;
+			Main.font.drawString(20, yStringPos, s);
+		}
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

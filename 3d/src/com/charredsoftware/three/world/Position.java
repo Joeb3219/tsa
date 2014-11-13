@@ -18,6 +18,10 @@ public class Position {
 		this.z = z;
 	}
 
+	public String toString(){
+		return "[x/y/z] {" + x + "/" + y + "/" + z + "}";
+	}
+	
 	//Converts decimal to whole number.
 	public void normalizeCoords(){
 		if(this.x > 0) this.x = (float) ((int) (x + 0.5));
