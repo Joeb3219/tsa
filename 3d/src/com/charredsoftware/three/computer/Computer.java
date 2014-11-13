@@ -19,6 +19,8 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
+import java.io.File;
+
 import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.three.Main;
@@ -28,12 +30,28 @@ public class Computer extends Peripheral{
 	public int id;
 	public String mac;
 
-	public Computer(float x, float y, float z){
-		super(x, y, z);
+	public Computer(float x, float y, float z, float special){
+		super(x, y, z, special);
 	}
 	
 	public Computer(){
-		super(0, 0, 0);
+		super(0, 0, 0, -1);
+	}
+	
+	public float generateSpecialId(){
+		if(special != -1) return special; //One is already assigned, everything is good.
+		File cDir = new File(Main.world.dir.getAbsolutePath(), "data/computers");
+		String[]entries = cDir.list();
+		float highest = -1f;
+		for(String s : entries){
+			//Look for highest directory -> next id will be the highest + 1.
+			if(!new File(cDir, s).isDirectory()) continue;
+			float current = Float.parseFloat(s);
+			highest = Math.max(current, highest);
+		}
+		highest ++;
+		new File(cDir, highest + "").mkdir();
+		return highest;
 	}
 	
 	public void draw(){

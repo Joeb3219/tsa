@@ -9,40 +9,59 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 public class Block {
 
+	public float id, meta;
 	public Texture texture;
 	public boolean solid = true;
 	public String name;
 	public static ArrayList<Block> blocks = new ArrayList<Block>();
 	
 	
-	public static Block air = new Block("Air", false);
-	public static Block bricks = new Block("Bricks", Block.loadTexture("brick.jpg"));
-	public static Block grass = new Block("Grass", Block.loadTexture("grass.jpg"));
-	public static Block ceiling = new Block("Ceiling", Block.loadTexture("ceiling.jpg"));
-	public static Block wood = new Block("Wood", Block.loadTexture("wood.jpg"));
-	public static Block water = new Block("Water", Block.loadTexture("water.jpg"), false);
-	public static Block boost = new Block("Boost Block", Block.loadTexture("boost.jpg"));
-	public static Block wall = new Block("Wall", Block.loadTexture("wall.jpg"));
-	public static Block computer = new Block("Computer", Block.loadTexture("computer.jpg"));
+	public static Block air = new Block(0, 0, "Air", false);
+	public static Block bricks = new Block(1, 0, "Bricks", Block.loadTexture("brick.jpg"));
+	public static Block grass = new Block(2, 0, "Grass", Block.loadTexture("grass.jpg"));
+	public static Block ceiling = new Block(3, 0, "Ceiling", Block.loadTexture("ceiling.jpg"));
+	public static Block wood = new Block(4, 0, "Wood", Block.loadTexture("wood.jpg"));
+	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.jpg"), false);
+	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
+	public static Block wall = new Block(7, 0,"Wall", Block.loadTexture("wall.jpg"));
+	public static Block computer = new Block(8, 0, "Computer", Block.loadTexture("computer.jpg"));
 
-	public Block(String name, boolean solid){
+	public Block(float id, float meta, String name, boolean solid){
+		this.id = id;
+		this.meta = meta;
 		this.name = name;
 		this.texture = null;
 		this.solid = solid;
 		blocks.add(this);
 	}
 	
-	public Block(String name, Texture texture){
+	public Block(float id, float meta, String name, Texture texture){
+		this.id = id;
+		this.meta = meta;
 		this.name = name;
 		this.texture = texture;
 		blocks.add(this);
 	}
 
-	public Block(String name, Texture texture, boolean solid){
+	public Block(float id, float meta, String name, Texture texture, boolean solid){
+		this.id = id;
+		this.meta = meta;
 		this.name = name;
 		this.texture = texture;
 		this.solid = solid;
 		blocks.add(this);
+	}
+	
+	
+	//Expects id:meta
+	public static Block getBlock(String idString){
+		float id = Float.parseFloat(idString.split(":")[0]);
+		float meta = Float.parseFloat(idString.split(":")[1]);
+		for(Block b : blocks){
+			if(b.id == id && b.meta == meta) return b;
+		}
+		
+		return air;
 	}
 	
 	public static Texture loadTexture(String path){

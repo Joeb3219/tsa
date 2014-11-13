@@ -4,6 +4,7 @@ public class BlockInstance {
 
 	public Block base;
 	public float x, y, z = 0;
+	public float special = -1;
 	
 	public BlockInstance(Block base, float x, float y, float z){
 		this.base = base;

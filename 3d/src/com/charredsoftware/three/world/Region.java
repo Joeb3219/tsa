@@ -1,7 +1,18 @@
 package com.charredsoftware.three.world;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.computer.Computer;
@@ -20,6 +31,63 @@ public class Region {
 		this.z = z;
 	}
 
+	public void save(File dir){
+		File file = new File(dir.getAbsolutePath() + "/region_" + x + "l" + z + ".csf");
+		try {
+			if(!file.exists()) file.createNewFile();
+			
+			PrintWriter writer = new PrintWriter(file, "UTF-8");
+
+			writer.println("<Blocks>");
+			
+			for(BlockInstance b : blocks){
+				writer.println("<block>");
+				writer.println("<position>" + b.x + ":" + b.y + ":" + b.z + "</position>");
+				writer.println("<data>" + b.base.id + ":" + b.base.meta + ":" + b.special + "</data>");
+				writer.println("</block>");
+			}
+			
+			writer.println("</Blocks>");
+			
+			writer.close();
+		} catch (IOException e) {e.printStackTrace();}
+	}
+	
+	public void generate(File file){
+		try {
+			Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+			NodeList base = d.getElementsByTagName("block");
+			for(int i = 0; i < base.getLength() - 1; i ++){
+				Node n = base.item(i);
+				NodeList children = n.getChildNodes();
+				float bx = 0, by = 0, bz = 0, bspecial = 0;
+				Block bbase = Block.air;
+				for(int l = 0; l < children.getLength() - 1; l ++){
+					Node c = children.item(l);
+					String value = c.getTextContent();
+					if(value.equals("") || value.equals(" ")) continue;
+					if(c.getNodeName().equals("position")){
+						bx = Float.parseFloat(value.split(":")[0]);
+						by = Float.parseFloat(value.split(":")[1]);
+						bz = Float.parseFloat(value.split(":")[2]);
+					}else if(c.getNodeName().equals("data")){
+						bspecial = Float.parseFloat(value.split(":")[2]);
+						bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
+					}
+				}
+				BlockInstance b = new BlockInstance(bbase, bx, by, bz);
+				b.special = bspecial;
+				addBlock(b);
+				
+			}
+			
+		} catch (IOException e) {e.printStackTrace();} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void generate(){
 		if(x == 0 && z == 0){
 			for(float x = 0 / 2; x < _SIZE - 1; x ++ ){
@@ -95,7 +163,7 @@ public class Region {
 			}
 		}
 		
-		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z));
+		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z, block.special));
 		
 		blocks.add(block);
 	}
@@ -103,13 +171,13 @@ public class Region {
 	public void removeBlock(BlockInstance block){
 		if(blocks.contains(block)){
 			blocks.remove(block);
-			removePeripheral(new Peripheral(block.x, block.y, block.z));
+			removePeripheral(new Peripheral(block.x, block.y, block.z, block.special));
 		}
 	}
 
 	public void addPeripheral(Peripheral peripheral){
 		if(peripherals.size() == 0) peripherals.add(peripheral);
-		for(int i = 0; i < blocks.size() - 1; i ++){
+		for(int i = 0; i < peripherals.size() - 1; i ++){
 			Peripheral p = peripherals.get(i);
 			if(p.x == peripheral.x && p.y == peripheral.y && p.z == peripheral.z){
 				return;

@@ -1,5 +1,6 @@
 package com.charredsoftware.three.world;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -10,24 +11,67 @@ import com.charredsoftware.three.computer.Peripheral;
 public class World {
 
 	public ArrayList<Region> regions = new ArrayList<Region>();
-	public int size = 0;
 	public float renderedBlocks = 0f;
 	public BlockInstance lookingAt;
+	public int id;
+	public File dir;
 	
-	public World(int size){
-		this.size = size;
+	public World(){
+		this.id = getNextId();
+		this.dir = new File("res/saves/" + id);
+	}
+	
+	public World(int id){
+		this.id = id;
+		this.dir = new File("res/saves/" + id);
+	}
+	
+	private int getNextId(){
+		int highest = 0;
+		
+		//Should later actually get the next id.
+		
+		
+		
+		return highest;
+	}
+	
+	public void save(){
+		for(Region r : regions) r.save(dir);
 	}
 	
 	public void generate(){
-		for(int x = 0; x < size; x ++){
-			for(int z = 0; z < size; z ++){
-				findRegion(x * Region._SIZE, z * Region._SIZE);//.generate();
+		if(!dir.exists()) generateWorldFolders();
+		else if(dir.list().length > 0){
+			load(dir);
+			return;
+		}
+
+		for(int x = -2; x < 2; x ++){
+			for(int z = -2; z < 2; z ++){
+				findRegion(x, z).save(dir);
 			}
 		}
+
 		
-		System.out.println(regions.size() + " regions generated:");
-		for(Region r : regions){
-			System.out.println("Region @: " + r.toString());
+		
+	}
+		
+	private void generateWorldFolders(){
+		dir.mkdir();
+		new File(dir, "data/computers").mkdirs();
+	}
+	
+	private void load(File dir){
+		String[]entries = dir.list();
+		for(String s : entries){
+			if(new File(dir.getAbsolutePath(), s).isDirectory()) continue;
+			String coordinates = s.split("_")[1];
+			if(coordinates.split("l").length != 2) continue;
+			Region r = new Region(Float.parseFloat(coordinates.split("l")[0]), Float.parseFloat(coordinates.split("l")[1].split(".csf")[0]));
+			regions.add(r);
+			r.generate(new File(dir.getAbsolutePath(), s));
+			
 		}
 	}
 	
@@ -69,8 +113,6 @@ public class World {
 		Region r = new Region(x, z);
 		regions.add(r);
 		r.generate();
-		
-		System.out.println("Total regions: " + regions.size() + ": newest: " + x + "," + z);
 		
 		return r;
 	}

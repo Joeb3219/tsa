@@ -206,14 +206,16 @@ public class Main {
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		
-		glPushMatrix();
-		glViewport(10, 10, 74, 74);
-		glLoadIdentity();
-		glRotatef(60, 1, 0, 0);
-		glRotatef(60, 0, 1, 0);
-		glRotatef(60, 0, 0, 1);
-		selectedBlock.draw(0f,0f,0f);
-		glPopMatrix();
+		if(gameState == GameState.GAME){
+			glPushMatrix();
+			glViewport(10, 10, 74, 74);
+			glLoadIdentity();
+			glRotatef(60, 1, 0, 0);
+			glRotatef(60, 0, 1, 0);
+			glRotatef(60, 0, 0, 1);
+			selectedBlock.draw(0f,0f,0f);
+			glPopMatrix();
+		}
 		glMatrixMode(GL_MODELVIEW);
 
 
@@ -224,7 +226,7 @@ public class Main {
 		font = new TrueTypeFont(awtFont, false);
 		
 		int roomSize = 1;
-		world = new World(roomSize);
+		world = new World();
 		world.generate();
 		
 		long lastTime = System.nanoTime();
@@ -258,6 +260,8 @@ public class Main {
 			
 			Display.update();
 		}
+		
+		world.save();
 		
 		Display.destroy();
 	}
