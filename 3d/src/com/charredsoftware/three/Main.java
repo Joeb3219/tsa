@@ -27,7 +27,6 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -36,11 +35,11 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 
+import com.charredsoftware.three.computer.Computer;
 import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
-import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Main {
@@ -145,12 +144,18 @@ public class Main {
 		if(Mouse.isButtonDown(0) && gameState == GameState.GAME && cooldown == 0) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
-		if(Keyboard.isKeyDown(Keyboard.KEY_N)){
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			world = new World(1);
 			player.setPosition(-2f, -1f, -2f);
 		}
 		
+		if(gameState == GameState.COMPUTER) selectedPeripheral.update();
+		
+		if(gameState == GameState.COMPUTER && cooldown == 0) selectedPeripheral.update();
+		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
+		
+		while(Keyboard.next()){}
 		
 	}
 	
@@ -164,6 +169,8 @@ public class Main {
 		if(player.isInWater()) glColor3f(0.4f, 0.8f, 0.8f);
 		
 		world.render();
+		//player.hotbar.draw();
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -190,27 +197,30 @@ public class Main {
 			glVertex2d(Display.getWidth() / 2 + 10, Display.getHeight() / 2);
 			glVertex2d(Display.getWidth() / 2 - 10, Display.getHeight() / 2);
 			glEnd();
+			glDisable(GL_TEXTURE_2D);
 			glPopMatrix();
 	
 			glLoadIdentity();
 			
 			//Display Text
 			if(DISPLAY_INFO){
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				/*font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
 				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
 				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
 				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
-				font.drawString(5, 105, "Health: " + player.health);
+				font.drawString(5, 105, "Health: " + player.health);*/
 			}
 		}
 		
+
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		
 		if(gameState == GameState.GAME){
 			glPushMatrix();
+			glEnable(GL_TEXTURE_2D);
 			glViewport(10, 10, 74, 74);
 			glLoadIdentity();
 			glRotatef(60, 1, 0, 0);
@@ -220,7 +230,6 @@ public class Main {
 			glPopMatrix();
 		}
 		glMatrixMode(GL_MODELVIEW);
-
 
 	}
 	
@@ -232,7 +241,7 @@ public class Main {
 		world.generate();
 		
 		Timer t = new Timer();
-		//t.scheduleAtFixedRate(new TimerTask(){public void run(){world.save();}}, 5000, 5000);
+		//t.scheduleAtFixedRate(new TimerTask(){public void run(){Main.world.save();}}, 5, 5000);
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
@@ -266,7 +275,7 @@ public class Main {
 			Display.update();
 		}
 		
-		//t.cancel();
+		t.cancel();
 		world.save();
 		
 		Display.destroy();

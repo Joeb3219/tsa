@@ -20,6 +20,10 @@ public class Peripheral {
 		return -1;
 	}
 	
+	public void update(){
+		
+	}
+	
 	public void draw(){
 		
 	}

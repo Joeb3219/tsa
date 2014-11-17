@@ -7,6 +7,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.three.Camera;
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.inventory.Hotbar;
+import com.charredsoftware.three.inventory.Item;
+import com.charredsoftware.three.inventory.ItemGroup;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
@@ -16,12 +19,15 @@ public class Player extends Mob{
 	private Camera camera; //Used to calculate motion.
 	public boolean isJumping, isCrouching = false;
 	private float jumpingTime = 0;
+	public Hotbar hotbar;
 	
 	public Player(Camera camera){
 		super();
 		this.camera = camera;
 		health = 20;
 		movingSpeed = 0.15f;
+		this.hotbar = new Hotbar(10);
+		hotbar.addItem(new ItemGroup(new Item("Test", Block.computer.texture, 32), 1));
 	}
 	
 	public void update(){

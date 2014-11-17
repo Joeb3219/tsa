@@ -1,25 +1,60 @@
 package com.charredsoftware.three.computer;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.JsePlatform;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import com.charredsoftware.three.GameState;
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.gui.TerminalDisplay;
+import com.charredsoftware.three.gui.TextDisplay;
+import com.charredsoftware.three.gui.TextEditDisplay;
 
 public class Computer extends Peripheral{
 
 	public int id;
 	public String mac;
 	public File dir;
-
+	public Script loadedScript = null;
+	public TextDisplay t;
+	public boolean editing = false, menu = false, executing = false;
+	
 	public Computer(float x, float y, float z, float special){
 		super(x, y, z, special);
+		t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
 	}
 	
 	public Computer(){
 		super(0, 0, 0, -1);
+		t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
 	}
 	
 	public float generateSpecialId(){
@@ -40,7 +75,61 @@ public class Computer extends Peripheral{
 		highest ++;
 		dir = new File(dir, highest + "");
 		dir.mkdirs();
+		copyDefaultScripts();
 		return highest;
+	}
+	
+	public void copyDefaultScripts(){
+		File defaultDir = new File("res/default/scripts/");
+		for(String s : defaultDir.list()){
+			System.out.println("Copying file " + s);
+			File d = new File(defaultDir, s);
+			File copy = new File(dir, s);
+			try {
+				copy.createNewFile();
+				FileChannel inputChannel = null;
+				FileChannel outputChannel = null;
+				try {
+					inputChannel = new FileInputStream(d).getChannel();
+					outputChannel = new FileOutputStream(copy).getChannel();
+					outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+				} finally {
+					inputChannel.close();
+					outputChannel.close();
+				}
+			} catch (IOException e) {e.printStackTrace();}
+		}
+	}
+	
+	public LuaValue executeScript(String name){
+		Globals globals = JsePlatform.standardGlobals();
+		LuaValue chunk = globals.loadfile(dir.getAbsolutePath() + "/" + name);
+		return chunk.call("print");
+	}
+	
+	public void changeLoadedScript(Script script){
+		this.loadedScript = script;
+		loadedScript.loadScript();
+		t.lines = loadedScript.lines;
+		t.yCursor = 0;
+		t.xCursor = 0;
+	}
+	
+	public void update(){
+		if(Main.gameState != GameState.COMPUTER) return;
+		if((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))){
+			if(Keyboard.isKeyDown(Keyboard.KEY_S) && editing){
+				loadedScript.saveScript(t.lines);
+				return;
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_E)){
+				if(editing) loadedScript.saveScript(t.lines);
+				editing = false;
+				executing = false;
+				t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
+			}
+		}
+		t.update();
 	}
 	
 	public void draw(){
@@ -65,19 +154,61 @@ public class Computer extends Peripheral{
 		
 		glEnd();
 		
-		Main.font.drawString(15, 15, getPosition().toString());
-		Main.font.drawString(15, 30, "Computer ID: " + special);
-		Main.font.drawString(15, 45, "Programs: (" + dir.list().length + ")");
-		float yStringPos = 45;
-		for(String s : dir.list()){
-			yStringPos += 15;
-			Main.font.drawString(20, yStringPos, s);
+		t.draw();
+		
+		if(executing){
+			if(dir.list().length > 0){
+				if(loadedScript == null) changeLoadedScript(new Script(dir, dir.list()[0]));
+				Main.font.drawString(15, 15, executeScript(loadedScript.name).tojstring());
+			}
+			t.clearScreen();
 		}
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
+		
+	}
+	
+	public ArrayList<String> getAbout(){
+		ArrayList<String> about = new ArrayList<String>();
+		about.add("NovaOS, v. 1.1.5");
+		about.add("NovaOS presented by CharredSoftware, programmed by Joe Boyle.");
+		about.add("Enjoy!");
+		return about;
+	}
+	
+	public ArrayList<String> getInfo(){
+		ArrayList<String> info = new ArrayList<String>();
+		info.add(getPosition().toString());
+		info.add("Computer ID: " + special);
+		info.add("Programs: (" + dir.list().length + ")");
+		return info;
+	}
+	
+	public void newScript(String name){
+		editScript(name + ".csf");
+	}
+	
+	public void runScript(String name){
+		if(!name.contains(".csf")) name += ".csf";
+		t = new TextDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
+		changeLoadedScript(new Script(dir, name));
+		executing = true;
+		editing = false;
+	}
+	
+	public void editScript(String name){
+		if(!name.contains(".csf")) name += ".csf";
+		changeLoadedScript(new Script(dir, name));
+		t = new TextEditDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, loadedScript.lines);
+		executing = false;
+		editing = true;
+	}
+	
+	public void reboot(){
+		//reboot
 	}
 	
 }
