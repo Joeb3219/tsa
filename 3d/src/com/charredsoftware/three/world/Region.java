@@ -156,11 +156,29 @@ public class Region {
 					float fZ = this.z * _SIZE + z;
 					if(y == -2) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
 					else{
-						if(r.nextInt(2) == 1) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
-						else if(r.nextInt(2) == 1) addBlock(new BlockInstance(Block.bricks, fX, y, fZ));
-						else if(r.nextInt(2) == 1) addBlock(new BlockInstance(Block.boost, fX, y, fZ));
-						else if(r.nextInt(2) == 1) addBlock(new BlockInstance(Block.ceiling, fX, y, fZ));
-						else if(r.nextInt(2) == 1) addBlock(new BlockInstance(Block.wood, fX, y, fZ));
+						ArrayList<BlockInstance> surrounding = Main.world.getSurroundingBlocks(x, y, z);
+						int baseChance = 6;
+						int grassChance = baseChance, bricksChance = baseChance, boostChance = baseChance, ceilingChance = baseChance, woodChance = baseChance, waterChance = baseChance;
+						for(BlockInstance b : surrounding){
+							if(b.base == Block.grass) grassChance -= 2;
+							if(b.base == Block.bricks) bricksChance -= 2;
+							if(b.base == Block.boost) boostChance -= 2;
+							if(b.base == Block.ceiling) ceilingChance -= 2;
+							if(b.base == Block.wood) woodChance -= 2;
+							if(b.base == Block.water) waterChance -= 2;
+						}
+						if(grassChance < 1) grassChance = 1;
+						if(bricksChance < 1) bricksChance = 1;
+						if(boostChance < 1) boostChance = 1;
+						if(ceilingChance < 1) ceilingChance = 1;
+						if(waterChance < 1) waterChance = 1;
+						if(woodChance < 1) woodChance = 1;
+						if(r.nextInt(grassChance) == 1) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
+						else if(r.nextInt(bricksChance) == 1) addBlock(new BlockInstance(Block.bricks, fX, y, fZ));
+						else if(r.nextInt(boostChance) == 1) addBlock(new BlockInstance(Block.boost, fX, y, fZ));
+						else if(r.nextInt(ceilingChance) == 1) addBlock(new BlockInstance(Block.ceiling, fX, y, fZ));
+						else if(r.nextInt(woodChance) == 1) addBlock(new BlockInstance(Block.wood, fX, y, fZ));
+						else if(r.nextInt(waterChance) == 1) addBlock(new BlockInstance(Block.water, fX, y, fZ));
 						//else if(r.nextInt(5) == 1) world.addBlock(new BlockInstance(Block.grass, x, y, z));
 						else{} //Air
 					}

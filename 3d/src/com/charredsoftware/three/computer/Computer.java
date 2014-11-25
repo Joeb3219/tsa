@@ -46,6 +46,7 @@ public class Computer extends Peripheral{
 	public Script loadedScript = null;
 	public TextDisplay t;
 	public boolean editing = false, menu = false, executing = false;
+	public HardwareSet hardware = new HardwareSet();
 	
 	public Computer(float x, float y, float z, float special){
 		super(x, y, z, special);
@@ -184,6 +185,7 @@ public class Computer extends Peripheral{
 		info.add(getPosition().toString());
 		info.add("Computer ID: " + special);
 		info.add("Programs: (" + dir.list().length + ")");
+		for(String s : hardware.getInfo()) info.add(s);
 		return info;
 	}
 	

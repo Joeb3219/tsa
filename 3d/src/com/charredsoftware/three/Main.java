@@ -58,6 +58,7 @@ public class Main {
 	public static Block selectedBlock;
 	public static Peripheral selectedPeripheral = null;
 	public static Random r = new Random();
+	private static float cooldown = 0f;
 	
 	private static boolean DISPLAY_INFO = true;
 	
@@ -83,7 +84,6 @@ public class Main {
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
-	private static float cooldown = 0f;
 	public static void tick(Camera camera){
 		if(cooldown > 0) cooldown --;
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
@@ -148,6 +148,8 @@ public class Main {
 			world = new World(1);
 			player.setPosition(-2f, -1f, -2f);
 		}
+		
+		if(gameState == GameState.COMPUTER) selectedPeripheral.update();
 		
 		if(gameState == GameState.COMPUTER) selectedPeripheral.update();
 		

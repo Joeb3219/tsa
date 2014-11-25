@@ -147,7 +147,7 @@ public class Player extends Mob{
 	}
 	
 	public Vector3f getLookingAt(float dist){
-		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist - x, (float) Math.cos(Math.toRadians(Main.camera.rx + 90)) * dist - y, (float) -Math.cos(Math.toRadians(Main.camera.ry)) * dist - z);
+		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -Math.cos(Math.toRadians(Main.camera.ry)) * dist - z);
 	}
 	
 }

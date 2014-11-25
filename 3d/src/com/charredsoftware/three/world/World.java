@@ -83,6 +83,23 @@ public class World {
 		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
+	public ArrayList<BlockInstance> getSurroundingBlocks(float fx, float fy, float fz){
+		ArrayList<BlockInstance> surrounding = new ArrayList<BlockInstance>();
+		for(int x = -1; x < 1; x ++){
+			for(int z = -1; z < 1; z ++){
+				for(int y = -1; y < 1; y ++){
+					BlockInstance block = getBlock(fx + x, fy + y, fz + z);
+					if(block.base != Block.air) surrounding.add(block);
+				}
+			}
+		}
+		return surrounding;
+	}
+	
+	public ArrayList<BlockInstance> getSurroundingBlocks(BlockInstance b){
+		return getSurroundingBlocks(b.x, b.y, b.z);
+	}
+	
 	public BlockInstance getBlock(float x, float y, float z){
 		x = (float) ((int) (x));
 		y = (float) ((int) (y));
@@ -201,7 +218,8 @@ public class World {
 	public BlockInstance getBlockLookingAt(){
 		for(float i = -1; i < 6; i += 0.25f){
 			Vector3f looking = Main.player.getLookingAt(i);
-			looking.translate(0f, 2f, 0f);
+			float yOffset = Math.max(0f, (float) (3f * (Math.sin(Math.toRadians(90 - Main.camera.rx)))) -.5f);
+			looking.translate(0f, yOffset, 0f);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
 			if(b.base != Block.air) return b;

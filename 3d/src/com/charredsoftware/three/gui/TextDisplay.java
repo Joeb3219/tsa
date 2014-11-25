@@ -28,6 +28,7 @@ public class TextDisplay {
 	public ArrayList<String> lines = new ArrayList<String>();
 	public int xCursor, yCursor = 0;
 	public float x, y, height, width;
+	protected float cooldown = 0f; //Used to add some delay to events.
 	
 	public TextDisplay(){
 	}

@@ -84,11 +84,13 @@ public class TerminalDisplay extends TextDisplay{
 	}
 
 	public void update() {
+		if(cooldown > 0) cooldown --;
 		xCursor = current.length();
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)) enterCommand();
 		
-		if(Keyboard.isKeyDown(Keyboard.KEY_BACK)){
+		if(Keyboard.isKeyDown(Keyboard.KEY_BACK) && cooldown == 0){
+			cooldown = 10;
 			if(current.length() > 0){
 				current = current.substring(0, xCursor - 1);
 				xCursor --;

@@ -55,7 +55,6 @@ public class TextEditDisplay extends TextDisplay{
 		cooldown += 3f;
 	}
 	
-	private static float cooldown = 0f;
 	public void update(){
 		if(cooldown > 0) cooldown --;
 		if(xCursor < 0) xCursor = 0;
@@ -64,7 +63,7 @@ public class TextEditDisplay extends TextDisplay{
 		if(xCursor > lines.get(yCursor).length()) xCursor = lines.get(yCursor).length();
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_RETURN) && cooldown == 0){
-			cooldown += 2f;
+			cooldown += 10f;
 			int position = lines.size();
 			if(yCursor != lines.size() - 1) position = yCursor + 1;
 			lines.add(position, "");
@@ -72,7 +71,7 @@ public class TextEditDisplay extends TextDisplay{
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_BACK) && cooldown == 0){
-			cooldown += 2f;
+			cooldown += 10f;
 			if(xCursor == 0 && yCursor > 0){
 				lines.remove(yCursor);
 				yCursor --;
