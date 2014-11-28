@@ -10,6 +10,7 @@ import com.charredsoftware.three.Main;
 import com.charredsoftware.three.inventory.Hotbar;
 import com.charredsoftware.three.inventory.Item;
 import com.charredsoftware.three.inventory.ItemGroup;
+import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
@@ -26,6 +27,7 @@ public class Player extends Mob{
 		this.camera = camera;
 		health = 20;
 		movingSpeed = 0.15f;
+		mass = 75f;
 		this.hotbar = new Hotbar(10);
 		hotbar.addItem(new ItemGroup(new Item("Test", Block.computer.texture, 32), 1));
 	}
@@ -57,9 +59,11 @@ public class Player extends Mob{
 		}
 		else if(isJumping){
 			jumpingTime += .5f / Main.TPS;
-			currentJumpingVelocity = beginningJumpingVelocity + (Main.DOWNWARD_ACCELERATION) * jumpingTime; //Calculate final velocity
+			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Main.DOWNWARD_ACCELERATION, jumpingTime);
+			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
 			checkCanJump(currentJumpingVelocity / 2);
 			if(y >  0 || standingOnSolid() && jumpingTime > .5f / Main.TPS){
+				health -= potentialDamage;
 				y = (float) ((int) y);
 				isJumping = false;
 			}
@@ -148,7 +152,7 @@ public class Player extends Mob{
 		double rx = Math.cos(Math.toRadians(Main.camera.rx));
 		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - z);
 		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.camera.rx)))) -.5f), 0);
-		//if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
+		if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}
 	

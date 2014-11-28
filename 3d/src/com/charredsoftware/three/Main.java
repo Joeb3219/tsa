@@ -45,6 +45,8 @@ import com.charredsoftware.three.world.World;
 
 public class Main {
 
+	public static String gameName = "NovaScript";
+	public static String version = "1.0.15";
 	public static Font font;
 	public static Player player;
 	public static final int TPS = 30;
@@ -73,7 +75,7 @@ public class Main {
 		}catch(Throwable t){
 			CrashReport crash = new CrashReport(t);
 			String lnBreak = System.getProperty("line.separator");
-			Sys.alert("Crash Report", "NovaScript has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
+			Sys.alert(gameName + " " + version + ": Crash Report", "NovaScript has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
 			cleanDisplay();
 			
 			System.exit(0); //We crashed! Cannot recover! Kill the system!
