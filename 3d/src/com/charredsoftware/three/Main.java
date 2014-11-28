@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import java.util.Random;
 import java.util.Timer;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -70,8 +71,11 @@ public class Main {
 		try{
 		loop();
 		}catch(Throwable t){
-			new CrashReport(t);
+			CrashReport crash = new CrashReport(t);
+			String lnBreak = System.getProperty("line.separator");
+			Sys.alert("Crash Report", "NovaScript has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
 			cleanDisplay();
+			
 			System.exit(0); //We crashed! Cannot recover! Kill the system!
 		}
 		cleanDisplay();

@@ -148,7 +148,7 @@ public class Player extends Mob{
 		double rx = Math.cos(Math.toRadians(Main.camera.rx));
 		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - z);
 		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.camera.rx)))) -.5f), 0);
-		if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
+		//if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}
 	

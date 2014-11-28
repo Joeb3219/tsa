@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.charredsoftware.three.entity.Player;
@@ -14,6 +15,7 @@ public class CrashReport {
 
 	public File file;
 	private Throwable t;
+	public String synop = "";
 	
 	public CrashReport(Throwable t){
 		this.t = t;
@@ -47,8 +49,10 @@ public class CrashReport {
 			
 			if(t instanceof Exception){
 				Exception e = ((Exception) t);
+				synop += e.getMessage() + System.getProperty("line.separator");
 				writer.println(e.getMessage());
 				for(StackTraceElement s : e.getStackTrace()){
+					synop += s.toString() + System.getProperty("line.separator");
 					writer.println(s.toString());
 				}
 			}
