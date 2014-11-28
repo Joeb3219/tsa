@@ -62,14 +62,14 @@ public class Player extends Mob{
 			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Main.DOWNWARD_ACCELERATION, jumpingTime);
 			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
 			checkCanJump(currentJumpingVelocity / 2);
-			if(y >  0 || standingOnSolid() && jumpingTime > .5f / Main.TPS){
+			if(standingOnSolid() && jumpingTime > .5f / Main.TPS){
 				health -= potentialDamage;
 				y = (float) ((int) y);
 				isJumping = false;
 			}
 		}if(!isJumping && !standingOnSolid()){
 			isJumping = true;
-			currentJumpingVelocity = 0f;
+			currentJumpingVelocity = 0;
 			beginningJumpingVelocity = currentJumpingVelocity;
 			jumpingTime = 0;
 		}if(y > 50) health --;

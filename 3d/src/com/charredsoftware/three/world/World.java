@@ -234,6 +234,7 @@ public class World {
 	
 	private void renderMap(Map<Texture, ArrayList<BlockInstance>> blockList){
 		//TODO: Make glass, water, etc. rendered last -> see through
+		//TODO: Implement VBOs for rendering (instead of glVertex calls (immediate mode))
 		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
 			
 			ArrayList<BlockInstance> list = e.getValue();
