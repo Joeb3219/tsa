@@ -35,11 +35,11 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 
-import com.charredsoftware.three.computer.Computer;
 import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
+import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Main {
@@ -47,10 +47,10 @@ public class Main {
 	public static Font font;
 	public static Player player;
 	public static final int TPS = 30;
-	public static final float DOWNWARD_ACCELERATION = -9.8f / 4;
+	public static final float DOWNWARD_ACCELERATION = -9.8f;
 	public static Camera camera;
 	public static World world;
-	private static int displayFPS = 0;
+	static int displayFPS = 0;
 	public static float yOffset = 0f;
 	public static float lastMX = 0, lastMY = 0, movementThreshold = 2f;
 	public static boolean menu = false;
@@ -67,7 +67,13 @@ public class Main {
 		camera = new Camera(70, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
 		player = new Player(camera);
 		selectedBlock = Block.computer;
+		try{
 		loop();
+		}catch(Throwable t){
+			new CrashReport(t);
+			cleanDisplay();
+			System.exit(0); //We crashed! Cannot recover! Kill the system!
+		}
 		cleanDisplay();
 	}
 	
@@ -79,7 +85,7 @@ public class Main {
 		try{
 			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
 			Display.setResizable(true);
-			Display.setTitle("CharredSoftware: A Game Demo [Joe B, 2014]");
+			Display.setTitle("CharredSoftware: NovaScript [Joe B, 2014]");
 			Display.create();
 		}catch(Exception e){e.printStackTrace();}
 	}
@@ -133,14 +139,17 @@ public class Main {
 		camera.x = player.x;
 		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
 		if(player.isCrouching) yOffset += 1;
-		camera.y = yOffset - 2;
+		camera.y = yOffset - 1;
 		camera.z = player.z;
 		
-		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0){
+		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0 && !player.isCrouching){
 			selectedPeripheral = world.getPeripheral(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z);
 			gameState = GameState.COMPUTER;
 		}
-		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid && cooldown == 0) world.addBlock(new BlockInstance(selectedBlock, world.lookingAt.x, world.lookingAt.y + 1, world.lookingAt.z));
+		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid && cooldown == 0){
+			BlockInstance adjacent = world.getBlockAdjectLookingAt();
+			world.addBlock(new BlockInstance(selectedBlock, adjacent.x, adjacent.y, adjacent.z));
+		}
 		if(Mouse.isButtonDown(0) && gameState == GameState.GAME && cooldown == 0) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
@@ -206,12 +215,12 @@ public class Main {
 			
 			//Display Text
 			if(DISPLAY_INFO){
-				/*font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
 				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
 				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
 				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
-				font.drawString(5, 105, "Health: " + player.health);*/
+				font.drawString(5, 105, "Health: " + player.health);
 			}
 		}
 		

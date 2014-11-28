@@ -51,25 +51,29 @@ public class Player extends Mob{
 		else isCrouching = false;
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !isJumping && standingOnSolid()){
 			isJumping = true;
-			currentJumpingVelocity = (isCrouching) ? jumpingVelocityStart / 2f : jumpingVelocityStart;
+			currentJumpingVelocity = defaultStartJumpingVelocity;
+			beginningJumpingVelocity = defaultStartJumpingVelocity;
 			jumpingTime = 0;
 		}
 		else if(isJumping){
-			jumpingTime += 0.1f; //Tenth of a second.
-			currentJumpingVelocity = ( (isCrouching) ? jumpingVelocityStart / 1.25f : jumpingVelocityStart) + Main.DOWNWARD_ACCELERATION * jumpingTime; //Calculate final velocity
-			checkCanJump(currentJumpingVelocity);
-			if(y >  0 || standingOnSolid()){
+			jumpingTime += .5f / Main.TPS;
+			currentJumpingVelocity = beginningJumpingVelocity + (Main.DOWNWARD_ACCELERATION) * jumpingTime; //Calculate final velocity
+			checkCanJump(currentJumpingVelocity / 2);
+			if(y >  0 || standingOnSolid() && jumpingTime > .5f / Main.TPS){
 				y = (float) ((int) y);
 				isJumping = false;
 			}
 		}if(!isJumping && !standingOnSolid()){
-			y += 0.5f;
+			isJumping = true;
+			currentJumpingVelocity = 0f;
+			beginningJumpingVelocity = currentJumpingVelocity;
+			jumpingTime = 0;
 		}if(y > 50) health --;
 		
 		if(getBlockUnder().base == Block.boost){
-			y -= 5f;
 			isJumping = true;
-			currentJumpingVelocity = -30f;
+			currentJumpingVelocity = defaultStartJumpingVelocity * 1.3f;
+			beginningJumpingVelocity = currentJumpingVelocity;
 			jumpingTime = 0;
 		}
 		
@@ -107,6 +111,7 @@ public class Player extends Mob{
 		float fZ = dZ + z;
 
 		if(!Main.world.getBlock(new Position(-fX, -fY, -fZ)).base.solid){
+			if(isCrouching && !Main.world.getBlock(new Position(-fX, -fY - 1, -fZ)).base.solid) return;
 			x = fX;
 			z = fZ;
 			y = fY;
@@ -127,27 +132,24 @@ public class Player extends Mob{
 	}
 	
 	public BlockInstance getBlockUnder(){
-		Position p = new Position(-x, -y - 1, -z);
-		p.normalizeCoords();
+		Position p = new Position(-x, -y - 1f, -z);
 		return Main.world.getBlock(p);
 	}
 
-	public BlockInstance getBlockLookingAt(){
-		
-		
-		return new BlockInstance(Block.air, -x, -2, -z);
-	}
-	
 	public boolean standingOnSolid(){
 		return getBlockUnder().base.solid;
 	}
 	
 	public Vector3f getLookingAt(){
-		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip - x,  Main.camera.farClip * (float) -Math.sin(Math.toRadians(Main.camera.rx)) - y, (float) -Math.cos(Math.toRadians(360 - Main.camera.ry)) * Main.camera.farClip - z);
+		return getLookingAt(Main.camera.farClip);
 	}
 	
 	public Vector3f getLookingAt(float dist){
-		return new Vector3f((float) -Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -Math.cos(Math.toRadians(Main.camera.ry)) * dist - z);
+		double rx = Math.cos(Math.toRadians(Main.camera.rx));
+		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - z);
+		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.camera.rx)))) -.5f), 0);
+		if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
+		return v;
 	}
 	
 }

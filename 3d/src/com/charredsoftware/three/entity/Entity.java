@@ -1,9 +1,12 @@
 package com.charredsoftware.three.entity;
 
+import com.charredsoftware.three.world.Position;
+
 public class Entity {
 
 	public float x = -2f, y = -1f, z = -2f;
-	public float currentVelocity = 0f, movingSpeed = 0.7f, jumpingVelocityStart = 1.75f, currentJumpingVelocity = 0f;
+	public float currentVelocity = 0f, movingSpeed = 0.7f, beginningJumpingVelocity = 0f, currentJumpingVelocity = 0f;
+	public final float defaultStartJumpingVelocity = 1.4f;
 
 	public Entity(){
 		
@@ -31,6 +34,10 @@ public class Entity {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+	
+	public Position getPosition(){
+		return new Position(x, y, z);
 	}
 	
 }
