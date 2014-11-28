@@ -83,11 +83,16 @@ public class Block {
 		glPopAttrib();
 	}
 	
-	public void draw(float x, float y, float z){
-		if(texture == null) return;
+	public void drawSetup(){
+		texture.bind();
+	}
+	
+	public void drawCleanup(){
+	}
+	
+	public void drawBlock(float x, float y, float z){
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		texture.bind();
 		glBegin(GL_QUADS);
 		
 		float leftBound = -0.5f;
@@ -131,6 +136,13 @@ public class Block {
 	
 		glEnd();
 		glPopMatrix();
+	}
+	
+	public void draw(float x, float y, float z){
+		if(texture == null) return;
+		drawSetup();
+		drawBlock(x, y, z);
+		drawCleanup();
 	}
 	
 }

@@ -24,7 +24,6 @@ public class Region {
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public ArrayList<Peripheral> peripherals = new ArrayList<Peripheral>();
 	public float x, z;
-	public float renderedBlocks = 0f; //Used to calculate # of blocks rendered per render.
 	
 	public Region(float x, float z){
 		this.x = x;
@@ -226,15 +225,16 @@ public class Region {
 		if(peripherals.contains(p)) peripherals.remove(p);
 	}
 	
-	public void render(){
-		renderedBlocks = 0f;
+	public ArrayList<BlockInstance> getRenderableBlocks(){
+		ArrayList<BlockInstance> renderableBlocks = new ArrayList<BlockInstance>();
 		
 		for(BlockInstance b : blocks){
 			if(!Main.camera.frustum.BlockInFrustum(b)) continue;
-			renderedBlocks ++;
-			if(b == Main.world.lookingAt) b.draw(100);
-			else b.draw();
+			renderableBlocks.add(b);
+			//if(b == Main.world.lookingAt) b.draw(100);
+			//else b.draw();
 		}
+		return renderableBlocks;
 	}
 	
 	public Position getPosition(){

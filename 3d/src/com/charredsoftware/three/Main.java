@@ -67,7 +67,7 @@ public class Main {
 	
 	public static void main(String[] args){
 		initializeDisplay();
-		camera = new Camera(70, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
+		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
 		player = new Player(camera);
 		selectedBlock = Block.computer;
 		try{

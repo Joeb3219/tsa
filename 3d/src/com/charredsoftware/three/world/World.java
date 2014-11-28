@@ -2,8 +2,13 @@ package com.charredsoftware.three.world;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.Texture;
 
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.computer.Peripheral;
@@ -208,11 +213,40 @@ public class World {
 	
 	public void render(){
 		renderedBlocks = 0f;
+		
+		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
+		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
+		
 		for(Region r : regions){
-			r.render();
-			renderedBlocks += r.renderedBlocks;
+			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
+			renderedBlocks += renderable.size();
+			//Add each renderable block to the map
+			for(BlockInstance b : renderable){
+				if(blockList.containsKey(b.base.texture)) blockList.get(b.base.texture).add(b);
+				else blockList.put(b.base.texture, new ArrayList<BlockInstance>(Arrays.asList(b)));
+			}
 		}
+		
+		renderMap(blockList);
+		
 		lookingAt = getBlockLookingAt();
+	}
+	
+	private void renderMap(Map<Texture, ArrayList<BlockInstance>> blockList){
+		//TODO: Make glass, water, etc. rendered last -> see through
+		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
+			
+			ArrayList<BlockInstance> list = e.getValue();
+			list.get(0).base.drawSetup();
+			
+			for(BlockInstance b : list){
+				if(b == Main.world.lookingAt) b.draw(100);
+				else b.draw();
+			}
+			
+			list.get(0).base.drawCleanup();
+			
+		}
 	}
 	
 	public BlockInstance getBlockLookingAt(){
