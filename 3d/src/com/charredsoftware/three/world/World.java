@@ -32,13 +32,14 @@ public class World {
 	}
 	
 	private int getNextId(){
-		int highest = 0;
-		File dir = new File("res/saves/");
-		for(String s : dir.list()){
-			if(new File(dir, s).isDirectory()){
+		int highest = -1;
+		File directory = new File("res/saves");
+		for(String s : directory.list()){
+			if(new File(directory, s).isDirectory()){
 				highest = Math.max(Integer.parseInt(s), highest);
 			}
 		}
+		highest ++;
 		return highest;
 	}
 	

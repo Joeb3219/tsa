@@ -38,7 +38,7 @@ public class Main {
 	private Main(){
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
-		player = new Player(new World(), camera);
+		player = new Player(new World(0), camera);
 		player.selectedBlock = Block.computer;
 	}
 	
@@ -104,6 +104,7 @@ public class Main {
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
+			player.world.generate();
 			player.setPosition(-2f, -1f, -2f);
 		}
 	}
