@@ -41,6 +41,7 @@ import com.charredsoftware.three.Main;
 import com.charredsoftware.three.gui.TerminalDisplay;
 import com.charredsoftware.three.gui.TextDisplay;
 import com.charredsoftware.three.gui.TextEditDisplay;
+import com.charredsoftware.three.util.FileUtilities;
 
 public class Computer extends Peripheral{
 
@@ -72,11 +73,11 @@ public class Computer extends Peripheral{
 	
 	public float generateSpecialId(){
 		if(special != -1){
-			dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), "data/computers/" + special);
+			dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), FileUtilities.computersPath + special);
 			dir.mkdirs();
 			return special; //One is already assigned, everything is good.
 		}
-		dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), "data/computers");
+		dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), FileUtilities.computersPath);
 		String[]entries = dir.list();
 		float highest = -1f;
 		for(String s : entries){
@@ -93,24 +94,9 @@ public class Computer extends Peripheral{
 	}
 	
 	public void copyDefaultScripts(){
-		File defaultDir = new File("res/default/scripts/");
+		File defaultDir = new File(FileUtilities.defaultProgramsPath);
 		for(String s : defaultDir.list()){
-			System.out.println("Copying file " + s);
-			File d = new File(defaultDir, s);
-			File copy = new File(dir, s);
-			try {
-				copy.createNewFile();
-				FileChannel inputChannel = null;
-				FileChannel outputChannel = null;
-				try {
-					inputChannel = new FileInputStream(d).getChannel();
-					outputChannel = new FileOutputStream(copy).getChannel();
-					outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
-				} finally {
-					inputChannel.close();
-					outputChannel.close();
-				}
-			} catch (IOException e) {e.printStackTrace();}
+			FileUtilities.copyFile(new File(defaultDir, s), new File(dir, s));
 		}
 	}
 	

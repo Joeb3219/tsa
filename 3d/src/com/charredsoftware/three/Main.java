@@ -53,16 +53,12 @@ public class Main {
 			game.loop();
 		}catch(Throwable t){
 			CrashReport crash = new CrashReport(t);
-			String lnBreak = System.getProperty("line.separator");
-			Sys.alert(game.gameName + " " + game.version + ": Crash Report", game.gameName + " has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
-			game.cleanDisplay();
-			
-			System.exit(0); //We crashed! Cannot recover! Kill the system!
+			 //We crashed! Cannot recover! Kill the system!
 		}
 		game.cleanDisplay();
 	}
 	
-	private void cleanDisplay(){
+	void cleanDisplay(){
 		Display.destroy();
 	}
 	

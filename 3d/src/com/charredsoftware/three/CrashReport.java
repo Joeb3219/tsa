@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.lwjgl.Sys;
+
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
@@ -26,6 +28,12 @@ public class CrashReport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		String lnBreak = System.getProperty("line.separator");
+		Sys.alert(Main.getInstance().gameName + " " + Main.getInstance().version + ": Crash Report", Main.getInstance().gameName + " has crashed." + lnBreak + lnBreak + synop + lnBreak + lnBreak + "Refer to " + file.getAbsolutePath());
+		Main.getInstance().cleanDisplay();
+		
+		System.exit(0);
 	}
 	
 	private void generateReport(){

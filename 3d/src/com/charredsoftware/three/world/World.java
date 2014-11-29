@@ -266,7 +266,7 @@ public class World {
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
-			if(b.base != Block.air){
+			if(b == lookingAt){
 				looking = Main.getInstance().player.getLookingAt(i - 0.25f);
 				return getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			}
