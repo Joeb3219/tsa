@@ -43,6 +43,7 @@ public class Region {
 				writer.println("<block>");
 				writer.println("<position>" + b.x + ":" + b.y + ":" + b.z + "</position>");
 				writer.println("<data>" + b.base.id + ":" + b.base.meta + ":" + b.special + "</data>");
+				writer.println("<json>" + b.getSpecialJson() + "</json>");
 				writer.println("</block>");
 			}
 			
@@ -73,6 +74,7 @@ public class Region {
 				Node n = base.item(i);
 				NodeList children = n.getChildNodes();
 				float bx = 0, by = 0, bz = 0, bspecial = 0;
+				String json = "";
 				Block bbase = Block.air;
 				for(int l = 0; l < children.getLength() - 1; l ++){
 					Node c = children.item(l);
@@ -86,10 +88,13 @@ public class Region {
 						bspecial = Float.parseFloat(value.split(":")[2]);
 						bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
 						if(bbase == Block.computer) System.out.println(bspecial);
+					}else if(c.getNodeName().equals("json")){
+						json = value;
 					}
 				}
 				BlockInstance b = new BlockInstance(bbase, bx, by, bz);
 				b.special = bspecial;
+				b.initJson = json;
 				addBlock(b);
 				
 			}
@@ -195,7 +200,7 @@ public class Region {
 		}
 		
 		int pSize = peripherals.size();
-		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z, block.special));
+		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z, block.special, block.initJson));
 		
 		if(pSize < peripherals.size()) block.special = peripherals.get(peripherals.size() - 1).special;
 		

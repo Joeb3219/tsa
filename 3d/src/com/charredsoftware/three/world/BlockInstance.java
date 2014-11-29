@@ -1,10 +1,13 @@
 package com.charredsoftware.three.world;
 
+import com.charredsoftware.three.Main;
+
 public class BlockInstance {
 
 	public Block base;
 	public float x, y, z = 0;
 	public float special = -1;
+	public String initJson = ""; //Used to give json data on load.
 	
 	public BlockInstance(Block base, float x, float y, float z){
 		this.base = base;
@@ -25,6 +28,11 @@ public class BlockInstance {
 	
 	public void draw(){
 		base.draw(x, y, z);
+	}
+	
+	public String getSpecialJson(){
+		if(base == Block.computer) return Main.world.getPeripheral(x, y, z).getSpecialJson();
+		return "";
 	}
 	
 	public boolean equals(Object o){

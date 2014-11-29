@@ -1,5 +1,8 @@
 package com.charredsoftware.three.computer;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+
 public enum Hardware {
 
 	//Processors
@@ -52,6 +55,7 @@ public enum Hardware {
 	;
 	
 	public String name;
+	public float id = 0;
 	public int powerDraw, level; //Level denotes multiplier for speed/ability/etc >> Higher == better
 	public HardwareType type;
 	
@@ -61,5 +65,21 @@ public enum Hardware {
 		this.level = level;
 		this.powerDraw = power;
 	}
+	
+	public static Hardware getById(float num){
+		for (Hardware h : EnumSet.allOf(Hardware.class)){
+            if(h.id == num) return h;
+        }
+		
+		return PROCESSOR_D1;
+	}
+	
+	static{
+		float i = -1f;
+        for (Hardware h : EnumSet.allOf(Hardware.class)){
+            i ++;
+            h.id = i;
+        }
+    }
 	
 }

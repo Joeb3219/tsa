@@ -28,6 +28,10 @@ public class Peripheral {
 		
 	}
 	
+	public String getSpecialJson(){
+		return "";
+	}
+	
 	public Position getPosition(){
 		return new Position(x, y, z);
 	}

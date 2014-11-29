@@ -57,6 +57,14 @@ public class Computer extends Peripheral{
 		t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
 	}
 	
+	public Computer(float x, float y, float z, float special, String json){
+		super(x, y, z, special);
+		t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
+		if(!json.equals("")){
+			hardware.loadFromJson(json);
+		}
+	}
+	
 	public Computer(){
 		super(0, 0, 0, -1);
 		t = new TerminalDisplay(x, y, Display.getHeight() - 2 * y, Display.getWidth() - 2 * x, new ArrayList<String>());
@@ -236,5 +244,13 @@ public class Computer extends Peripheral{
 	public void reboot(){
 		//reboot
 	}
+	
+	public String getSpecialJson(){
+		String response = "{";
+		response += hardware.getJson();
+		response += "}";
+		return response;
+	}
+	
 	
 }

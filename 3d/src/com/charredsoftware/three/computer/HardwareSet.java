@@ -39,9 +39,33 @@ public class HardwareSet {
 		info.add("CPU: " + processor.name + " (draws " + processor.powerDraw + "W)");
 		info.add("RAM: " + memory.name + " (draws " + memory.powerDraw + "W)");
 		info.add("Harddrive: " + harddrive.name + " (draws " + harddrive.powerDraw + "W)");
-		info.add("Graphics Card: " + processor.name + " (draws " + processor.powerDraw + "W)");
+		info.add("Graphics Card: " + graphicsCard.name + " (draws " + graphicsCard.powerDraw + "W)");
 		info.add("Power Supply Unit: " + powerSupply.name);
 		return info;
+	}
+	
+	public void loadFromJson(String json){
+		if(!json.contains("{")) return;
+		while(json.charAt(0) == '{') json = json.substring(1, json.length() - 1);
+		String[] sections = json.split(",");
+		if(sections.length != 5) return;
+		
+		processor = Hardware.getById(Float.parseFloat(sections[0].split(":")[1].replace("\"", "")));
+		memory = Hardware.getById(Float.parseFloat(sections[1].split(":")[1].replace("\"", "")));
+		harddrive = Hardware.getById(Float.parseFloat(sections[2].split(":")[1].replace("\"", "")));
+		powerSupply = Hardware.getById(Float.parseFloat(sections[3].split(":")[1].replace("\"", "")));
+		graphicsCard = Hardware.getById(Float.parseFloat(sections[4].split(":")[1].replace("\"", "")));
+	}
+	
+	public String getJson(){
+		String response = "{";
+		response += "\"PROCESSOR\":\"" + processor.id + "\",";
+		response += "\"MEMORY\":\"" + memory.id + "\",";
+		response += "\"HARDDRIVE\":\"" + harddrive.id + "\",";
+		response += "\"POWERSUPPLY\":\"" + powerSupply.id + "\",";
+		response += "\"GRAPHICS\":\"" + graphicsCard.id + "\",";
+		response += "}";
+		return response;
 	}
 	
 }
