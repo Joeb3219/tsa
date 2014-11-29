@@ -35,14 +35,14 @@ public class CrashReport {
 			writer.println("Crash Report || " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 			writer.println("========");
 			writer.println("");
-			Player player = Main.player;
-			Camera camera = Main.camera;
-			World world = Main.world;
+			Player player = Main.getInstance().player;
+			Camera camera = Main.getInstance().camera;
+			World world = Main.getInstance().player.world;
 			writer.println("[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-			writer.println("[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + Main.yOffset);
-			writer.println("Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
+			writer.println("[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + Main.getInstance().camera.yOffset);
+			writer.println("Standing on : " + Main.getInstance().player.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.getInstance().player.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.getInstance().player.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 			writer.println("Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
-			writer.println("fps: " + Main.displayFPS + "; blocksRendered: " + world.renderedBlocks);
+			writer.println("fps: " + Main.getInstance().displayFPS + "; blocksRendered: " + world.renderedBlocks);
 			
 			writer.println("");
 			writer.println("");

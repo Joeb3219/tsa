@@ -241,7 +241,7 @@ public class World {
 			list.get(0).base.drawSetup();
 			
 			for(BlockInstance b : list){
-				if(b == Main.world.lookingAt) b.draw(100);
+				if(b == lookingAt) b.draw(100);
 				else b.draw();
 			}
 			
@@ -252,28 +252,28 @@ public class World {
 	
 	public BlockInstance getBlockLookingAt(){
 		for(float i = 0; i < 6; i += 0.25f){
-			Vector3f looking = Main.player.getLookingAt(i);
+			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
 			if(b.base != Block.air) return b;
 		}
 		
-		Vector3f looking = Main.player.getLookingAt(6);
+		Vector3f looking = Main.getInstance().player.getLookingAt(6);
 		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
 	}
 	
 	public BlockInstance getBlockAdjectLookingAt(){
 		for(float i = 0; i < 6; i += 0.25f){
-			Vector3f looking = Main.player.getLookingAt(i);
+			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
 			if(b.base != Block.air){
-				looking = Main.player.getLookingAt(i - 0.25f);
+				looking = Main.getInstance().player.getLookingAt(i - 0.25f);
 				return getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			}
 		}
 		
-		Vector3f looking = Main.player.getLookingAt(6);
+		Vector3f looking = Main.getInstance().player.getLookingAt(6);
 		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
 	}
 	

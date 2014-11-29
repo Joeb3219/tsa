@@ -1,11 +1,23 @@
 package com.charredsoftware.three;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.util.glu.GLU.gluOrtho2D;
+import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+
+import com.charredsoftware.three.entity.Player;
 
 public class Camera {
 
@@ -13,6 +25,7 @@ public class Camera {
 	public float rx = 0, ry = 0, rz = 0;
 	public float fov, aspectRatio, nearClip, farClip;
 	public Frustum frustum = Frustum.getInstance();
+	public float yOffset = 0f;
 	
 	public Camera(float fov, float aspectRatio, float nearClip, float farClip){
 		this.fov = fov;
@@ -49,7 +62,7 @@ public class Camera {
 	
 	public void useView(){
 		Vector3f camera = new Vector3f(-x, -y, -z);
-		Vector3f looking = Main.player.getLookingAt();
+		Vector3f looking = Main.getInstance().player.getLookingAt();
 		Vector3f up = new Vector3f(0, y + farClip * (float) -Math.cos(Math.toRadians(rx - 90)), 0);
 		frustum.setCamera(camera, looking, up);
 		
@@ -59,6 +72,14 @@ public class Camera {
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(x, y, z);
 		glMatrixMode(GL_MODELVIEW);
+	}
+	
+	public void calculatePosition(Player player){
+		x = player.x;
+		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
+		if(player.isCrouching) yOffset += 1;
+		y = yOffset - 1;
+		z = player.z;
 	}
 	
 }

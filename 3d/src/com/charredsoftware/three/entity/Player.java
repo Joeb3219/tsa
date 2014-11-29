@@ -7,6 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.three.Camera;
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.inventory.Hotbar;
 import com.charredsoftware.three.inventory.Item;
 import com.charredsoftware.three.inventory.ItemGroup;
@@ -14,6 +15,7 @@ import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
+import com.charredsoftware.three.world.World;
 
 public class Player extends Mob{
 
@@ -21,9 +23,13 @@ public class Player extends Mob{
 	public boolean isJumping, isCrouching = false;
 	private float jumpingTime = 0;
 	public Hotbar hotbar;
+	public Block selectedBlock;
+	public Peripheral selectedPeripheral = null;
+	public World world;
 	
-	public Player(Camera camera){
+	public Player(World world, Camera camera){
 		super();
+		this.world = world;
 		this.camera = camera;
 		health = 20;
 		movingSpeed = 0.15f;
@@ -59,7 +65,7 @@ public class Player extends Mob{
 		}
 		else if(isJumping){
 			jumpingTime += .5f / Main.TPS;
-			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Main.DOWNWARD_ACCELERATION, jumpingTime);
+			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Physics.DOWNWARD_ACCELERATION, jumpingTime);
 			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
 			checkCanJump(currentJumpingVelocity / 2);
 			if(standingOnSolid() && jumpingTime > .5f / Main.TPS){
@@ -88,7 +94,7 @@ public class Player extends Mob{
 	
 	public void checkCanJump(float dY){
 		float fY = y - dY;
-		ArrayList<BlockInstance>  blocks = Main.world.getBlocksInRange(-x, -z, -y, -dY);
+		ArrayList<BlockInstance>  blocks = world.getBlocksInRange(-x, -z, -y, -dY);
 		if(dY > 0){
 			for(int i = 0; i <= blocks.size() - 1; i ++){
 				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
@@ -114,8 +120,9 @@ public class Player extends Mob{
 		float fY = dY + y;
 		float fZ = dZ + z;
 
-		if(!Main.world.getBlock(new Position(-fX, -fY, -fZ)).base.solid){
-			if(isCrouching && !Main.world.getBlock(new Position(-fX, -fY - 1, -fZ)).base.solid) return;
+		if(!world.getBlock(new Position(-fX, -fY, -fZ)).base.solid){
+			if(isCrouching && !world.getBlock(new Position(-fX, -fY - 1, -fZ)).base.solid) return; //Falling while crouching -> stop movement.
+			if(world.getBlock(new Position(-fX, -fY + 1, -fZ)).base.solid) return; //Hit yer head!
 			x = fX;
 			z = fZ;
 			y = fY;
@@ -126,18 +133,18 @@ public class Player extends Mob{
 	public boolean stuckInBlock(){
 		Position p = new Position(-x, -y, -z);
 		p.normalizeCoords();
-		return Main.world.getBlock(p).base.solid;
+		return world.getBlock(p).base.solid;
 	}
 	
 	public boolean isInWater(){
-		if(Main.world.getBlock(new Position(-x, -y, -z)).base == Block.water) return true;
-		if(Main.world.getBlock(new Position(-x, -y + 1, -z)).base == Block.water) return true;
+		if(world.getBlock(new Position(-x, -y, -z)).base == Block.water) return true;
+		if(world.getBlock(new Position(-x, -y + 1, -z)).base == Block.water) return true;
 		return false;
 	}
 	
 	public BlockInstance getBlockUnder(){
 		Position p = new Position(-x, -y - 1f, -z);
-		return Main.world.getBlock(p);
+		return world.getBlock(p);
 	}
 
 	public boolean standingOnSolid(){
@@ -145,14 +152,14 @@ public class Player extends Mob{
 	}
 	
 	public Vector3f getLookingAt(){
-		return getLookingAt(Main.camera.farClip);
+		return getLookingAt(Main.getInstance().camera.farClip);
 	}
 	
 	public Vector3f getLookingAt(float dist){
-		double rx = Math.cos(Math.toRadians(Main.camera.rx));
-		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.camera.ry)) * dist * rx) - z);
-		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.camera.rx)))) -.5f), 0);
-		if(dist == Main.camera.farClip) v.translate(.1f, 0, .1f);
+		double rx = Math.cos(Math.toRadians(Main.getInstance().camera.rx));
+		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - z);
+		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
+		if(dist == Main.getInstance().camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}
 	

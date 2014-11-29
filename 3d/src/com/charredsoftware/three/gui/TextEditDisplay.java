@@ -140,7 +140,7 @@ public class TextEditDisplay extends TextDisplay{
 				Color c = Color.white;
 				if(yPos == yCursor && i == xCursor) c = Color.red;
 				else if(yPos == yCursor) c = Color.green;
-				Main.font.drawString(x + 10 + (Main.font.getWidth(s.substring(0, i)) + 1), y + (drawnLines * 20) + 10, s.charAt(i) + "", c);
+				Main.getInstance().font.drawString(x + 10 + (Main.getInstance().font.getWidth(s.substring(0, i)) + 1), y + (drawnLines * 20) + 10, s.charAt(i) + "", c);
 			}
 		}
 

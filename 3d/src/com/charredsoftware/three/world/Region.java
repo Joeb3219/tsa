@@ -160,7 +160,7 @@ public class Region {
 					float fZ = this.z * _SIZE + z;
 					if(y == -2) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
 					else{
-						ArrayList<BlockInstance> surrounding = Main.world.getSurroundingBlocks(x, y, z);
+						ArrayList<BlockInstance> surrounding = Main.getInstance().player.world.getSurroundingBlocks(x, y, z);
 						int baseChance = 6;
 						int grassChance = baseChance, bricksChance = baseChance, boostChance = baseChance, ceilingChance = baseChance, woodChance = baseChance, waterChance = baseChance;
 						for(BlockInstance b : surrounding){
@@ -234,7 +234,7 @@ public class Region {
 		ArrayList<BlockInstance> renderableBlocks = new ArrayList<BlockInstance>();
 		
 		for(BlockInstance b : blocks){
-			if(!Main.camera.frustum.BlockInFrustum(b)) continue;
+			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
 			renderableBlocks.add(b);
 			//if(b == Main.world.lookingAt) b.draw(100);
 			//else b.draw();

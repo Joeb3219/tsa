@@ -25,7 +25,6 @@ import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
-import java.util.Random;
 import java.util.Timer;
 
 import org.lwjgl.Sys;
@@ -36,7 +35,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 
-import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
@@ -45,138 +43,145 @@ import com.charredsoftware.three.world.World;
 
 public class Main {
 
-	public static String gameName = "NovaScript";
-	public static String version = "1.0.15";
-	public static Font font;
-	public static Player player;
+	public String gameName = "NovaScript";
+	public String version = "1.0.15";
+	public Font font;
+	public Player player;
 	public static final int TPS = 30;
-	public static final float DOWNWARD_ACCELERATION = -9.8f;
-	public static Camera camera;
-	public static World world;
-	static int displayFPS = 0;
-	public static float yOffset = 0f;
-	public static float lastMX = 0, lastMY = 0, movementThreshold = 2f;
-	public static boolean menu = false;
-	public static GameState gameState = GameState.GAME;
-	public static Block selectedBlock;
-	public static Peripheral selectedPeripheral = null;
-	public static Random r = new Random();
-	private static float cooldown = 0f;
+	private static final float movementThreshold = 2f;
+	public Camera camera;
+	int displayFPS = 0;
+	public boolean menu = false, DISPLAY_INFO = true;
+	public GameState gameState = GameState.GAME;
+	private float cooldown = 0f;
 	
-	private static boolean DISPLAY_INFO = true;
+	private static Main _INSTANCE = null;
 	
-	public static void main(String[] args){
+	
+	private Main(){
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
-		player = new Player(camera);
-		selectedBlock = Block.computer;
+		player = new Player(new World(), camera);
+		player.selectedBlock = Block.computer;
+	}
+	
+	public static Main getInstance(){
+		if(_INSTANCE == null) _INSTANCE = new Main();
+		return _INSTANCE;
+	}
+	
+	public static void main(String[] args){
+		Main game = getInstance();
 		try{
-		loop();
+			game.loop();
 		}catch(Throwable t){
 			CrashReport crash = new CrashReport(t);
 			String lnBreak = System.getProperty("line.separator");
-			Sys.alert(gameName + " " + version + ": Crash Report", "NovaScript has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
-			cleanDisplay();
+			Sys.alert(game.gameName + " " + game.version + ": Crash Report", game.gameName + " has crashed." + lnBreak + lnBreak + crash.synop + lnBreak + lnBreak + "Refer to " + crash.file.getAbsolutePath());
+			game.cleanDisplay();
 			
 			System.exit(0); //We crashed! Cannot recover! Kill the system!
 		}
-		cleanDisplay();
+		game.cleanDisplay();
 	}
 	
-	private static void cleanDisplay(){
+	private void cleanDisplay(){
 		Display.destroy();
 	}
 	
-	private static void initializeDisplay(){
+	private void initializeDisplay(){
 		try{
 			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
 			Display.setResizable(true);
-			Display.setTitle("CharredSoftware: NovaScript [Joe B, 2014]");
+			Display.setTitle("CharredSoftware: " + gameName + " v." + version + " [Joe B, 2014]");
 			Display.create();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
-	public static void tick(Camera camera){
+	public void tick(){
 		if(cooldown > 0) cooldown --;
-		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
-			menu = !menu;
-			cooldown = 5f;
-		}
 
 		if(gameState == GameState.GAME){
 			if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
 			player.update();
 			
-			float deltaX = Mouse.getDX();
-			float deltaY = Mouse.getDY();
-			
-			if(Math.abs(deltaX) > movementThreshold){
-				if(deltaX > 0) camera.ry += 1.8f * (Math.min(deltaX, 28) / 4);
-				if(deltaX < 0) camera.ry -= 1.8f * (Math.min(-deltaX, 28) / 4);
-			}
-			if(Math.abs(deltaY) > movementThreshold){
-				if(deltaY < 0 && camera.rx < 90f) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
-				if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
-			}
-
-			if(camera.ry < 0) camera.ry = 360 + camera.ry;
-			if(camera.ry >= 360) camera.ry = 360 - camera.ry;
-			if(camera.rx < -90f) camera.rx = -90f;
-			if(camera.rx > 90f) camera.rx = 90f;
-			
-			float dWheel = Mouse.getDWheel();
-			
-			if(dWheel > 0){
-				if(Block.blocks.indexOf(selectedBlock) < Block.blocks.size() - 1) selectedBlock = Block.blocks.get(Block.blocks.indexOf(selectedBlock) + 1);
-				else selectedBlock = Block.blocks.get(1);
-			}
-			if(dWheel < 0){
-				if(Block.blocks.indexOf(selectedBlock) > 1) selectedBlock = Block.blocks.get(Block.blocks.indexOf(selectedBlock) - 1);
-				else selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
-			}
-			
-			if(!menu) {
-				Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
-				Mouse.setGrabbed(true);
-			}
-			else Mouse.setGrabbed(false);
+			mouseTick();
 		}
 		
-		camera.x = player.x;
-		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));
-		if(player.isCrouching) yOffset += 1;
-		camera.y = yOffset - 1;
-		camera.z = player.z;
+		camera.calculatePosition(player);
 		
-		if(world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0 && !player.isCrouching){
-			selectedPeripheral = world.getPeripheral(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z);
-			gameState = GameState.COMPUTER;
-		}
-		if(Mouse.isButtonDown(1) && gameState == GameState.GAME && world.lookingAt.base.solid && cooldown == 0){
-			BlockInstance adjacent = world.getBlockAdjectLookingAt();
-			world.addBlock(new BlockInstance(selectedBlock, adjacent.x, adjacent.y, adjacent.z));
-		}
-		if(Mouse.isButtonDown(0) && gameState == GameState.GAME && cooldown == 0) world.removeBlock(world.getBlock(world.lookingAt.x, world.lookingAt.y, world.lookingAt.z));
-		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
-			world = new World(1);
-			player.setPosition(-2f, -1f, -2f);
-		}
+		keyboardTick();
 		
-		if(gameState == GameState.COMPUTER) selectedPeripheral.update();
-		
-		if(gameState == GameState.COMPUTER) selectedPeripheral.update();
-		
-		if(gameState == GameState.COMPUTER && cooldown == 0) selectedPeripheral.update();
-		
-		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
+		if(gameState == GameState.COMPUTER && cooldown == 0) player.selectedPeripheral.update();
 		
 		while(Keyboard.next()){}
 		
 	}
+
+	private void keyboardTick() {
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
+			menu = !menu;
+			cooldown = 5f;
+		}
+		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
+			player.world = new World(1);
+			player.setPosition(-2f, -1f, -2f);
+		}
+	}
 	
-	public static void render(Camera camera){
+	private void mouseTick(){
+		float deltaX = Mouse.getDX();
+		float deltaY = Mouse.getDY();
+		
+		if(Math.abs(deltaX) > movementThreshold){
+			if(deltaX > 0) camera.ry += 1.8f * (Math.min(deltaX, 28) / 4);
+			if(deltaX < 0) camera.ry -= 1.8f * (Math.min(-deltaX, 28) / 4);
+		}
+		if(Math.abs(deltaY) > movementThreshold){
+			if(deltaY < 0 && camera.rx < 90f) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
+			if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
+		}
+
+		if(camera.ry < 0) camera.ry = 360 + camera.ry;
+		if(camera.ry >= 360) camera.ry = 360 - camera.ry;
+		if(camera.rx < -90f) camera.rx = -90f;
+		if(camera.rx > 90f) camera.rx = 90f;
+		
+		float dWheel = Mouse.getDWheel();
+		
+		if(dWheel > 0){
+			if(Block.blocks.indexOf(player.selectedBlock) < Block.blocks.size() - 1) player.selectedBlock = Block.blocks.get(Block.blocks.indexOf(player.selectedBlock) + 1);
+			else player.selectedBlock = Block.blocks.get(1);
+		}
+		if(dWheel < 0){
+			if(Block.blocks.indexOf(player.selectedBlock) > 1) player.selectedBlock = Block.blocks.get(Block.blocks.indexOf(player.selectedBlock) - 1);
+			else player.selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
+		}
+		
+		//Check if attempting to break/place/right-click
+		if(player.world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0 && !player.isCrouching){
+			player.selectedPeripheral = player.world.getPeripheral(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z);
+			gameState = GameState.COMPUTER;
+		}
+		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0) player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && cooldown == 0){
+			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
+			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
+		}
+		
+		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
+		
+		//Reset mouse position
+		if(!menu) {
+			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+			Mouse.setGrabbed(true);
+		}
+		else Mouse.setGrabbed(false);
+	}
+	
+	public void render(Camera camera){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
@@ -185,7 +190,7 @@ public class Main {
 
 		if(player.isInWater()) glColor3f(0.4f, 0.8f, 0.8f);
 		
-		world.render();
+		player.world.render();
 		//player.hotbar.draw();
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
@@ -200,7 +205,7 @@ public class Main {
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
-		if(gameState == GameState.COMPUTER) selectedPeripheral.draw();
+		if(gameState == GameState.COMPUTER) player.selectedPeripheral.draw();
 		
 		if(gameState == GameState.GAME){
 			glPushMatrix();
@@ -221,11 +226,11 @@ public class Main {
 			
 			//Display Text
 			if(DISPLAY_INFO){
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + yOffset);
-				font.drawString(5, 45, "Standing on : " + Main.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + Main.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + Main.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
-				font.drawString(5, 65, "Looking at " + world.lookingAt.base.name + " [" + world.lookingAt.x + ", " + world.lookingAt.y + ", " + world.lookingAt.z + "]");
-				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + world.renderedBlocks);
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
+				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
+				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
+				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + player.world.renderedBlocks);
 				font.drawString(5, 105, "Health: " + player.health);
 			}
 		}
@@ -243,19 +248,18 @@ public class Main {
 			glRotatef(60, 1, 0, 0);
 			glRotatef(60, 0, 1, 0);
 			glRotatef(60, 0, 0, 1);
-			selectedBlock.draw(0f,0f,0f);
+			player.selectedBlock.draw(0f,0f,0f);
 			glPopMatrix();
 		}
 		glMatrixMode(GL_MODELVIEW);
 
 	}
 	
-	private static void loop(){
+	private void loop(){
 		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 20);
 		font = new TrueTypeFont(awtFont, false);
 		
-		world = new World();
-		world.generate();
+		player.world.generate();
 		
 		Timer t = new Timer();
 		//t.scheduleAtFixedRate(new TimerTask(){public void run(){Main.world.save();}}, 5, 5000);
@@ -275,7 +279,7 @@ public class Main {
 			delta+= (now - lastTime) / nanoSeconds;
 			lastTime = now;
 			while(delta >= 1){
-				tick(camera);
+				tick();
 				ticks++;
 				delta--;
 			}
@@ -293,7 +297,7 @@ public class Main {
 		}
 		
 		t.cancel();
-		world.save();
+		player.world.save();
 		
 		Display.destroy();
 	}

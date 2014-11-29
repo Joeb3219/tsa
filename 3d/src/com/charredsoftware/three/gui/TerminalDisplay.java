@@ -45,7 +45,7 @@ public class TerminalDisplay extends TextDisplay{
 	
 	private void enterCommand(){
 		if(current.equals("") || current.equals(" ")) return;
-		Computer c = (Computer) Main.selectedPeripheral;
+		Computer c = (Computer) Main.getInstance().player.selectedPeripheral;
 		lines.add(current);
 		if(current.equals("help")) lines.add("Commands: help, clear, info, about, reboot, exit, run <script>, edit <script>, copy <source> <dest>, new <name>, delete <script>");
 		if(current.equals("reboot")) c.reboot();
@@ -56,8 +56,8 @@ public class TerminalDisplay extends TextDisplay{
 			for(String s : c.getAbout()) lines.add(s);
 		}
 		if(current.equals("exit")){
-			Main.selectedPeripheral = null;
-			Main.gameState = GameState.GAME.resetGameState(GameState.GAME);
+			Main.getInstance().player.selectedPeripheral = null;
+			Main.getInstance().gameState = GameState.GAME.resetGameState(GameState.GAME);
 		}
 		if(current.equals("clear")) lines = new ArrayList<String>();
 		if(current.equals("list")){
@@ -129,11 +129,11 @@ public class TerminalDisplay extends TextDisplay{
 			if(netLine < 0) continue;
 			
 			for(int i = 0; i < s.length(); i ++){
-				Main.font.drawString(x + 10 + (Main.font.getWidth(s.substring(0, i)) + 1), y + (netLine * 20) + 10, s.charAt(i) + "");
+				Main.getInstance().font.drawString(x + 10 + (Main.getInstance().font.getWidth(s.substring(0, i)) + 1), y + (netLine * 20) + 10, s.charAt(i) + "");
 			}
 		}
 		
-		Main.font.drawString(x + 2 + Main.font.getWidth("F:/ "), (y + height) - Main.font.getHeight(current) - 10, "F:/ " + current);
+		Main.getInstance().font.drawString(x + 2 + Main.getInstance().font.getWidth("F:/ "), (y + height) - Main.getInstance().font.getHeight(current) - 10, "F:/ " + current);
 
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

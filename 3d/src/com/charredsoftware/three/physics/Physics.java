@@ -36,5 +36,7 @@ public class Physics {
 	public static float calculateForce(float mass, float acceleration){
 		return mass * acceleration;
 	}
+
+	public static final float DOWNWARD_ACCELERATION = -9.8f;
 	
 }

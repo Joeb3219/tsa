@@ -31,7 +31,7 @@ public class BlockInstance {
 	}
 	
 	public String getSpecialJson(){
-		if(base == Block.computer) return Main.world.getPeripheral(x, y, z).getSpecialJson();
+		if(base == Block.computer) return Main.getInstance().player.world.getPeripheral(x, y, z).getSpecialJson();
 		return "";
 	}
 	

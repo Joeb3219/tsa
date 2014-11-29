@@ -72,11 +72,11 @@ public class Computer extends Peripheral{
 	
 	public float generateSpecialId(){
 		if(special != -1){
-			dir = new File(Main.world.dir.getAbsolutePath(), "data/computers/" + special);
+			dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), "data/computers/" + special);
 			dir.mkdirs();
 			return special; //One is already assigned, everything is good.
 		}
-		dir = new File(Main.world.dir.getAbsolutePath(), "data/computers");
+		dir = new File(Main.getInstance().player.world.dir.getAbsolutePath(), "data/computers");
 		String[]entries = dir.list();
 		float highest = -1f;
 		for(String s : entries){
@@ -138,7 +138,7 @@ public class Computer extends Peripheral{
 	}
 	
 	public void update(){
-		if(Main.gameState != GameState.COMPUTER) return;
+		if(Main.getInstance().gameState != GameState.COMPUTER) return;
 		if((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))){
 			if(Keyboard.isKeyDown(Keyboard.KEY_S) && editing){
 				loadedScript.saveScript(t.lines);
@@ -192,7 +192,7 @@ public class Computer extends Peripheral{
 			          }
 			          reader.close();
 			    }catch (Exception e) {e.printStackTrace();}
-				Main.font.drawString(15, 15, output);
+				Main.getInstance().font.drawString(15, 15, output);
 			}
 			t.clearScreen();
 		}

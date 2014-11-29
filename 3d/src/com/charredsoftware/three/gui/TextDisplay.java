@@ -78,7 +78,7 @@ public class TextDisplay {
 			if(netLine < 0) continue;
 			
 			for(int i = 0; i < s.length(); i ++){
-				Main.font.drawString(x + 10 + (Main.font.getWidth(s.substring(0, i)) + 1), y + (netLine * 20) + 10, s.charAt(i) + "");
+				Main.getInstance().font.drawString(x + 10 + (Main.getInstance().font.getWidth(s.substring(0, i)) + 1), y + (netLine * 20) + 10, s.charAt(i) + "");
 			}
 		}
 
