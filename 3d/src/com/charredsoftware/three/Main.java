@@ -47,8 +47,8 @@ public class Main {
 	public String version = "1.0.15";
 	public Font font;
 	public Player player;
-	public static final int TPS = 30;
-	private static final float movementThreshold = 2f;
+	public static final int DESIRED_TPS = 30;
+	private static final float mouseMovementThreshold = 2f;
 	public Camera camera;
 	int displayFPS = 0;
 	public boolean menu = false, DISPLAY_INFO = true;
@@ -60,7 +60,7 @@ public class Main {
 	
 	private Main(){
 		initializeDisplay();
-		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 100f);
+		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
 		player = new Player(new World(), camera);
 		player.selectedBlock = Block.computer;
 	}
@@ -126,7 +126,7 @@ public class Main {
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
-			player.world = new World(1);
+			player.world = new World();
 			player.setPosition(-2f, -1f, -2f);
 		}
 	}
@@ -135,11 +135,11 @@ public class Main {
 		float deltaX = Mouse.getDX();
 		float deltaY = Mouse.getDY();
 		
-		if(Math.abs(deltaX) > movementThreshold){
+		if(Math.abs(deltaX) > mouseMovementThreshold){
 			if(deltaX > 0) camera.ry += 1.8f * (Math.min(deltaX, 28) / 4);
 			if(deltaX < 0) camera.ry -= 1.8f * (Math.min(-deltaX, 28) / 4);
 		}
-		if(Math.abs(deltaY) > movementThreshold){
+		if(Math.abs(deltaY) > mouseMovementThreshold){
 			if(deltaY < 0 && camera.rx < 90f) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
 			if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
 		}
@@ -266,7 +266,7 @@ public class Main {
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
-		final double nanoSeconds = 1000000000.0 / TPS;
+		final double nanoSeconds = 1000000000.0 / DESIRED_TPS;
 		double delta = 0;
 		int fps = 0, ticks = 0;
 		

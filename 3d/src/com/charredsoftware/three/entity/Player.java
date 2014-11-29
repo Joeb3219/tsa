@@ -1,7 +1,5 @@
 package com.charredsoftware.three.entity;
 
-import java.util.ArrayList;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -13,25 +11,22 @@ import com.charredsoftware.three.inventory.Item;
 import com.charredsoftware.three.inventory.ItemGroup;
 import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.world.Block;
-import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Player extends Mob{
 
 	private Camera camera; //Used to calculate motion.
-	public boolean isJumping, isCrouching = false;
-	private float jumpingTime = 0;
 	public Hotbar hotbar;
 	public Block selectedBlock;
 	public Peripheral selectedPeripheral = null;
-	public World world;
 	
 	public Player(World world, Camera camera){
 		super();
 		this.world = world;
 		this.camera = camera;
-		health = 20;
+		health = 100;
+		health = 100;
 		movingSpeed = 0.15f;
 		mass = 75f;
 		this.hotbar = new Hotbar(10);
@@ -39,10 +34,39 @@ public class Player extends Mob{
 	}
 	
 	public void update(){
+		checkMovement((isCrouching) ? 4f : 1f);
+		
+		checkJumping();
+		
 		super.update();
-		
-		float speedModifier = (isCrouching) ? 4f : 1f;
-		
+	}
+
+	private void checkJumping() {
+		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !isJumping && standingOnSolid()){
+			isJumping = true;
+			currentJumpingVelocity = defaultStartJumpingVelocity;
+			beginningJumpingVelocity = defaultStartJumpingVelocity;
+			jumpingTime = 0;
+		}
+		else if(isJumping){
+			jumpingTime += .5f / Main.DESIRED_TPS;
+			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Physics.DOWNWARD_ACCELERATION, jumpingTime);
+			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
+			checkCanJump(currentJumpingVelocity / 2);
+			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
+				health -= potentialDamage;
+				y = (float) ((int) y);
+				isJumping = false;
+			}
+		}if(!isJumping && !standingOnSolid()){
+			isJumping = true;
+			currentJumpingVelocity = 0;
+			beginningJumpingVelocity = currentJumpingVelocity;
+			jumpingTime = 0;
+		}
+	}
+
+	private void checkMovement(float speedModifier) {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
 		}
@@ -55,64 +79,9 @@ public class Player extends Mob{
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
 			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
 		}
+		
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
 		else isCrouching = false;
-		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !isJumping && standingOnSolid()){
-			isJumping = true;
-			currentJumpingVelocity = defaultStartJumpingVelocity;
-			beginningJumpingVelocity = defaultStartJumpingVelocity;
-			jumpingTime = 0;
-		}
-		else if(isJumping){
-			jumpingTime += .5f / Main.TPS;
-			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Physics.DOWNWARD_ACCELERATION, jumpingTime);
-			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
-			checkCanJump(currentJumpingVelocity / 2);
-			if(standingOnSolid() && jumpingTime > .5f / Main.TPS){
-				health -= potentialDamage;
-				y = (float) ((int) y);
-				isJumping = false;
-			}
-		}if(!isJumping && !standingOnSolid()){
-			isJumping = true;
-			currentJumpingVelocity = 0;
-			beginningJumpingVelocity = currentJumpingVelocity;
-			jumpingTime = 0;
-		}if(y > 50) health --;
-		
-		if(getBlockUnder().base == Block.boost){
-			isJumping = true;
-			currentJumpingVelocity = defaultStartJumpingVelocity * 1.3f;
-			beginningJumpingVelocity = currentJumpingVelocity;
-			jumpingTime = 0;
-		}
-		
-		if(stuckInBlock()) y -= 1f;
-		
-		
-	}
-	
-	public void checkCanJump(float dY){
-		float fY = y - dY;
-		ArrayList<BlockInstance>  blocks = world.getBlocksInRange(-x, -z, -y, -dY);
-		if(dY > 0){
-			for(int i = 0; i <= blocks.size() - 1; i ++){
-				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
-					currentJumpingVelocity = 0f;
-					y = -blocks.get(i).y + 2;
-					return;
-				}
-			}
-		}else{
-			for(int i = blocks.size() - 1; i >= 0; i --){
-				if(blocks.get(i).y < fY && blocks.get(i).base.solid){
-					currentJumpingVelocity = 0f;
-					y = -blocks.get(i).y - 1;
-					return;
-				}
-			}
-		}
-		y = fY;
 	}
 	
 	public void move(float dX, float dY, float dZ){
@@ -122,7 +91,7 @@ public class Player extends Mob{
 
 		if(!world.getBlock(new Position(-fX, -fY, -fZ)).base.solid){
 			if(isCrouching && !world.getBlock(new Position(-fX, -fY - 1, -fZ)).base.solid) return; //Falling while crouching -> stop movement.
-			if(world.getBlock(new Position(-fX, -fY + 1, -fZ)).base.solid) return; //Hit yer head!
+			if(world.getBlock(new Position(-fX, -fY + height / 2, -fZ)).base.solid) return; //Hit yer head!
 			x = fX;
 			z = fZ;
 			y = fY;
@@ -130,27 +99,6 @@ public class Player extends Mob{
 		
 	}
 
-	public boolean stuckInBlock(){
-		Position p = new Position(-x, -y, -z);
-		p.normalizeCoords();
-		return world.getBlock(p).base.solid;
-	}
-	
-	public boolean isInWater(){
-		if(world.getBlock(new Position(-x, -y, -z)).base == Block.water) return true;
-		if(world.getBlock(new Position(-x, -y + 1, -z)).base == Block.water) return true;
-		return false;
-	}
-	
-	public BlockInstance getBlockUnder(){
-		Position p = new Position(-x, -y - 1f, -z);
-		return world.getBlock(p);
-	}
-
-	public boolean standingOnSolid(){
-		return getBlockUnder().base.solid;
-	}
-	
 	public Vector3f getLookingAt(){
 		return getLookingAt(Main.getInstance().camera.farClip);
 	}
@@ -158,7 +106,7 @@ public class Player extends Mob{
 	public Vector3f getLookingAt(float dist){
 		double rx = Math.cos(Math.toRadians(Main.getInstance().camera.rx));
 		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - z);
-		v.translate(0, Math.max(0f, (float) (((isCrouching) ? 1f : 2f) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
+		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2 : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
 		if(dist == Main.getInstance().camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}

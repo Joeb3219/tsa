@@ -17,7 +17,7 @@ public class World {
 
 	public ArrayList<Region> regions = new ArrayList<Region>();
 	public float renderedBlocks = 0f;
-	public BlockInstance lookingAt;
+	public BlockInstance lookingAt = new BlockInstance(Block.air, 0, -10000, 0);
 	public int id;
 	public File dir;
 	
@@ -33,11 +33,12 @@ public class World {
 	
 	private int getNextId(){
 		int highest = 0;
-		
-		//Should later actually get the next id.
-		
-		
-		
+		File dir = new File("res/saves/");
+		for(String s : dir.list()){
+			if(new File(dir, s).isDirectory()){
+				highest = Math.max(Integer.parseInt(s), highest);
+			}
+		}
 		return highest;
 	}
 	
@@ -57,9 +58,6 @@ public class World {
 				findRegion(x, z).save(dir);
 			}
 		}
-
-		System.out.println("World saved!");
-		
 	}
 		
 	private void generateWorldFolders(){
