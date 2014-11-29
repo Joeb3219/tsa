@@ -19,10 +19,14 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
@@ -42,7 +46,7 @@ public class Computer extends Peripheral{
 
 	public int id;
 	public String mac;
-	public File dir;
+	public File dir, tempScriptFile;
 	public Script loadedScript = null;
 	public TextDisplay t;
 	public boolean editing = false, menu = false, executing = false;
@@ -104,8 +108,17 @@ public class Computer extends Peripheral{
 	
 	public LuaValue executeScript(String name){
 		Globals globals = JsePlatform.standardGlobals();
+		if(tempScriptFile == null) {
+			try {
+				tempScriptFile = File.createTempFile("script_" + id, null);
+				tempScriptFile.deleteOnExit();
+			} catch (IOException e) {e.printStackTrace();}
+		}
+		try {
+			globals.STDOUT = new PrintStream(tempScriptFile);
+		} catch (FileNotFoundException e) {e.printStackTrace();}
 		LuaValue chunk = globals.loadfile(dir.getAbsolutePath() + "/" + name);
-		return chunk.call("print");
+		return chunk.call();
 	}
 	
 	public void changeLoadedScript(Script script){
@@ -160,7 +173,18 @@ public class Computer extends Peripheral{
 		if(executing){
 			if(dir.list().length > 0){
 				if(loadedScript == null) changeLoadedScript(new Script(dir, dir.list()[0]));
-				Main.font.drawString(15, 15, executeScript(loadedScript.name).tojstring());
+				executeScript(loadedScript.name);
+				String output = "";
+				try {
+			          FileInputStream inputStream =  new FileInputStream(tempScriptFile);
+			          BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			          String line = "";
+			          while ((line = reader.readLine()) != null) {
+			             output += line;
+			          }
+			          reader.close();
+			    }catch (Exception e) {e.printStackTrace();}
+				Main.font.drawString(15, 15, output);
 			}
 			t.clearScreen();
 		}
