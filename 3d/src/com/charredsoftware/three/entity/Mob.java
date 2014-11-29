@@ -55,10 +55,11 @@ public class Mob extends Entity{
 		if(stuckInBlock()){
 			//At first, attempt to push player away.
 			Position startingPosition = getPosition();
-			if(canMove(1, 0, 0)) move(1, 0, 0);
+			if(canMove(0, 1, 0)) move(0, 1, 0);
+			/*if(canMove(1, 0, 0)) move(1, 0, 0);
 			else if(canMove(0, 0, 1)) move(0, 0, 1);
 			else if(canMove(-1, 0, 0)) move(-1, 0, 0);
-			else if(canMove(0, 0, -1)) move(0, 0, -1);
+			else if(canMove(0, 0, -1)) move(0, 0, -1);*/
 			if(startingPosition.equals(getPosition())) health -= 1f; //Didn't move -> start suffocating!
 		}
 	}
