@@ -133,7 +133,7 @@ public class TerminalDisplay extends TextDisplay{
 			}
 		}
 		
-		Main.getInstance().font.drawString(x + 2 + Main.getInstance().font.getWidth("F:/ "), (y + height) - Main.getInstance().font.getHeight(current) - 10, "F:/ " + current);
+		Main.getInstance().font.drawString(x + 2 + Main.getInstance().font.getWidth("N:\\ "), (y + height) - Main.getInstance().font.getHeight(current) - 10, "N:\\ " + current);
 
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

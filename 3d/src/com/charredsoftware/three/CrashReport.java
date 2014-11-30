@@ -10,6 +10,7 @@ import java.util.Date;
 import org.lwjgl.Sys;
 
 import com.charredsoftware.three.entity.Player;
+import com.charredsoftware.three.util.FileUtilities;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
@@ -21,7 +22,7 @@ public class CrashReport {
 	
 	public CrashReport(Throwable t){
 		this.t = t;
-		file = new File("res/crashes/" + System.currentTimeMillis() + ".txt");
+		file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
 		try {
 			file.createNewFile();
 			generateReport();

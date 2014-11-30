@@ -12,6 +12,7 @@ import org.newdawn.slick.opengl.Texture;
 
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.computer.Peripheral;
+import com.charredsoftware.three.util.FileUtilities;
 
 public class World {
 
@@ -23,17 +24,17 @@ public class World {
 	
 	public World(){
 		this.id = getNextId();
-		this.dir = new File("res/saves/" + id);
+		this.dir = new File(FileUtilities.savesPath + id);
 	}
 	
 	public World(int id){
 		this.id = id;
-		this.dir = new File("res/saves/" + id);
+		this.dir = new File(FileUtilities.savesPath + id);
 	}
 	
 	private int getNextId(){
 		int highest = -1;
-		File directory = new File("res/saves");
+		File directory = new File(FileUtilities.savesPath);
 		for(String s : directory.list()){
 			if(new File(directory, s).isDirectory()){
 				highest = Math.max(Integer.parseInt(s), highest);
@@ -63,7 +64,7 @@ public class World {
 		
 	private void generateWorldFolders(){
 		dir.mkdir();
-		new File(dir, "data/computers").mkdirs();
+		new File(dir, FileUtilities.computersPath).mkdirs();
 	}
 	
 	private void load(File dir){
@@ -81,10 +82,7 @@ public class World {
 	
 	public BlockInstance getBlock(Position p){
 		p.normalizeCoords();
-		for(BlockInstance b : findRegion(p.x, p.z).blocks){
-			if(b.x == p.x && b.y == p.y && b.z == p.z) return b;
-		}
-		return new BlockInstance(Block.air, p.x, p.y, p.z);
+		return findRegion(p.x, p.z).getBlock(p);
 	}
 	
 	public ArrayList<BlockInstance> getSurroundingBlocks(float fx, float fy, float fz){
@@ -209,15 +207,17 @@ public class World {
 		return inY;
 	}
 	
+	public float blocksChecked = 0;
 	
 	public void render(){
 		renderedBlocks = 0f;
-		
+		blocksChecked = 0f;
 		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
 		for(Region r : regions){
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
+			blocksChecked += r.blocksChecked;
 			renderedBlocks += renderable.size();
 			//Add each renderable block to the map
 			for(BlockInstance b : renderable){

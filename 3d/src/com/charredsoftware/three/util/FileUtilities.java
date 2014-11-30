@@ -14,11 +14,15 @@ public class FileUtilities {
 	public static String dataPath = "data/"; //Relative to saves
 	public static String defaultsPath = "res/default/";
 	public static String defaultProgramsPath = defaultsPath + "/scripts/";
+	public static String texturesPath = "textures/";
+	public static String savesPath = "res/saves/";
+	public static String crashesPath = "res/crashes/";
 	public static File scriptTempFile = null;
 	
 	static{
 		try {
 			scriptTempFile = File.createTempFile("script_temp_csf", null);
+			scriptTempFile.deleteOnExit();
 		} catch (IOException e) {new CrashReport(e);}
 	}
 	

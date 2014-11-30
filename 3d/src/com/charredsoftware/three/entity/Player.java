@@ -26,7 +26,6 @@ public class Player extends Mob{
 		this.world = world;
 		this.camera = camera;
 		health = 100;
-		health = 100;
 		movingSpeed = 0.15f;
 		mass = 75f;
 		this.hotbar = new Hotbar(10);
@@ -106,7 +105,7 @@ public class Player extends Mob{
 	public Vector3f getLookingAt(float dist){
 		double rx = Math.cos(Math.toRadians(Main.getInstance().camera.rx));
 		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - z);
-		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2 : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
+		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2f : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
 		if(dist == Main.getInstance().camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}

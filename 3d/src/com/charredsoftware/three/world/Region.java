@@ -29,7 +29,6 @@ public class Region {
 		this.x = x;
 		this.z = z;
 	}
-
 	public void save(File dir){
 		File file = new File(dir.getAbsolutePath() + "/region_" + x + "l" + z + ".csf");
 		try {
@@ -64,6 +63,35 @@ public class Region {
 				if(c.dir.exists() && c.dir.list().length == 0) c.dir.delete();
 			}
 		}
+	}
+	
+	public boolean playerInRegion(){
+		int px = ((int) Main.getInstance().player.x) / ((int) _SIZE);
+		int pz = ((int) Main.getInstance().player.z) / ((int) _SIZE);
+		if(x == px && z == pz) return true;
+		return false;
+	}
+	
+	public ArrayList<BlockInstance> getFrustumTestBlocks(float y){
+		ArrayList<BlockInstance> testBlocks = new ArrayList<BlockInstance>();
+		float offset = _SIZE / 2;
+		float baseX = x * _SIZE;
+		float baseZ = z * _SIZE;
+		for(float i = -2f; i < offset; i += 2){
+			testBlocks.add(getBlock(new Position(baseX - (offset - i), y, baseZ - (offset - i))));
+			testBlocks.add(getBlock(new Position(baseX + (offset - i), y, baseZ - (offset - i))));
+			testBlocks.add(getBlock(new Position(baseX - (offset - i), y, baseZ + (offset - i))));
+			testBlocks.add(getBlock(new Position(baseX + (offset - i), y, baseZ + (offset - i))));
+		}
+		return testBlocks;
+	}
+	
+	public BlockInstance getBlock(Position p){
+		p.normalizeCoords();
+		for(BlockInstance b : blocks){
+			if(b.x == p.x && b.y == p.y && b.z == p.z) return b;
+		}
+		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
 	public void generate(File file){
@@ -230,10 +258,17 @@ public class Region {
 		if(peripherals.contains(p)) peripherals.remove(p);
 	}
 	
+	public float blocksChecked = 0;
+	
 	public ArrayList<BlockInstance> getRenderableBlocks(){
 		ArrayList<BlockInstance> renderableBlocks = new ArrayList<BlockInstance>();
 		
+		blocksChecked = 0;
+		
+		if(!playerInRegion() && !Main.getInstance().camera.frustum.regionInFrustum(this)) return renderableBlocks;
+		
 		for(BlockInstance b : blocks){
+			blocksChecked ++;
 			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
 			renderableBlocks.add(b);
 			//if(b == Main.world.lookingAt) b.draw(100);

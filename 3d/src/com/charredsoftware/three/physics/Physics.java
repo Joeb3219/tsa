@@ -1,5 +1,7 @@
 package com.charredsoftware.three.physics;
 
+import com.charredsoftware.three.world.Position;
+
 public class Physics {
 
 	/*
@@ -7,6 +9,8 @@ public class Physics {
 	 * Most calculations (damage, force, etc.) do not account for exterior forces (gravity, friction, etc)
 	 * Somewhat reality-based physics, but mostly modified to make game logic work.
 	 */
+	
+	public static final float DOWNWARD_ACCELERATION = -9.8f;
 	
 	public static float calculateFinalVelocity(float initialVelocity, float acceleration, float time){
 		return initialVelocity + acceleration * time;
@@ -37,6 +41,11 @@ public class Physics {
 		return mass * acceleration;
 	}
 
-	public static final float DOWNWARD_ACCELERATION = -9.8f;
+	public static float getDistance(Position a, Position b){
+		float dX = b.x - a.x;
+		float dY = b.y - a.y;
+		float dZ = b.z - a.z;
+		return (float) Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2) + Math.pow(dZ, 2));
+	}
 	
 }

@@ -47,7 +47,7 @@ public class Computer extends Peripheral{
 
 	public int id;
 	public String mac;
-	public File dir, tempScriptFile;
+	public File dir;
 	public Script loadedScript = null;
 	public TextDisplay t;
 	public boolean editing = false, menu = false, executing = false;
@@ -102,14 +102,8 @@ public class Computer extends Peripheral{
 	
 	public LuaValue executeScript(String name){
 		Globals globals = JsePlatform.standardGlobals();
-		if(tempScriptFile == null) {
-			try {
-				tempScriptFile = File.createTempFile("script_" + id, null);
-				tempScriptFile.deleteOnExit();
-			} catch (IOException e) {e.printStackTrace();}
-		}
 		try {
-			globals.STDOUT = new PrintStream(tempScriptFile);
+			globals.STDOUT = new PrintStream(FileUtilities.scriptTempFile);
 		} catch (FileNotFoundException e) {e.printStackTrace();}
 		LuaValue chunk = globals.loadfile(dir.getAbsolutePath() + "/" + name);
 		return chunk.call();
@@ -170,7 +164,7 @@ public class Computer extends Peripheral{
 				executeScript(loadedScript.name);
 				String output = "";
 				try {
-			          FileInputStream inputStream =  new FileInputStream(tempScriptFile);
+			          FileInputStream inputStream =  new FileInputStream(FileUtilities.scriptTempFile);
 			          BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			          String line = "";
 			          while ((line = reader.readLine()) != null) {

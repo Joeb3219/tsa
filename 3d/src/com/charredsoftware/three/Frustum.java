@@ -2,7 +2,10 @@ package com.charredsoftware.three;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.world.BlockInstance;
+import com.charredsoftware.three.world.Position;
+import com.charredsoftware.three.world.Region;
 
 public class Frustum {
 
@@ -41,7 +44,18 @@ public class Frustum {
 		y = new Vector3f(0, Vector3f.dot(x, z), 0);
 	}
 	
-	public boolean BlockInFrustum(BlockInstance b){
+	public boolean regionInFrustum(Region r){
+		//if(Physics.getDistance(Main.getInstance().player.getPosition(), new Position(r.x * Region._SIZE, Main.getInstance().player.y, r.z * Region._SIZE)) > Main.getInstance().camera.farClip) return false;
+		for(BlockInstance b : r.getFrustumTestBlocks(Main.getInstance().player.y)){
+			if(blockInFrustum(b, false)){
+				System.out.println(b.getPosition().toString());
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean blockInFrustum(BlockInstance b, boolean considerY){
 		Vector3f p = b.getPosition().toVector3f();
 		p = Vector3f.sub(p, cameraPos, null);
 		
@@ -50,13 +64,17 @@ public class Frustum {
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
-	 	if (pcy > aux || pcy < -aux) return false;
+	 	if (considerY && (pcy > aux || pcy < -aux)) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;
 	 	if (pcx > aux || pcx < -aux) return false;
 
 		return true;
+	}
+	
+	public boolean BlockInFrustum(BlockInstance b){
+		return blockInFrustum(b, true);
 	}
 	
 }
