@@ -27,7 +27,7 @@ public class Frustum {
 		this.farClip = farClip;
 		this.ratio = ratio;
 		this.fov = fov;
-		this.tFOV = (float) Math.tan(Math.PI / 180.0 * fov * 0.5f);
+		this.tFOV = (float) Math.tan(Math.PI / 180f * fov * 0.5f);
 		nHeight = tFOV * nearClip;
 		nWidth = nHeight * ratio;
 	}
@@ -61,7 +61,7 @@ public class Frustum {
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
-	 	if (considerY && (pcy - 1 > aux || pcy + 1< -aux)) return false;
+	 	if (considerY && (pcy - 1 > aux || pcy + 1 < -aux)) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;

@@ -216,6 +216,8 @@ public class World {
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
 		for(Region r : regions){
+			if(r.x == -1 && r.z == 0){
+			}
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
 			blocksChecked += r.blocksChecked;
 			renderedBlocks += renderable.size();
@@ -225,6 +227,8 @@ public class World {
 				else blockList.put(b.base.texture, new ArrayList<BlockInstance>(Arrays.asList(b)));
 			}
 		}
+
+		
 		
 		renderMap(blockList);
 		

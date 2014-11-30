@@ -66,23 +66,24 @@ public class Region {
 	}
 	
 	public boolean playerInRegion(){
-		int px = ((int) Main.getInstance().player.x) / ((int) _SIZE);
-		int pz = ((int) Main.getInstance().player.z) / ((int) _SIZE);
+		int px = ((int) -Main.getInstance().player.x) / ((int) _SIZE);
+		int pz = ((int) -Main.getInstance().player.z) / ((int) _SIZE);
 		if(x == px && z == pz) return true;
 		return false;
 	}
 	
 	public ArrayList<BlockInstance> getFrustumTestBlocks(float y){
 		ArrayList<BlockInstance> testBlocks = new ArrayList<BlockInstance>();
-		float offset = _SIZE / 2;
 		float baseX = x * _SIZE;
 		float baseZ = z * _SIZE;
-		for(float i = -2f; i < offset; i += 2){
-			testBlocks.add(getBlock(new Position(baseX - (offset - i), y, baseZ - (offset - i))));
-			testBlocks.add(getBlock(new Position(baseX + (offset - i), y, baseZ - (offset - i))));
-			testBlocks.add(getBlock(new Position(baseX - (offset - i), y, baseZ + (offset - i))));
-			testBlocks.add(getBlock(new Position(baseX + (offset - i), y, baseZ + (offset - i))));
+		for(float x = 0; x < _SIZE; x += 2){
+			for(float z = 0; z < _SIZE; z += 2){
+				float fX = baseX + x;
+				float fZ = baseZ + z;
+				testBlocks.add(getBlock(new Position(fX, y, fZ)));
+			}
 		}
+		
 		return testBlocks;
 	}
 	
@@ -271,8 +272,6 @@ public class Region {
 			blocksChecked ++;
 			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
 			renderableBlocks.add(b);
-			//if(b == Main.world.lookingAt) b.draw(100);
-			//else b.draw();
 		}
 		return renderableBlocks;
 	}

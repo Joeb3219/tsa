@@ -200,7 +200,7 @@ public class Main {
 			
 			//Display Text
 			if(DISPLAY_INFO){
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(-player.x, -player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
 				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
 				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
