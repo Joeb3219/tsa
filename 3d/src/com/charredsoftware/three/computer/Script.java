@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import com.charredsoftware.three.CrashReport;
+
 public class Script {
 
 	public File dir;
@@ -30,14 +32,14 @@ public class Script {
 			}
 			
 			writer.close();
-		} catch (Exception e){e.printStackTrace();}
+		} catch (Exception e){new CrashReport(e);}
 	}
 	
 	public void loadScript(){
 		File f = new File(dir, name);
 		try{
 			if(!f.exists()) f.createNewFile();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){new CrashReport(e);}
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			for(String line; (line = br.readLine()) != null; ) {
@@ -45,7 +47,7 @@ public class Script {
 			}
 			
 			br.close();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){new CrashReport(e);}
 	}
 	
 }

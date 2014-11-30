@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.util.FileUtilities;
 
 public class Block {
@@ -83,7 +84,7 @@ public class Block {
 		try{
 			if(path.contains("png")) return TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + path));
 			else return TextureLoader.getTexture("jpg", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + path));
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){new CrashReport(e);}
 			return null;
 	}
 	

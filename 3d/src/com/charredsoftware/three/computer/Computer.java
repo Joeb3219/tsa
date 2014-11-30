@@ -23,11 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import org.luaj.vm2.Globals;
@@ -36,6 +33,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.GameState;
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.gui.TerminalDisplay;
@@ -104,7 +102,7 @@ public class Computer extends Peripheral{
 		Globals globals = JsePlatform.standardGlobals();
 		try {
 			globals.STDOUT = new PrintStream(FileUtilities.scriptTempFile);
-		} catch (FileNotFoundException e) {e.printStackTrace();}
+		} catch (FileNotFoundException e) {new CrashReport(e);}
 		LuaValue chunk = globals.loadfile(dir.getAbsolutePath() + "/" + name);
 		return chunk.call();
 	}
@@ -171,7 +169,7 @@ public class Computer extends Peripheral{
 			             output += line;
 			          }
 			          reader.close();
-			    }catch (Exception e) {e.printStackTrace();}
+			    }catch (Exception e) {new CrashReport(e);}
 				Main.getInstance().font.drawString(15, 15, output);
 			}
 			t.clearScreen();

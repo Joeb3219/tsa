@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.computer.Computer;
 import com.charredsoftware.three.computer.Peripheral;
@@ -54,7 +55,7 @@ public class Region {
 			writer.println("</Blocks>");
 			
 			writer.close();
-		} catch (IOException e) {e.printStackTrace();}
+		} catch (IOException e) {new CrashReport(e);}
 		
 		//Delete unused data folders
 		for(Peripheral p : peripherals){
@@ -66,9 +67,9 @@ public class Region {
 	}
 	
 	public boolean playerInRegion(){
-		int px = ((int) -Main.getInstance().player.x) / ((int) _SIZE);
-		int pz = ((int) -Main.getInstance().player.z) / ((int) _SIZE);
-		if(x == px && z == pz) return true;
+		int px = ((int) Main.getInstance().player.x) / ((int) _SIZE);
+		int pz = ((int) Main.getInstance().player.z) / ((int) _SIZE);
+		if(x == -px && z == -pz) return true;
 		return false;
 	}
 	
@@ -128,10 +129,10 @@ public class Region {
 				
 			}
 			
-		} catch (IOException e) {e.printStackTrace();} catch (SAXException e) {
-			e.printStackTrace();
+		} catch (IOException e) {new CrashReport(e);} catch (SAXException e) {
+			new CrashReport(e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			new CrashReport(e);
 		}
 	}
 	
