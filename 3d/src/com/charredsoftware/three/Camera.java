@@ -49,7 +49,7 @@ public class Camera {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		glClearColor(89 / 255f, 203 / 255f, 222 / 255f, 1f);
 		
-		frustum.calculateFrustum(fov, Display.getWidth() / Display.getHeight(), nearClip, farClip);
+		frustum.calculateFrustum(fov, Display.getWidth() * 1f / Display.getHeight(), nearClip, farClip);
 	}
 	
 	public void resetAspectRatio(float aspectRatio){

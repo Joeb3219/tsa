@@ -27,7 +27,7 @@ public class Frustum {
 		this.farClip = farClip;
 		this.ratio = ratio;
 		this.fov = fov;
-		this.tFOV = (float) Math.tan(Math.PI / 180.0 * fov);
+		this.tFOV = (float) Math.tan(Math.PI / 180.0 * fov * 0.5f);
 		nHeight = tFOV * nearClip;
 		nWidth = nHeight * ratio;
 	}
@@ -47,10 +47,7 @@ public class Frustum {
 	public boolean regionInFrustum(Region r){
 		//if(Physics.getDistance(Main.getInstance().player.getPosition(), new Position(r.x * Region._SIZE, Main.getInstance().player.y, r.z * Region._SIZE)) > Main.getInstance().camera.farClip) return false;
 		for(BlockInstance b : r.getFrustumTestBlocks(Main.getInstance().player.y)){
-			if(blockInFrustum(b, false)){
-				System.out.println(b.getPosition().toString());
-				return true;
-			}
+			if(blockInFrustum(b, false)) return true;
 		}
 		return false;
 	}
@@ -64,11 +61,11 @@ public class Frustum {
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
-	 	if (considerY && (pcy > aux || pcy < -aux)) return false;
+	 	if (considerY && (pcy - 1 > aux || pcy + 1< -aux)) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;
-	 	if (pcx > aux || pcx < -aux) return false;
+	 	if (pcx - 1 > aux || pcx + 1 < -aux) return false;
 
 		return true;
 	}
