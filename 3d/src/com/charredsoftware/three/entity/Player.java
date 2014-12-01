@@ -67,16 +67,16 @@ public class Player extends Mob{
 
 	private void checkMovement(float speedModifier) {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
 			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
 		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
+		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
+			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
+			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
@@ -88,9 +88,9 @@ public class Player extends Mob{
 		float fY = dY + y;
 		float fZ = dZ + z;
 
-		if(!world.getBlock(new Position(-fX, -fY, -fZ)).base.solid){
-			if(isCrouching && !world.getBlock(new Position(-fX, -fY - 1, -fZ)).base.solid) return; //Falling while crouching -> stop movement.
-			if(world.getBlock(new Position(-fX, -fY + height / 2, -fZ)).base.solid) return; //Hit yer head!
+		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
+			if(isCrouching && !world.getBlock(new Position(fX, fY - 1, fZ)).base.solid) return; //Falling while crouching -> stop movement.
+			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
 			x = fX;
 			z = fZ;
 			y = fY;
@@ -104,7 +104,7 @@ public class Player extends Mob{
 	
 	public Vector3f getLookingAt(float dist){
 		double rx = Math.cos(Math.toRadians(Main.getInstance().camera.rx));
-		Vector3f v = new Vector3f((float) -(Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - x, (float) -Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist - y, (float) -(Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx) - z);
+		Vector3f v = new Vector3f(x - (float) (Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx), y - (float) Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist, z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx));
 		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2f : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
 		if(dist == Main.getInstance().camera.farClip) v.translate(.1f, 0, .1f);
 		return v;

@@ -28,21 +28,21 @@ public class Mob extends Entity{
 	}
 	
 	protected void checkCanJump(float dY){
-		float fY = y - dY;
-		ArrayList<BlockInstance>  blocks = world.getBlocksInRange(-x, -z, -y, -dY);
+		float fY = y + dY;
+		ArrayList<BlockInstance>  blocks = world.getBlocksInRange(x, z, y, dY);
 		if(dY > 0){
 			for(int i = 0; i <= blocks.size() - 1; i ++){
-				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
+				if(blocks.get(i).y < fY + height && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
-					y = -blocks.get(i).y + height;
+					y = blocks.get(i).y - height;
 					return;
 				}
 			}
 		}else{
 			for(int i = blocks.size() - 1; i >= 0; i --){
-				if(blocks.get(i).y < fY && blocks.get(i).base.solid){
+				if(blocks.get(i).y > fY && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
-					y = -blocks.get(i).y - 1;
+					y =  blocks.get(i).y + 1;
 					return;
 				}
 			}
@@ -65,19 +65,19 @@ public class Mob extends Entity{
 	}
 	
 	public boolean stuckInBlock(){
-		Position p = new Position(-x, -y, -z);
+		Position p = new Position(x, y, z);
 		p.normalizeCoords();
 		return world.getBlock(p).base.solid;
 	}
 	
 	public boolean isInWater(){
-		if(world.getBlock(new Position(-x, -y, -z)).base == Block.water) return true;
-		if(world.getBlock(new Position(-x, -y + 1, -z)).base == Block.water) return true;
+		if(world.getBlock(new Position(x, y, z)).base == Block.water) return true;
+		if(world.getBlock(new Position(x, y + 1, z)).base == Block.water) return true;
 		return false;
 	}
 	
 	public BlockInstance getBlockUnder(){
-		Position p = new Position(-x, -y - 1f, -z);
+		Position p = new Position(x, y - 1f, z);
 		return world.getBlock(p);
 	}
 

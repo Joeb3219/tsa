@@ -144,8 +144,8 @@ public class World {
 		ArrayList<BlockInstance> inRange = getBlocksInY(x, z);
 		ArrayList<BlockInstance> inRangeVertically = new ArrayList<BlockInstance>();
 		for(BlockInstance b : inRange){
-			if(dY > 0 && b.y < yCurrent && b.y > yCurrent - dY) inRangeVertically.add(b);
-			else if(dY < 0 && b.y > yCurrent && b.y < yCurrent - dY) inRangeVertically.add(b);
+			if(dY > 0 && b.y > yCurrent && b.y < yCurrent + dY) inRangeVertically.add(b);
+			else if(dY < 0 && b.y < yCurrent && b.y > yCurrent + dY) inRangeVertically.add(b);
 		}
 		return inRangeVertically;
 	}

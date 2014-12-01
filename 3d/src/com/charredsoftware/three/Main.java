@@ -119,11 +119,11 @@ public class Main {
 			cooldown = 5f;
 		}
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(-2f, -1f, -2f);
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(2f, 1f, 2f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
 			player.world.generate();
-			player.setPosition(-2f, -1f, -2f);
+			player.setPosition(2f, 1f, 2f);
 		}
 	}
 	
@@ -136,8 +136,8 @@ public class Main {
 			if(deltaX < 0) camera.ry -= 1.8f * (Math.min(-deltaX, 28) / 4);
 		}
 		if(Math.abs(deltaY) > mouseMovementThreshold){
-			if(deltaY < 0 && camera.rx < 90f) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
-			if(deltaY > 0 && camera.rx > -90f) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
+			if(deltaY < 0) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
+			if(deltaY > 0) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
 		}
 
 		if(camera.ry < 0) camera.ry = 360 + camera.ry;
@@ -222,9 +222,9 @@ public class Main {
 			
 			//Display Text
 			if(DISPLAY_INFO){
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(-player.x, -player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
+				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
 				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
-				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(-player.x, -player.y - 1, -player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(-player.x, -player.y, -player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(-player.x, (-player.y + 2), -player.z)).base.name + "}");
+				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(player.x, player.y - 1, player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(player.x, player.y, player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(player.x, (player.y + player.height), player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
 				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + player.world.renderedBlocks + " {checked: " + player.world.blocksChecked + "}");
 				font.drawString(5, 105, "Health: " + player.health);
