@@ -23,7 +23,7 @@ import com.charredsoftware.three.entity.Player;
 public class Camera {
 
 	public float x = 0, y = -2, z = 0;
-	public float ry = 0, rx = 0, rz = 0;
+	public float rx = 0, ry = 0, rz = 0;
 	public float fov, aspectRatio, nearClip, farClip;
 	public Frustum frustum = Frustum.getInstance();
 	public float yOffset = 0f;
@@ -58,19 +58,19 @@ public class Camera {
 	}
 	
 	public void move(float dir, float speed){
-		this.z += speed * Math.sin(Math.toRadians(rx + 90 * dir));
-		this.x += speed * Math.cos(Math.toRadians(rx + 90 * dir));
+		this.z += speed * Math.sin(Math.toRadians(ry + 90 * dir));
+		this.x += speed * Math.cos(Math.toRadians(ry + 90 * dir));
 	}
 	
 	public void useView(){
 		Vector3f camera = new Vector3f(x, y, z);
 		Vector3f looking = Main.getInstance().player.getLookingAt();
-		Vector3f up = new Vector3f(0, y + farClip * (float) Math.cos(Math.toRadians(ry - 90)), 0);
+		Vector3f up = new Vector3f(0, y + farClip * (float) Math.cos(Math.toRadians(rx - 90)), 0);
 		frustum.setCamera(camera, looking, up);
 		
 		glLoadIdentity();
-		glRotatef(rx, 1, 0, 0);
-		glRotatef(ry, 0, 1, 0);
+		glRotatef(ry, 1, 0, 0);
+		glRotatef(rx, 0, 1, 0);
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);

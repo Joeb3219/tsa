@@ -132,18 +132,18 @@ public class Main {
 		float deltaY = Mouse.getDY();
 		
 		if(Math.abs(deltaX) > mouseMovementThreshold){
-			if(deltaX > 0) camera.ry += 1.8f * (Math.min(deltaX, 28) / 4);
-			if(deltaX < 0) camera.ry -= 1.8f * (Math.min(-deltaX, 28) / 4);
+			if(deltaX > 0) camera.rx += 1.8f * (Math.min(deltaX, 28) / 4);
+			if(deltaX < 0) camera.rx -= 1.8f * (Math.min(-deltaX, 28) / 4);
 		}
 		if(Math.abs(deltaY) > mouseMovementThreshold){
-			if(deltaY < 0) camera.rx += 1.8f * (Math.min(-deltaY, 28) / 4);
-			if(deltaY > 0) camera.rx -= 1.8f * (Math.min(deltaY, 28) / 4);
+			if(deltaY < 0) camera.ry += 1.8f * (Math.min(-deltaY, 28) / 4);
+			if(deltaY > 0) camera.ry -= 1.8f * (Math.min(deltaY, 28) / 4);
 		}
 
-		if(camera.ry < 0) camera.ry = 360 + camera.ry;
-		if(camera.ry >= 360) camera.ry = 360 - camera.ry;
-		if(camera.rx < -90f) camera.rx = -90f;
-		if(camera.rx > 90f) camera.rx = 90f;
+		if(camera.rx < 0) camera.rx = 360 + camera.rx;
+		if(camera.rx >= 360) camera.rx = 360 - camera.rx;
+		if(camera.ry < -90f) camera.ry = -90f;
+		if(camera.ry > 90f) camera.ry = 90f;
 		
 		float dWheel = Mouse.getDWheel();
 		
@@ -223,7 +223,7 @@ public class Main {
 			//Display Text
 			if(DISPLAY_INFO){
 				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
+				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.ry + "/" + camera.rx + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
 				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(player.x, player.y - 1, player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(player.x, player.y, player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(player.x, (player.y + player.height), player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
 				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + player.world.renderedBlocks + " {checked: " + player.world.blocksChecked + "}");

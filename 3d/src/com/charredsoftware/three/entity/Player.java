@@ -67,16 +67,16 @@ public class Player extends Mob{
 
 	private void checkMovement(float speedModifier) {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
+			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx + 90))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx + 90))));
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry + 90))));
+			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx + 90))));
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
+			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx))));
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.ry))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.ry))));
+			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx))));
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
@@ -103,9 +103,9 @@ public class Player extends Mob{
 	}
 	
 	public Vector3f getLookingAt(float dist){
-		double rx = Math.cos(Math.toRadians(Main.getInstance().camera.rx));
-		Vector3f v = new Vector3f(x - (float) (Math.sin(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx), y - (float) Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * dist, z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.ry)) * dist * rx));
-		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2f : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.rx)))) -.5f), 0);
+		double ry = Math.cos(Math.toRadians(Main.getInstance().camera.ry));
+		Vector3f v = new Vector3f(x - (float) (Math.sin(Math.toRadians(360 - Main.getInstance().camera.rx)) * dist * ry), y - (float) Math.sin(Math.toRadians(Main.getInstance().camera.ry)) * dist, z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.rx)) * dist * ry));
+		v.translate(0, Math.max(0f, (float) (((isCrouching) ? height / 2f : height) * (Math.sin(Math.toRadians(90 - Main.getInstance().camera.ry)))) -.5f), 0);
 		if(dist == Main.getInstance().camera.farClip) v.translate(.1f, 0, .1f);
 		return v;
 	}
