@@ -10,9 +10,11 @@ import com.charredsoftware.three.util.FileUtilities;
 public class Sound {
 
 	public static Sound HIT_GROUND = new Sound("hit_ground.wav");
+	public static Sound DAMAGE_GROUND = new Sound("hurt_fall_damage.wav");
+	public static Sound WALKING = new Sound("walking.wav");
 	
 	private String path;
-	private Audio audio;
+	public Audio audio;
 	
 	public Sound(String path){
 		this.path = path;

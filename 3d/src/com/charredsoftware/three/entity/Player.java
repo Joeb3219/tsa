@@ -21,6 +21,7 @@ public class Player extends Mob{
 	public Hotbar hotbar;
 	public Block selectedBlock;
 	public Peripheral selectedPeripheral = null;
+	public boolean walking = false;
 	
 	public Player(World world, Camera camera){
 		super();
@@ -54,7 +55,8 @@ public class Player extends Mob{
 			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
 			checkCanJump(currentJumpingVelocity / 2);
 			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
-				Sound.HIT_GROUND.playSfx(x, y, z);
+				Sound.HIT_GROUND.playSfx();
+				if(potentialDamage > 0) Sound.DAMAGE_GROUND.playSfx();
 				health -= potentialDamage;
 				y = (float) ((int) y);
 				isJumping = false;
@@ -68,6 +70,7 @@ public class Player extends Mob{
 	}
 
 	private void checkMovement(float speedModifier) {
+		walking = false;
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx + 90))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx + 90))));
 		}
@@ -80,6 +83,10 @@ public class Player extends Mob{
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
 			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx))));
 		}
+
+		if(isJumping) walking = false;
+		if(walking && !Sound.WALKING.audio.isPlaying()) Sound.WALKING.playSfx();
+		if(!walking && Sound.WALKING.audio.isPlaying()) Sound.WALKING.audio.stop();
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
 		else isCrouching = false;
@@ -93,6 +100,7 @@ public class Player extends Mob{
 		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
 			if(isCrouching && !world.getBlock(new Position(fX, fY - 1, fZ)).base.solid) return; //Falling while crouching -> stop movement.
 			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
+			walking = true;
 			x = fX;
 			z = fZ;
 			y = fY;

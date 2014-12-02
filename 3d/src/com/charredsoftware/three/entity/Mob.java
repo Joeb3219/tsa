@@ -2,6 +2,8 @@ package com.charredsoftware.three.entity;
 
 import java.util.ArrayList;
 	
+
+import com.charredsoftware.three.Sound;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
@@ -35,6 +37,7 @@ public class Mob extends Entity{
 				if(blocks.get(i).y < fY + height && blocks.get(i).base.solid){
 					currentJumpingVelocity = 0f;
 					y = blocks.get(i).y - height;
+					Sound.DAMAGE_GROUND.playSfx();
 					return;
 				}
 			}
