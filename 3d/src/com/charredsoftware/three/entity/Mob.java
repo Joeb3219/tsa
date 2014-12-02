@@ -1,7 +1,7 @@
 package com.charredsoftware.three.entity;
 
 import java.util.ArrayList;
-
+	
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;

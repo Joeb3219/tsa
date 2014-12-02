@@ -25,16 +25,23 @@ import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import java.io.File;
 import java.util.Timer;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.openal.SoundStore;
 
 import com.charredsoftware.three.entity.Player;
+import com.charredsoftware.three.gui.Button;
+import com.charredsoftware.three.gui.Menu;
+import com.charredsoftware.three.gui.Widget;
+import com.charredsoftware.three.util.FileUtilities;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
 import com.charredsoftware.three.world.Position;
@@ -51,8 +58,10 @@ public class Main {
 	public Camera camera;
 	int displayFPS = 0;
 	public boolean menu = false, DISPLAY_INFO = true;
-	public GameState gameState = GameState.GAME;
+	public GameState gameState = GameState.MENU;
 	private float cooldown = 0f;
+	private Menu main_menu, options_menu;
+	private boolean developer_mode = true;
 	
 	private static Main _INSTANCE = null;
 	
@@ -74,14 +83,14 @@ public class Main {
 		try{
 			game.loop();
 		}catch(Throwable t){
-			CrashReport crash = new CrashReport(t);
-			 //We crashed! Cannot recover! Kill the system!
+			new CrashReport(t);
 		}
 		game.cleanDisplay();
 	}
 	
 	void cleanDisplay(){
 		Display.destroy();
+		AL.destroy();
 	}
 	
 	private void initializeDisplay(){
@@ -95,7 +104,11 @@ public class Main {
 	
 	public void tick(){
 		if(cooldown > 0) cooldown --;
-
+		
+		if(gameState == GameState.MENU && developer_mode) gameState = GameState.GAME;
+		else if(gameState == GameState.MENU) unboundMouseTick(); 
+		
+		
 		if(gameState == GameState.GAME){
 			if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
 			player.update();
@@ -111,8 +124,29 @@ public class Main {
 		
 		while(Keyboard.next()){}
 		
+		SoundStore.get().poll(0);
 	}
 
+	private void unboundMouseTick(){
+		//TODO: Extract this logic to its own class.
+		if(gameState == GameState.MENU){
+			if(Mouse.isButtonDown(0)){
+				Widget w = main_menu.getWidgetInBounds();
+				if(w != null){
+					gameState = GameState.GAME;
+					if(w.identifier.equalsIgnoreCase("new_world")){
+						player.world = new World();
+						player.world.generate();
+					}else{
+						System.out.println("Loading world " + w.identifier);
+						player.world = new World(Integer.parseInt(w.identifier));
+						player.world.generate();
+					}
+				}
+			}
+		}
+	}
+	
 	private void keyboardTick() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
 			menu = !menu;
@@ -181,6 +215,11 @@ public class Main {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
+		if(gameState == GameState.MENU){
+			renderMenu("main");
+			return;
+		}
+		
 		glLoadIdentity();
 		camera.useView();
 
@@ -223,7 +262,7 @@ public class Main {
 			//Display Text
 			if(DISPLAY_INFO){
 				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.ry + "/" + camera.rx + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
+				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
 				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(player.x, player.y - 1, player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(player.x, player.y, player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(player.x, (player.y + player.height), player.z)).base.name + "}");
 				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
 				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + player.world.renderedBlocks + " {checked: " + player.world.blocksChecked + "}");
@@ -296,6 +335,27 @@ public class Main {
 		player.world.save();
 		
 		Display.destroy();
+		AL.destroy();
+	}
+	
+	private void renderMenu(String menu){
+		if(menu.equalsIgnoreCase("main")){
+			if(main_menu == null){
+				main_menu = new Menu(new Position(0, 0, 0), Display.getWidth(), Display.getHeight(), 0f, 0f, 0f, 1f);
+				float standardX = Display.getWidth() - Button.standardWidth - 10f;
+				float standardY = Display.getHeight() - Button.standardHeight - 40f;
+				Button button = new Button(new Position(standardX, standardY, 0), "New World", 1f, 1f, 1f, 1f);
+				button.identifier = "new_world";
+				main_menu.widgets.add(button);
+				for(String s : FileUtilities.getChildDirectoriesAsString(FileUtilities.savesPath)){
+					button = new Button(new Position(standardX, standardY - (Button.standardHeight + 10) * main_menu.widgets.size(), 0), "World " + s, 100f, 100f, 100f, 255f);
+					button.identifier = s;
+					main_menu.widgets.add(button);
+				}
+			}
+			main_menu.render();
+			return;
+		}
 	}
 	
 }

@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.three.Camera;
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.Sound;
 import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.inventory.Hotbar;
 import com.charredsoftware.three.inventory.Item;
@@ -53,6 +54,7 @@ public class Player extends Mob{
 			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
 			checkCanJump(currentJumpingVelocity / 2);
 			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
+				Sound.HIT_GROUND.playSfx(x, y, z);
 				health -= potentialDamage;
 				y = (float) ((int) y);
 				isJumping = false;
