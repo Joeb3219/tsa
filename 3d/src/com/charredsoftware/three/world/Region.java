@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +17,7 @@ import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.computer.Computer;
 import com.charredsoftware.three.computer.Peripheral;
+import com.charredsoftware.three.entity.Player;
 
 public class Region {
 
@@ -25,8 +25,10 @@ public class Region {
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public ArrayList<Peripheral> peripherals = new ArrayList<Peripheral>();
 	public float x, z;
+	public World world;
 	
-	public Region(float x, float z){
+	public Region(World world, float x, float z){
+		this.world = world;
 		this.x = x;
 		this.z = z;
 	}
@@ -137,86 +139,27 @@ public class Region {
 	}
 	
 	public void generate(){
-		if(x == 0 && z == 0){
-			for(float x = 0 / 2; x < _SIZE - 1; x ++ ){
-				for(float y = 0; y < 24; y ++){
-					addBlock(new BlockInstance(Block.bricks, x, y, _SIZE - 1));
-					addBlock(new BlockInstance(Block.bricks, x, y, 0));
-				}
-			}
-			
-			for(float z = 0 / 2; z < _SIZE - 1; z ++){
-				for(float y = 0; y < 24; y ++){
-					addBlock(new BlockInstance(Block.bricks, _SIZE - 1, y, z));
-					addBlock(new BlockInstance(Block.bricks, 0, y, z));
-				}
-			}
-			
-			for(float x = 0 / 2; x < _SIZE - 1; x ++){
-				for(float z = 0; z < _SIZE - 1; z ++){
-					addBlock(new BlockInstance(Block.grass, x, -1.0f, z));
-					if(!(x == 0 && z == 0)) addBlock(new BlockInstance(Block.ceiling, x, 24, z));
-				}
-			}
-			
-			for(float x = 6; x < 12; x ++){
-				for(float z = 6; z < 12; z ++){
-					for(float y = 0; y < 3; y ++){
-						addBlock(new BlockInstance(Block.bricks, x, y, z));
-					}
-				}
-			}
-			
-			addBlock(new BlockInstance(Block.boost, 10, 3, 10));
-			
-			addBlock(new BlockInstance(Block.wood, 4, 0, 6));
-			addBlock(new BlockInstance(Block.wood, 4, 1, 8));
-			addBlock(new BlockInstance(Block.wood, 4, 2, 10));
-			addBlock(new BlockInstance(Block.wood, 4, 0, 8));
-			addBlock(new BlockInstance(Block.wood, 4, 0, 10));
-			addBlock(new BlockInstance(Block.wood, 4, 1, 10));
-			
-			addBlock(new BlockInstance(Block.computer, 8, 3, 8));
-			
+		double[][] masses = Main.getInstance().player.world.noise.getMassAsArray();
+		double[][] heights = Main.getInstance().player.world.noise.getHeightAsArray();
+
+		if(this.x < 0 || this.z < 0){
+			addBlock(new BlockInstance(Block.air, this.x * _SIZE + 1, 1,  this.z * _SIZE + 1));
 			return;
-		
 		}
 		
-		Random r = new Random();
-		for(float y = -2f; y <= -1f; y ++){
-			for(float x = 0; x < _SIZE; x ++){
-				for(float z = 0; z < _SIZE; z ++){
-					float fX = this.x * _SIZE + x;
-					float fZ = this.z * _SIZE + z;
-					if(y == -2) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
-					else{
-						ArrayList<BlockInstance> surrounding = Main.getInstance().player.world.getSurroundingBlocks(x, y, z);
-						int baseChance = 6;
-						int grassChance = baseChance, bricksChance = baseChance, boostChance = baseChance, ceilingChance = baseChance, woodChance = baseChance, waterChance = baseChance;
-						for(BlockInstance b : surrounding){
-							if(b.base == Block.grass) grassChance -= 2;
-							if(b.base == Block.bricks) bricksChance -= 2;
-							if(b.base == Block.boost) boostChance -= 2;
-							if(b.base == Block.ceiling) ceilingChance -= 2;
-							if(b.base == Block.wood) woodChance -= 2;
-							if(b.base == Block.water) waterChance -= 2;
-						}
-						if(grassChance < 1) grassChance = 1;
-						if(bricksChance < 1) bricksChance = 1;
-						if(boostChance < 1) boostChance = 1;
-						if(ceilingChance < 1) ceilingChance = 1;
-						if(waterChance < 1) waterChance = 1;
-						if(woodChance < 1) woodChance = 1;
-						if(r.nextInt(grassChance) == 1) addBlock(new BlockInstance(Block.grass, fX, y, fZ));
-						else if(r.nextInt(bricksChance) == 1) addBlock(new BlockInstance(Block.bricks, fX, y, fZ));
-						else if(r.nextInt(boostChance) == 1) addBlock(new BlockInstance(Block.boost, fX, y, fZ));
-						else if(r.nextInt(ceilingChance) == 1) addBlock(new BlockInstance(Block.ceiling, fX, y, fZ));
-						else if(r.nextInt(woodChance) == 1) addBlock(new BlockInstance(Block.wood, fX, y, fZ));
-						else if(r.nextInt(waterChance) == 1) addBlock(new BlockInstance(Block.water, fX, y, fZ));
-						//else if(r.nextInt(5) == 1) world.addBlock(new BlockInstance(Block.grass, x, y, z));
-						else{} //Air
-					}
+		for(float x = 0; x < _SIZE; x ++){
+			for(float z = 0; z < _SIZE; z ++){
+				int dX = (int) (this.x * _SIZE + x);
+				int dZ = (int) (this.z * _SIZE + z);
+				
+				float height = (float) heights[dX][dZ];
+				double landMass = masses[dX][dZ];
+				float _height = (float) ((int) (height * Region._HEIGHT));
+				for(float y = 0; y < _height; y ++){
+					if(landMass == 0.0) addBlock(new BlockInstance(Block.bricks, dX, (float) y, dZ));
+					else addBlock(new BlockInstance(Block.grass, dX, (float) y, dZ));
 				}
+				
 			}
 		}
 	}
@@ -272,9 +215,22 @@ public class Region {
 		for(BlockInstance b : blocks){
 			blocksChecked ++;
 			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
+			if(!checkIfCovered(b)) continue;
 			renderableBlocks.add(b);
 		}
 		return renderableBlocks;
+	}
+	
+	private boolean checkIfCovered(BlockInstance b){
+		Player player = Main.getInstance().player;
+		if(world.getBlockWithoutNewRegion(new Position(b.x, b.y + 1, b.z)).base == Block.air && player.y + player.height > b.y) return true;
+		if(world.getBlockWithoutNewRegion(new Position(b.x, b.y - 1, b.z)).base == Block.air && player.y + player.height < b.y) return true;
+		if(world.getBlockWithoutNewRegion(new Position(b.x + 1, b.y, b.z)).base == Block.air && player.x > b.x) return true;
+		if(world.getBlockWithoutNewRegion(new Position(b.x - 1, b.y, b.z)).base == Block.air && player.x < b.x) return true;
+		if(world.getBlockWithoutNewRegion(new Position(b.x, b.y, b.z + 1)).base == Block.air && player.z > b.z) return true;
+		if(world.getBlockWithoutNewRegion(new Position(b.x, b.y, b.z - 1)).base == Block.air && player.z < b.z) return true;
+		
+		return false;
 	}
 	
 	public Position getPosition(){

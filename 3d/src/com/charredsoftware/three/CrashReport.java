@@ -57,6 +57,7 @@ public class CrashReport {
 			
 			if(t instanceof Exception){
 				Exception e = ((Exception) t);
+				e.printStackTrace();
 				synop += e.getMessage() + System.getProperty("line.separator");
 				writer.println(e.getMessage());
 				for(StackTraceElement s : e.getStackTrace()){

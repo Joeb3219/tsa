@@ -25,8 +25,10 @@ import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
-import java.io.File;
 import java.util.Timer;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -44,6 +46,7 @@ import com.charredsoftware.three.gui.Widget;
 import com.charredsoftware.three.util.FileUtilities;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
+import com.charredsoftware.three.world.NoiseMap;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
@@ -61,7 +64,7 @@ public class Main {
 	public GameState gameState = GameState.MENU;
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
-	private boolean developer_mode = true;
+	private boolean developer_mode = false;
 	
 	private static Main _INSTANCE = null;
 	
@@ -80,6 +83,7 @@ public class Main {
 	
 	public static void main(String[] args){
 		Main game = getInstance();
+		
 		try{
 			game.loop();
 		}catch(Throwable t){
@@ -137,10 +141,12 @@ public class Main {
 					if(w.identifier.equalsIgnoreCase("new_world")){
 						player.world = new World();
 						player.world.generate();
+						player.spawn(1, 1);
 					}else{
 						System.out.println("Loading world " + w.identifier);
 						player.world = new World(Integer.parseInt(w.identifier));
 						player.world.generate();
+						player.spawn(1, 1);
 					}
 				}
 			}
@@ -157,7 +163,7 @@ public class Main {
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
 			player.world.generate();
-			player.setPosition(2f, 1f, 2f);
+			player.spawn(1, 1);
 		}
 	}
 	
@@ -295,6 +301,7 @@ public class Main {
 		font = new TrueTypeFont(awtFont, false);
 		
 		player.world.generate();
+		player.spawn(1, 1);
 		
 		Timer t = new Timer();
 		//t.scheduleAtFixedRate(new TimerTask(){public void run(){Main.world.save();}}, 5, 5000);

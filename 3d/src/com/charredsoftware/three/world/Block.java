@@ -97,6 +97,7 @@ public class Block {
 	}
 	
 	public void drawSetup(){
+		if(this == Block.air) return;
 		texture.bind();
 	}
 	
@@ -104,6 +105,8 @@ public class Block {
 	}
 	
 	public void drawBlock(float x, float y, float z){
+		if(this == Block.air) return;
+
 		glPushMatrix();
 		glTranslatef(x, y, z);
 		glBegin(GL_QUADS);

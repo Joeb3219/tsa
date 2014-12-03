@@ -107,6 +107,10 @@ public class Player extends Mob{
 		}
 		
 	}
+	
+	public void spawn(float x, float z){
+		setPosition(x, world.getHighestBlock(x, z).y, z);
+	}
 
 	public Vector3f getLookingAt(){
 		return getLookingAt(Main.getInstance().camera.farClip);

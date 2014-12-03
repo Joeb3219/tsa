@@ -21,6 +21,7 @@ public class World {
 	public BlockInstance lookingAt = new BlockInstance(Block.air, 0, -10000, 0);
 	public int id;
 	public File dir;
+	public NoiseMap noise = new NoiseMap(256, 256);
 	
 	public World(){
 		this.id = getNextId();
@@ -73,11 +74,24 @@ public class World {
 			if(new File(dir.getAbsolutePath(), s).isDirectory()) continue;
 			String coordinates = s.split("_")[1];
 			if(coordinates.split("l").length != 2) continue;
-			Region r = new Region(Float.parseFloat(coordinates.split("l")[0]), Float.parseFloat(coordinates.split("l")[1].split(".csf")[0]));
+			Region r = new Region(this, Float.parseFloat(coordinates.split("l")[0]), Float.parseFloat(coordinates.split("l")[1].split(".csf")[0]));
 			regions.add(r);
 			r.generate(new File(dir.getAbsolutePath(), s));
 			
 		}
+	}
+
+	
+	//Does exactly what getBlock does, but won't create a new region if one doesn't exist.
+	//Useful for when doing occulsion culling.
+	public BlockInstance getBlockWithoutNewRegion(Position p){
+		p.normalizeCoords();
+		for(Region r : regions){
+			if(p.x == r.x && p.z == r.z){
+				return r.getBlock(p);
+			}
+		}
+		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
 	public BlockInstance getBlock(Position p){
@@ -129,7 +143,7 @@ public class World {
 			if(x == r.x && z == r.z) return r;
 		}
 		
-		Region r = new Region(x, z);
+		Region r = new Region(this, x, z);
 		regions.add(r);
 		r.generate();
 		
@@ -215,9 +229,9 @@ public class World {
 		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
+		System.out.println(regions.size());
+		
 		for(Region r : regions){
-			if(r.x == -1 && r.z == 0){
-			}
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
 			blocksChecked += r.blocksChecked;
 			renderedBlocks += renderable.size();
