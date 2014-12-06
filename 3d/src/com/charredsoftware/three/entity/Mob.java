@@ -31,7 +31,7 @@ public class Mob extends Entity{
 	
 	protected void checkCanJump(float dY){
 		float fY = y + dY;
-		ArrayList<BlockInstance>  blocks = world.getBlocksInRange(x, z, y, dY);
+		ArrayList<BlockInstance> blocks = world.getBlocksInRange(x, z, y, dY);
 		if(dY > 0){
 			for(int i = 0; i <= blocks.size() - 1; i ++){
 				if(blocks.get(i).y < fY + height && blocks.get(i).base.solid){
@@ -54,7 +54,7 @@ public class Mob extends Entity{
 	}
 	
 	protected void checkGettingHurt() {
-		if(y > 50 && ((int) y) % 4 == 0) health --;
+		if(y < -50 && ((int) y) % 4 == 0) health --;
 		if(stuckInBlock()){
 			//At first, attempt to push player away.
 			Position startingPosition = getPosition();

@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
 import com.charredsoftware.three.Main;
-import com.charredsoftware.three.computer.Peripheral;
+import com.charredsoftware.three.entity.Entity;
 import com.charredsoftware.three.util.FileUtilities;
 
 public class World {
@@ -21,7 +21,7 @@ public class World {
 	public BlockInstance lookingAt = new BlockInstance(Block.air, 0, -10000, 0);
 	public int id;
 	public File dir;
-	public NoiseMap noise = new NoiseMap(256, 256);
+	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	
 	public World(){
 		this.id = getNextId();
@@ -229,8 +229,6 @@ public class World {
 		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
-		System.out.println(regions.size());
-		
 		for(Region r : regions){
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
 			blocksChecked += r.blocksChecked;
@@ -241,8 +239,6 @@ public class World {
 				else blockList.put(b.base.texture, new ArrayList<BlockInstance>(Arrays.asList(b)));
 			}
 		}
-
-		
 		
 		renderMap(blockList);
 		
@@ -296,14 +292,6 @@ public class World {
 	
 	public ArrayList<BlockInstance> getBlocksInRegion(float x, float z){
 		return findRegion(x, z).blocks;
-	}
-	
-	public Peripheral getPeripheral(float x, float y, float z){
-		for(Peripheral p : findRegion(x, z).peripherals){
-			if(p.x == x && p.y == y && p.z == z) return p;
-		}
-		
-		return null;
 	}
 	
 }

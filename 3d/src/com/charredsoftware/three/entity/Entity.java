@@ -1,10 +1,11 @@
 package com.charredsoftware.three.entity;
 
+import com.charredsoftware.three.Main;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Entity {
-
+	
 	public float x = 2f, y = 1f, z = 2f, mass = 0f; //Mass in kg
 	public float currentVelocity = 0f, movingSpeed = 0.7f, beginningJumpingVelocity = 0f, currentJumpingVelocity = 0f;
 	public final float defaultStartJumpingVelocity = 1.4f;
@@ -15,6 +16,7 @@ public class Entity {
 	}
 	
 	public Entity(float x, float y, float z){
+		if(!(this instanceof Player)) Main.getInstance().player.world.entities.add(this);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -40,6 +42,10 @@ public class Entity {
 	
 	public Position getPosition(){
 		return new Position(x, y, z);
+	}
+	
+	public void render(){
+		
 	}
 	
 }

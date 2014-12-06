@@ -15,15 +15,12 @@ import org.xml.sax.SAXException;
 
 import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.Main;
-import com.charredsoftware.three.computer.Computer;
-import com.charredsoftware.three.computer.Peripheral;
 import com.charredsoftware.three.entity.Player;
 
 public class Region {
 
 	public static final float _SIZE = 16, _HEIGHT = 128;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
-	public ArrayList<Peripheral> peripherals = new ArrayList<Peripheral>();
 	public float x, z;
 	public World world;
 	
@@ -59,13 +56,6 @@ public class Region {
 			writer.close();
 		} catch (IOException e) {new CrashReport(e);}
 		
-		//Delete unused data folders
-		for(Peripheral p : peripherals){
-			if(p instanceof Computer){
-				Computer c = (Computer) p;
-				if(c.dir.exists() && c.dir.list().length == 0) c.dir.delete();
-			}
-		}
 	}
 	
 	public boolean playerInRegion(){
@@ -119,7 +109,6 @@ public class Region {
 					}else if(c.getNodeName().equals("data")){
 						bspecial = Float.parseFloat(value.split(":")[2]);
 						bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
-						if(bbase == Block.computer) System.out.println(bspecial);
 					}else if(c.getNodeName().equals("json")){
 						json = value;
 					}
@@ -139,27 +128,11 @@ public class Region {
 	}
 	
 	public void generate(){
-		double[][] masses = Main.getInstance().player.world.noise.getMassAsArray();
-		double[][] heights = Main.getInstance().player.world.noise.getHeightAsArray();
-
-		if(this.x < 0 || this.z < 0){
-			addBlock(new BlockInstance(Block.air, this.x * _SIZE + 1, 1,  this.z * _SIZE + 1));
-			return;
-		}
-		
-		for(float x = 0; x < _SIZE; x ++){
-			for(float z = 0; z < _SIZE; z ++){
-				int dX = (int) (this.x * _SIZE + x);
-				int dZ = (int) (this.z * _SIZE + z);
-				
-				float height = (float) heights[dX][dZ];
-				double landMass = masses[dX][dZ];
-				float _height = (float) ((int) (height * Region._HEIGHT));
-				for(float y = 0; y < _height; y ++){
-					if(landMass == 0.0) addBlock(new BlockInstance(Block.bricks, dX, (float) y, dZ));
-					else addBlock(new BlockInstance(Block.grass, dX, (float) y, dZ));
+		for(float x = 0; x < 16; x ++){
+			for(float z = 0; z < 16; z ++){
+				for(float y = 0; y < 3; y ++){
+					addBlock(new BlockInstance(Block.grass, this.x * _SIZE + x, y, this.z * _SIZE + z));
 				}
-				
 			}
 		}
 	}
@@ -172,37 +145,15 @@ public class Region {
 			}
 		}
 		
-		int pSize = peripherals.size();
-		if(block.base == Block.computer) addPeripheral(new Computer(block.x, block.y, block.z, block.special, block.initJson));
-		
-		if(pSize < peripherals.size()) block.special = peripherals.get(peripherals.size() - 1).special;
-		
 		blocks.add(block);
 	}
 
 	public void removeBlock(BlockInstance block){
 		if(blocks.contains(block)){
 			blocks.remove(block);
-			removePeripheral(new Peripheral(block.x, block.y, block.z, block.special));
 		}
 	}
 
-	public void addPeripheral(Peripheral peripheral){
-		if(peripherals.size() == 0) peripherals.add(peripheral);
-		for(int i = 0; i < peripherals.size() - 1; i ++){
-			Peripheral p = peripherals.get(i);
-			if(p.x == peripheral.x && p.y == peripheral.y && p.z == peripheral.z){
-				return;
-			}
-		}
-		
-		peripherals.add(peripheral);
-	}
-	
-	public void removePeripheral(Peripheral p){
-		if(peripherals.contains(p)) peripherals.remove(p);
-	}
-	
 	public float blocksChecked = 0;
 	
 	public ArrayList<BlockInstance> getRenderableBlocks(){

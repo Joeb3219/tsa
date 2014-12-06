@@ -1,6 +1,5 @@
 package com.charredsoftware.three.world;
 
-import com.charredsoftware.three.Main;
 
 public class BlockInstance {
 
@@ -31,7 +30,6 @@ public class BlockInstance {
 	}
 	
 	public String getSpecialJson(){
-		if(base == Block.computer) return Main.getInstance().player.world.getPeripheral(x, y, z).getSpecialJson();
 		return "";
 	}
 	

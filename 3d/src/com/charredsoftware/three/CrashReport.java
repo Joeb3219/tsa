@@ -23,6 +23,9 @@ public class CrashReport {
 		this.t = t;
 		file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
 		try {
+			if(t instanceof Exception){
+				((Exception) t).printStackTrace();
+			}
 			file.createNewFile();
 			generateReport();
 		} catch (IOException e) {

@@ -27,9 +27,6 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.util.Timer;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
@@ -39,6 +36,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.SoundStore;
 
+import com.charredsoftware.three.entity.Entity;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.gui.Button;
 import com.charredsoftware.three.gui.Menu;
@@ -46,13 +44,12 @@ import com.charredsoftware.three.gui.Widget;
 import com.charredsoftware.three.util.FileUtilities;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.BlockInstance;
-import com.charredsoftware.three.world.NoiseMap;
 import com.charredsoftware.three.world.Position;
 import com.charredsoftware.three.world.World;
 
 public class Main {
 
-	public String gameName = "NovaScript";
+	public String gameName = "TSA Entry";
 	public String version = "1.0.15";
 	public Font font;
 	public Player player;
@@ -60,11 +57,11 @@ public class Main {
 	private static final float mouseMovementThreshold = 2f;
 	public Camera camera;
 	int displayFPS = 0;
-	public boolean menu = false, DISPLAY_INFO = true;
+	public boolean menu = false;
 	public GameState gameState = GameState.MENU;
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
-	private boolean developer_mode = false;
+	private boolean developer_mode = true;
 	
 	private static Main _INSTANCE = null;
 	
@@ -73,7 +70,6 @@ public class Main {
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
 		player = new Player(new World(0), camera);
-		player.selectedBlock = Block.computer;
 	}
 	
 	public static Main getInstance(){
@@ -114,8 +110,8 @@ public class Main {
 		
 		
 		if(gameState == GameState.GAME){
-			if(Keyboard.isKeyDown(Keyboard.KEY_F1)) DISPLAY_INFO = !DISPLAY_INFO;
 			player.update();
+			for(Entity e : player.world.entities) e.update();
 			
 			mouseTick();
 		}
@@ -123,8 +119,6 @@ public class Main {
 		camera.calculatePosition(player);
 		
 		keyboardTick();
-		
-		if(gameState == GameState.COMPUTER && cooldown == 0) player.selectedPeripheral.update();
 		
 		while(Keyboard.next()){}
 		
@@ -159,7 +153,7 @@ public class Main {
 			cooldown = 5f;
 		}
 		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.setPosition(2f, 1f, 2f);
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn(1f, 1f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
 			player.world.generate();
@@ -196,15 +190,14 @@ public class Main {
 			else player.selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
 		}
 		
-		//Check if attempting to break/place/right-click
-		if(player.world.lookingAt.base == Block.computer && Mouse.isButtonDown(1) && cooldown == 0 && !player.isCrouching){
-			player.selectedPeripheral = player.world.getPeripheral(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z);
-			gameState = GameState.COMPUTER;
-		}
 		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0) player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
 		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
+		}
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_B) && player.world.lookingAt.base.solid && cooldown == 0){
+			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
+			player.world.addBlock(new BlockInstance(Block.torch, adjacent.x, adjacent.y, adjacent.z));
 		}
 		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
@@ -231,6 +224,7 @@ public class Main {
 
 		if(player.isInWater()) glColor3f(0.4f, 0.8f, 0.8f);
 		
+		for(Entity e : player.world.entities) e.render();
 		player.world.render();
 		//player.hotbar.draw();
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -245,8 +239,6 @@ public class Main {
 		glDisable(GL_DEPTH_TEST); 
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
-		
-		if(gameState == GameState.COMPUTER) player.selectedPeripheral.draw();
 		
 		if(gameState == GameState.GAME){
 			glPushMatrix();
@@ -265,33 +257,12 @@ public class Main {
 	
 			glLoadIdentity();
 			
-			//Display Text
-			if(DISPLAY_INFO){
-				font.drawString(5, 5, "[x/y/z]: {" + player.x + "/" + player.y + "/" + player.z + "} REGION: " + player.world.findRegion(player.x, player.z).toString() + " [currentJumpingVelocity] {" + player.currentJumpingVelocity + "}" + " isJumping: " + player.isJumping);
-				font.drawString(5, 25, "[rx/ry/rz]: {" + camera.rx + "/" + camera.ry + "/" + camera.rz + "} [cx/cy/cz]" + camera.x + "/" + camera.y + "/" + camera.z + "} yOffset: " + camera.yOffset);
-				font.drawString(5, 45, "Standing on : " + getInstance().player.world.getBlock(player.x, player.y - 1, player.z).base.name + " [highest rel. solid/roof]: {" + getInstance().player.world.getRelativeHighestSolidBlock(new Position(player.x, player.y, player.z)).base.name + "/" + getInstance().player.world.getClosestSolidRoofBlock(new Position(player.x, (player.y + player.height), player.z)).base.name + "}");
-				font.drawString(5, 65, "Looking at " + player.world.lookingAt.base.name + " [" + player.world.lookingAt.x + ", " + player.world.lookingAt.y + ", " + player.world.lookingAt.z + "]");
-				font.drawString(5, 85, "fps: " + displayFPS + "; blocksRendered: " + player.world.renderedBlocks + " {checked: " + player.world.blocksChecked + "}");
-				font.drawString(5, 105, "Health: " + player.health);
-			}
 		}
 		
 
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
-		
-		if(gameState == GameState.GAME){
-			glPushMatrix();
-			glEnable(GL_TEXTURE_2D);
-			glViewport(10, 10, 74, 74);
-			glLoadIdentity();
-			glRotatef(60, 1, 0, 0);
-			glRotatef(60, 0, 1, 0);
-			glRotatef(60, 0, 0, 1);
-			player.selectedBlock.draw(0f,0f,0f);
-			glPopMatrix();
-		}
 		glMatrixMode(GL_MODELVIEW);
 
 	}

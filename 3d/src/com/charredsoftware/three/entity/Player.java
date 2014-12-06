@@ -6,10 +6,6 @@ import org.lwjgl.util.vector.Vector3f;
 import com.charredsoftware.three.Camera;
 import com.charredsoftware.three.Main;
 import com.charredsoftware.three.Sound;
-import com.charredsoftware.three.computer.Peripheral;
-import com.charredsoftware.three.inventory.Hotbar;
-import com.charredsoftware.three.inventory.Item;
-import com.charredsoftware.three.inventory.ItemGroup;
 import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.world.Block;
 import com.charredsoftware.three.world.Position;
@@ -18,10 +14,9 @@ import com.charredsoftware.three.world.World;
 public class Player extends Mob{
 
 	private Camera camera; //Used to calculate motion.
-	public Hotbar hotbar;
-	public Block selectedBlock;
-	public Peripheral selectedPeripheral = null;
+	public Block selectedBlock = Block.air;
 	public boolean walking = false;
+	private Bow bow = new Bow();
 	
 	public Player(World world, Camera camera){
 		super();
@@ -30,11 +25,11 @@ public class Player extends Mob{
 		health = 100;
 		movingSpeed = 0.15f;
 		mass = 75f;
-		this.hotbar = new Hotbar(10);
-		hotbar.addItem(new ItemGroup(new Item("Test", Block.computer.texture, 32), 1));
 	}
 	
 	public void update(){
+		bow.update();
+		
 		checkMovement((isCrouching) ? 4f : 1f);
 		
 		checkJumping();
@@ -109,7 +104,7 @@ public class Player extends Mob{
 	}
 	
 	public void spawn(float x, float z){
-		setPosition(x, world.getHighestBlock(x, z).y, z);
+		setPosition(x, world.getHighestBlock(x, z).y + 2, z);
 	}
 
 	public Vector3f getLookingAt(){

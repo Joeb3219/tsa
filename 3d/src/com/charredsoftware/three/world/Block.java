@@ -1,22 +1,12 @@
 package com.charredsoftware.three.world;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glPopAttrib;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushAttrib;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
+import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
+import org.lwjgl.BufferUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -39,9 +29,9 @@ public class Block {
 	public static Block wood = new Block(4, 0, "Wood", Block.loadTexture("wood.jpg"));
 	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.jpg"), false);
 	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
-	public static Block wall = new Block(7, 0,"Wall", Block.loadTexture("wall.jpg"));
-	public static Block computer = new Block(8, 0, "Computer", Block.loadTexture("computer.jpg"));
-
+	public static Block wall = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
+	public static Block torch = new Block(8, 0, "Torch", false);
+	
 	public Block(float id, float meta, String name, boolean solid){
 		this.id = id;
 		this.meta = meta;
@@ -97,18 +87,22 @@ public class Block {
 	}
 	
 	public void drawSetup(){
-		if(this == Block.air) return;
+		glEnable(GL_TEXTURE_2D);
+		if(this == Block.air || this == Block.torch || texture == null) return;
 		texture.bind();
 	}
 	
 	public void drawCleanup(){
+		glDisable(GL_TEXTURE_2D);
 	}
 	
 	public void drawBlock(float x, float y, float z){
 		if(this == Block.air) return;
-
+		
+		
 		glPushMatrix();
 		glTranslatef(x, y, z);
+		
 		glBegin(GL_QUADS);
 		
 		float leftBound = -0.5f;
@@ -151,7 +145,18 @@ public class Block {
 		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound,rightBound);
 	
 		glEnd();
+		
 		glPopMatrix();
+	
+		if(this == Block.torch){
+			FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+			
+			glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 2f, 2f, 2f, 1f }))).flip());
+			glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0.8f, 0.8f, 0.8f, 1.0f }))).flip());
+			glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 1.0f, 1.0f, 1.0f, 1.0f }))).flip());
+			glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 1f, z, y, x }))).flip());
+		}
+		
 	}
 	
 	public void draw(float x, float y, float z){
