@@ -12,6 +12,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.three.CrashReport;
 import com.charredsoftware.three.Main;
+import com.charredsoftware.three.Sound;
 import com.charredsoftware.three.physics.Physics;
 import com.charredsoftware.three.util.FileUtilities;
 import com.charredsoftware.three.world.Position;
@@ -62,20 +63,22 @@ public class Arrow extends Entity{
 			x += dx;
 			z += dz;
 			y += dy;
-		}else stuckInSolid = true;
+		}else{
+			Sound.ARROW_HIT.playSfx();
+			stuckInSolid = true;
+		}
 	}
 	
 	public void render(){
 		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 		
-		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
-		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);
-		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.08f);
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.0f, 0.0f, 1.0f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1.0f }))).flip());
-		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
+		glLight(Main.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(Main.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.0f, 0.0f, 1.0f }))).flip());
+		glLight(Main.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1.0f }))).flip());
+		glLight(Main.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
+		
+		Main.lightInUse ++;
 		
 		glEnable(GL_TEXTURE_2D);
 		texture.bind();

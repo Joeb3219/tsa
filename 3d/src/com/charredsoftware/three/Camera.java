@@ -44,17 +44,29 @@ public class Camera {
 		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 		
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0.1f, 0.1f, 0.1f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0.8f, 0.8f, 0.8f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 1.0f, 1.0f, 1.0f, 0f }))).flip());
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		
+		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
 		
-		glEnable(GL_LIGHT0);
-		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+		for(int i = GL_LIGHT0 - 1; i < GL_LIGHT7; i ++){
+			glLightf(i, GL_CONSTANT_ATTENUATION, 1.0f);
+			glLightf(i, GL_LINEAR_ATTENUATION, 0.2f);
+			glLightf(i, GL_QUADRATIC_ATTENUATION, 0.08f);
+			glEnable(i);
+		}
+
+		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.35f);
+		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1f);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.08f);
 		
 		glEnable(GL_COLOR_MATERIAL);
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 		
-		glClearColor(89 / 255f, 203 / 255f, 222 / 255f, 1f);
+		
+		glClearColor(0 / 255f, 0 / 255f, 0 / 255f, 1f);
 		
 		frustum.calculateFrustum(fov, Display.getWidth() * 1f / Display.getHeight(), nearClip, farClip);
 	}

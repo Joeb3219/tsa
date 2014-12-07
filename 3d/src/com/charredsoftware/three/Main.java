@@ -1,32 +1,11 @@
 package com.charredsoftware.three;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.FloatBuffer;
 import java.util.Timer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
@@ -36,6 +15,8 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.SoundStore;
 
+import com.charredsoftware.three.entity.Arrow;
+import com.charredsoftware.three.entity.Bow;
 import com.charredsoftware.three.entity.Entity;
 import com.charredsoftware.three.entity.Player;
 import com.charredsoftware.three.gui.Button;
@@ -210,6 +191,26 @@ public class Main {
 		else Mouse.setGrabbed(false);
 	}
 	
+	private void playerFlashlight(){
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+		if(player.isInWater()){
+			glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1f);
+			glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);
+			glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.16f);
+		}else{
+			glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
+			glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);
+			glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2f);		
+		}
+		
+		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
+	}
+	
+	public static int lightInUse = GL_LIGHT1;
+	
 	public void render(Camera camera){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -222,10 +223,14 @@ public class Main {
 		glLoadIdentity();
 		camera.useView();
 
-		if(player.isInWater()) glColor3f(0.4f, 0.8f, 0.8f);
+		playerFlashlight();
 		
-		for(Entity e : player.world.entities) e.render();
+		for(int i = player.world.entities.size() - 1; i >= 0; i --){
+			player.world.entities.get(i).render();
+		}
 		player.world.render();
+		lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
+		
 		//player.hotbar.draw();
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
@@ -236,7 +241,8 @@ public class Main {
 		glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST); 
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
@@ -257,9 +263,13 @@ public class Main {
 	
 			glLoadIdentity();
 			
+			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.maxArrows);
+			font.drawString(10, 30, "Health: " + player.health + "/100");
+			
 		}
 		
 
+		glEnable(GL_LIGHTING);
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -268,7 +278,7 @@ public class Main {
 	}
 	
 	private void loop(){
-		java.awt.Font awtFont = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 20);
+		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 15);
 		font = new TrueTypeFont(awtFont, false);
 		
 		player.world.generate();

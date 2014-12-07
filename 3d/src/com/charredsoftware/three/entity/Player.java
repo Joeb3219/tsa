@@ -16,7 +16,7 @@ public class Player extends Mob{
 	private Camera camera; //Used to calculate motion.
 	public Block selectedBlock = Block.air;
 	public boolean walking = false;
-	private Bow bow = new Bow();
+	public Bow bow = new Bow();
 	
 	public Player(World world, Camera camera){
 		super();

@@ -12,6 +12,8 @@ public class Sound {
 	public static Sound HIT_GROUND = new Sound("hit_ground.wav");
 	public static Sound DAMAGE_GROUND = new Sound("hurt_fall_damage.wav");
 	public static Sound WALKING = new Sound("walking.wav");
+	public static Sound BOW_SHOT = new Sound("bow_shot.wav");
+	public static Sound ARROW_HIT = new Sound("arrow_hit.wav");
 	
 	private String path;
 	public Audio audio;
