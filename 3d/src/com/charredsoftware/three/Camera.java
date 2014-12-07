@@ -52,9 +52,9 @@ public class Camera {
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
 		
 		for(int i = GL_LIGHT0 - 1; i < GL_LIGHT7; i ++){
-			glLightf(i, GL_CONSTANT_ATTENUATION, 1.0f);
-			glLightf(i, GL_LINEAR_ATTENUATION, 0.2f);
-			glLightf(i, GL_QUADRATIC_ATTENUATION, 0.08f);
+			glLightf(i, GL_CONSTANT_ATTENUATION, 1.25f);
+			glLightf(i, GL_LINEAR_ATTENUATION, .5f);
+			glLightf(i, GL_QUADRATIC_ATTENUATION, 1.0f);
 			glEnable(i);
 		}
 

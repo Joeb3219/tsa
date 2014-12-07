@@ -72,10 +72,10 @@ public class Arrow extends Entity{
 	public void render(){
 		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-		
-		glLight(Main.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(Main.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.0f, 0.0f, 1.0f }))).flip());
-		glLight(Main.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1.0f }))).flip());
+	
+		glLight(Main.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+		glLight(Main.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+		glLight(Main.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
 		glLight(Main.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
 		
 		Main.lightInUse ++;

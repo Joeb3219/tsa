@@ -278,7 +278,7 @@ public class Main {
 	}
 	
 	private void loop(){
-		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 15);
+		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
 		
 		player.world.generate();
