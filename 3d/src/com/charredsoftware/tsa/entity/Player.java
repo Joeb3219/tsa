@@ -11,6 +11,13 @@ import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
+/**
+ * Player class.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
+
 public class Player extends Mob{
 
 	private Camera camera; //Used to calculate motion.
@@ -18,6 +25,11 @@ public class Player extends Mob{
 	public boolean walking = false;
 	public Bow bow = new Bow();
 	
+	/**
+	 * Creates anew Player
+	 * @param world World that the player resides in
+	 * @param camera Camera that will follow the player.
+	 */
 	public Player(World world, Camera camera){
 		super();
 		this.world = world;
@@ -27,6 +39,10 @@ public class Player extends Mob{
 		mass = 75f;
 	}
 	
+	/**
+	 * Updates player's movement.
+	 * @see super.update()
+	 */
 	public void update(){
 		bow.update();
 		
@@ -37,6 +53,9 @@ public class Player extends Mob{
 		super.update();
 	}
 
+	/**
+	 * Handles all jumping code.
+	 */
 	private void checkJumping() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !isJumping && standingOnSolid()){
 			isJumping = true;
@@ -64,6 +83,10 @@ public class Player extends Mob{
 		}
 	}
 
+	/**
+	 * Moves the player if indicated keyboard/mouse events occur.
+	 * @param speedModifier SpeedModifier, such that it is slower to move and crouch.
+	 */
 	private void checkMovement(float speedModifier) {
 		walking = false;
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
@@ -87,6 +110,9 @@ public class Player extends Mob{
 		else isCrouching = false;
 	}
 	
+	/**
+	 * Actually moves the player if a block isn't in the way.
+	 */
 	public void move(float dX, float dY, float dZ){
 		float fX = dX + x;
 		float fY = dY + y;
@@ -103,14 +129,27 @@ public class Player extends Mob{
 		
 	}
 	
+	/**
+	 * Spawns the player at the highest possible Y value.
+	 * @param x X-position
+	 * @param z Z-position
+	 */
 	public void spawn(float x, float z){
 		setPosition(x, world.getHighestBlock(x, z).y + 2, z);
 	}
 
+	/**
+	 * @return Returns a <code>Vector3f</code> that the player is looking at, at the furthest distance.
+	 */
 	public Vector3f getLookingAt(){
 		return getLookingAt(Main.getInstance().camera.farClip);
 	}
 	
+	/**
+	 * 
+	 * @param dist Distance that the player is looking at.
+	 * @return Returns a <code>Vector3f</code> that the player is looking at, at dist.
+	 */
 	public Vector3f getLookingAt(float dist){
 		double ry = Math.cos(Math.toRadians(Main.getInstance().camera.ry));
 		Vector3f v = new Vector3f(x - (float) (Math.sin(Math.toRadians(360 - Main.getInstance().camera.rx)) * dist * ry), y - (float) Math.sin(Math.toRadians(Main.getInstance().camera.ry)) * dist, z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.rx)) * dist * ry));

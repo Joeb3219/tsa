@@ -17,18 +17,38 @@ import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.entity.Player;
 
+/**
+ * Region class.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since November 9, 2014
+ */
 public class Region {
 
-	public static final float _SIZE = 16, _HEIGHT = 128;
+	/** _SIZE - {@value} Size of chunk*/
+	public static final float _SIZE = 16;
+	/** _HEIGHT - {@value} Height of chunk*/
+	public static final float _HEIGHT = 128;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public float x, z;
 	public World world;
 	
+	/**
+	 * Creates a region
+	 * @param world World to create region in
+	 * @param x X-position, divided by _SIZE.
+	 * @param z Z-position, divided by _SIZE.
+	 */
 	public Region(World world, float x, float z){
 		this.world = world;
 		this.x = x;
 		this.z = z;
 	}
+	
+	/**
+	 * Saves world.
+	 * @param dir Direction to save world to, relative to /res
+	 */
 	public void save(File dir){
 		File file = new File(dir.getAbsolutePath() + "/region_" + x + "l" + z + ".csf");
 		try {
@@ -58,6 +78,9 @@ public class Region {
 		
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if player is inside of region.
+	 */
 	public boolean playerInRegion(){
 		int px = ((int) Main.getInstance().player.x) / ((int) _SIZE);
 		int pz = ((int) Main.getInstance().player.z) / ((int) _SIZE);
@@ -65,6 +88,10 @@ public class Region {
 		return false;
 	}
 	
+	/**
+	 * @param y Y-position to test blocks at.
+	 * @return Returns blocks in region to test against frustum; Limits number of regions to render.
+	 */
 	public ArrayList<BlockInstance> getFrustumTestBlocks(float y){
 		ArrayList<BlockInstance> testBlocks = new ArrayList<BlockInstance>();
 		float baseX = x * _SIZE;
@@ -79,7 +106,11 @@ public class Region {
 		
 		return testBlocks;
 	}
-	
+
+	/**
+	 * @param p Position of the block.
+	 * @return Returns the <code>BlockInstance</code> at the indicated position.
+	 */
 	public BlockInstance getBlock(Position p){
 		p.normalizeCoords();
 		for(BlockInstance b : blocks){
@@ -88,6 +119,10 @@ public class Region {
 		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
+	/**
+	 * Loads a region from a file.
+	 * @param file File to load region from.
+	 */
 	public void generate(File file){
 		try {
 			Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
@@ -127,6 +162,9 @@ public class Region {
 		}
 	}
 	
+	/**
+	 * Generates a new region.
+	 */
 	public void generate(){
 		for(float x = 0; x < 16; x ++){
 			for(float z = 0; z < 16; z ++){
@@ -137,6 +175,9 @@ public class Region {
 		}
 	}
 	
+	/**
+	 * @param block <code>BlockInstance</code> to add the region.
+	 */
 	public void addBlock(BlockInstance block){
 		for(int i = 0; i < blocks.size() - 1; i ++){
 			BlockInstance b = blocks.get(i);
@@ -148,23 +189,24 @@ public class Region {
 		blocks.add(block);
 	}
 
+	/**
+	 * @param block <code>BlockInstance</code> to remove from region,
+	 */
 	public void removeBlock(BlockInstance block){
 		if(blocks.contains(block)){
 			blocks.remove(block);
 		}
 	}
 
-	public float blocksChecked = 0;
-	
+	 /** 
+	 * @return Returns an <code>ArrayList</code> of blocks that should be rendered.
+	 */
 	public ArrayList<BlockInstance> getRenderableBlocks(){
 		ArrayList<BlockInstance> renderableBlocks = new ArrayList<BlockInstance>();
-		
-		blocksChecked = 0;
 		
 		if(!playerInRegion() && !Main.getInstance().camera.frustum.regionInFrustum(this)) return renderableBlocks;
 		
 		for(BlockInstance b : blocks){
-			blocksChecked ++;
 			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
 			if(!checkIfCovered(b)) continue;
 			renderableBlocks.add(b);
@@ -172,6 +214,10 @@ public class Region {
 		return renderableBlocks;
 	}
 	
+	/**
+	 * @param b <code>BlockInstance</code> to check.
+	 * @return Returns <tt>true</tt> if <code>b</code> is visible (not covered).
+	 */
 	private boolean checkIfCovered(BlockInstance b){
 		Player player = Main.getInstance().player;
 		if(world.getBlockWithoutNewRegion(new Position(b.x, b.y + 1, b.z)).base == Block.air && player.y + player.height > b.y) return true;
@@ -184,10 +230,16 @@ public class Region {
 		return false;
 	}
 	
+	/**
+	 * @return Returns the position.
+	 */
 	public Position getPosition(){
 		return new Position(x, 0, z);
 	}
-	
+
+	/**
+	 * @return Returns a string of the region's position (x, y).
+	 */
 	public String toString(){
 		return "[x/z]: {" + x + "/" + z + "}";
 	}

@@ -14,6 +14,12 @@ import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.util.FileUtilities;
 
+/**
+ * World class.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
 public class World {
 
 	public ArrayList<Region> regions = new ArrayList<Region>();
@@ -23,16 +29,26 @@ public class World {
 	public File dir;
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	
+	/**
+	 * Generates a new world with the next highest ID.
+	 */
 	public World(){
 		this.id = getNextId();
 		this.dir = new File(FileUtilities.savesPath + id);
 	}
 	
+	/**
+	 * Generates a new world.
+	 * @param id ID to generate world with.
+	 */
 	public World(int id){
 		this.id = id;
 		this.dir = new File(FileUtilities.savesPath + id);
 	}
 	
+	/**
+	 * @return Returns the next highest ID.
+	 */
 	private int getNextId(){
 		int highest = -1;
 		File directory = new File(FileUtilities.savesPath);
@@ -45,10 +61,16 @@ public class World {
 		return highest;
 	}
 	
+	/**
+	 * Saves the world.
+	 */
 	public void save(){
 		for(Region r : regions) r.save(dir);
 	}
 	
+	/**
+	 * Generates a world.
+	 */
 	public void generate(){
 		if(!dir.exists()) generateWorldFolders();
 		else if(dir.list().length > 0){
@@ -62,12 +84,18 @@ public class World {
 			}
 		}
 	}
-		
+
+	/**
+	 * Makes all of the directories needed to make a new world.
+	 */
 	private void generateWorldFolders(){
 		dir.mkdir();
-		new File(dir, FileUtilities.computersPath).mkdirs();
 	}
 	
+	/**
+	 * Loads a new world.
+	 * @param dir Directory containing the world.
+	 */
 	private void load(File dir){
 		String[]entries = dir.list();
 		for(String s : entries){
@@ -81,9 +109,12 @@ public class World {
 		}
 	}
 
-	
-	//Does exactly what getBlock does, but won't create a new region if one doesn't exist.
-	//Useful for when doing occulsion culling.
+	/**
+	 * Does exactly what getBlock does, but won't create a new region if one doesn't exist.
+	 * Useful for when doing occulsion culling.
+	 * @param p Position to check.
+	 * @return Returns <code>BlockInstance</code> at given position, or air if no region exists.
+	 */
 	public BlockInstance getBlockWithoutNewRegion(Position p){
 		p.normalizeCoords();
 		for(Region r : regions){
@@ -94,11 +125,21 @@ public class World {
 		return new BlockInstance(Block.air, p.x, p.y, p.z);
 	}
 	
+	/**
+	 * @param p Position to check
+	 * @return Returns <code>BlockInstance</code> at given position.
+	 */
 	public BlockInstance getBlock(Position p){
 		p.normalizeCoords();
 		return findRegion(p.x, p.z).getBlock(p);
 	}
 	
+	/**
+	 * @param fx X-position.
+	 * @param fy Y-position.
+	 * @param fz Z-position.
+	 * @return Returns an <code>ArrayList</code> of <code>BlockInstance</code> that surround the indication position.
+	 */
 	public ArrayList<BlockInstance> getSurroundingBlocks(float fx, float fy, float fz){
 		ArrayList<BlockInstance> surrounding = new ArrayList<BlockInstance>();
 		for(int x = -1; x < 1; x ++){
@@ -112,10 +153,21 @@ public class World {
 		return surrounding;
 	}
 	
+	/**
+	 * @param b BlockInstance to check/
+	 * @return Returns an <code>ArrayList</code> of <code>BlockInstance</code> that surround the indication block.
+	 * @see getSurroundingBlocks(fx, fy, fz)
+	 */
 	public ArrayList<BlockInstance> getSurroundingBlocks(BlockInstance b){
 		return getSurroundingBlocks(b.x, b.y, b.z);
 	}
 	
+	/**
+	 * @param x X-position
+	 * @param y Y-position
+	 * @param z Z-position
+	 * @return Returns the block at the indicated position.
+	 */
 	public BlockInstance getBlock(float x, float y, float z){
 		x = (float) ((int) (x));
 		y = (float) ((int) (y));
@@ -124,14 +176,25 @@ public class World {
 		return getBlock(new Position(x, y, z));
 	}
 	
+	/**
+	 * @param block BlockInstance to add to the world.
+	 */
 	public void addBlock(BlockInstance block){
 		findRegion(block.x, block.z).addBlock(block);
 	}
 	
+	/**
+	 * @param block BlockInstance to remove from the world.
+	 */
 	public void removeBlock(BlockInstance block){
 		findRegion(block.x, block.z).removeBlock(block);
 	}
 	
+	/**
+	 * @param x X-position, not divided by Region._SIZE.
+	 * @param z Z-position, not divided by Region._SIZE.
+	 * @return Returns the region, or creates a new one, at indicated position.
+	 */
 	public Region findRegion(float x, float z){
 		x /= Region._SIZE;
 		z /= Region._SIZE;
@@ -150,10 +213,21 @@ public class World {
 		return r;
 	}
 	
+	/**
+	 * @param b Block to find the region of.
+	 * @return Returns the region at the block exists in.
+	 */
 	public Region findRegion(BlockInstance b){
 		return findRegion(b.x, b.z);
 	}
 	
+	/**
+	 * @param x X-position
+	 * @param z Z-position
+	 * @param yCurrent Y-position
+	 * @param dY Change in Y position to look up/down to.
+	 * @return Returns an <code>ArrayList<code> of <code>BlockInstance</code> that are within indicated bounds.
+	 */
 	public ArrayList<BlockInstance> getBlocksInRange(float x, float z, float yCurrent, float dY){
 		ArrayList<BlockInstance> inRange = getBlocksInY(x, z);
 		ArrayList<BlockInstance> inRangeVertically = new ArrayList<BlockInstance>();
@@ -164,6 +238,10 @@ public class World {
 		return inRangeVertically;
 	}
 	
+	/**
+	 * @param p Position
+	 * @return Returns the closest solid block above the indicated position.
+	 */
 	public BlockInstance getClosestSolidRoofBlock(Position p){
 		p.normalizeCoords();
 		ArrayList<BlockInstance> inY = getBlocksInY(p.x, p.z);
@@ -174,7 +252,11 @@ public class World {
 		return lowest;
 	}
 	
-	//Gets highest **solid** block that is less than current y.
+	/**
+	 * Gets highest **solid** block that is less than current y.
+	 * @param p Position
+	 * @return Returns the highest **solid** block that is less than current y.
+	 */
 		public BlockInstance getRelativeHighestSolidBlock(Position p){
 			p.normalizeCoords();
 			ArrayList<BlockInstance> inY = getBlocksInY(p.x, p.z);
@@ -185,7 +267,11 @@ public class World {
 			return highest;
 		}
 	
-	//Gets highest block that is less than current y.
+	/**
+	 * Gets highest block that is less than current y.
+	 * @param p Position
+	 * @return Returns the highest block that is less than current y.
+	 */
 	public BlockInstance getNextHighestBlock(Position p){
 		p.normalizeCoords();
 		ArrayList<BlockInstance> inY = getBlocksInY(p.x, p.z);
@@ -196,6 +282,11 @@ public class World {
 		return highest;
 	}
 	
+	/**
+	 * @param x X-position
+	 * @param z Z-position
+	 * @return Returns the highest block.
+	 */
 	public BlockInstance getHighestBlock(float x, float z){
 		x = (float) ((int) (x));
 		z = (float) ((int) (z));
@@ -209,6 +300,11 @@ public class World {
 		return highest;
 	}
 	
+	/**
+	 * @param x X-position
+	 * @param z Z-position
+	 * @return Returns all blocks in given X, Z column.
+	 */
 	public ArrayList<BlockInstance> getBlocksInY(float x, float z){
 		Position p = new Position(x, 0, z);
 		p.normalizeCoords();
@@ -221,17 +317,18 @@ public class World {
 		return inY;
 	}
 	
-	public float blocksChecked = 0;
-	
+	/**
+	 * Renders the world.
+	 * Wraps, calls renderMap(blockList).
+	 * @see renderMap(blockList)
+	 */
 	public void render(){
 		renderedBlocks = 0f;
-		blocksChecked = 0f;
 		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
 		for(Region r : regions){
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
-			blocksChecked += r.blocksChecked;
 			renderedBlocks += renderable.size();
 			//Add each renderable block to the map
 			for(BlockInstance b : renderable){
@@ -245,6 +342,11 @@ public class World {
 		lookingAt = getBlockLookingAt();
 	}
 	
+	/**
+	 * Renders all blocks w/ similar textures at the same time.
+	 * Reduces OpenGL calls.
+	 * @param blockList <code>Map<Texture, ArrayList<BlockInstance>></code> to render.
+	 */
 	private void renderMap(Map<Texture, ArrayList<BlockInstance>> blockList){
 		//TODO: Make glass, water, etc. rendered last -> see through
 		//TODO: Implement VBOs for rendering (instead of glVertex calls (immediate mode))
@@ -263,6 +365,9 @@ public class World {
 		}
 	}
 	
+	/**
+	 * @return Returns the block that the player is looking at.
+	 */
 	public BlockInstance getBlockLookingAt(){
 		for(float i = 0; i < 6; i += 0.25f){
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
@@ -275,6 +380,9 @@ public class World {
 		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
 	}
 	
+	/**
+	 * @return Returns the block directly in front of the block the player is looking at.
+	 */
 	public BlockInstance getBlockAdjectLookingAt(){
 		for(float i = 0; i < 6; i += 0.25f){
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
@@ -290,6 +398,11 @@ public class World {
 		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
 	}
 	
+	/**
+	 * @param x X-position
+	 * @param z Z-position
+	 * @return Returns the blocks in the given region.
+	 */
 	public ArrayList<BlockInstance> getBlocksInRegion(float x, float z){
 		return findRegion(x, z).blocks;
 	}

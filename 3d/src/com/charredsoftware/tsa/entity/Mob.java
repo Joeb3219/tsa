@@ -9,6 +9,13 @@ import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Mob class.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
+
 public class Mob extends Entity{
 
 	public int health = 20;
@@ -16,10 +23,16 @@ public class Mob extends Entity{
 	public boolean isJumping, isCrouching = false;
 	protected float jumpingTime = 0;
 	
+	/**
+	 * Creates a new Mob.
+	 */
 	public Mob(){
 		super();
 	}
 	
+	/**
+	 * Updates the mob. 
+	 */
 	public void update(){
 		if(getBlockUnder().base == Block.boost){
 			isJumping = true;
@@ -30,6 +43,10 @@ public class Mob extends Entity{
 		checkGettingHurt();
 	}
 	
+	/**
+	 * Checks to see if can jump without going through a block.
+	 * @param dY Change in Y position.
+	 */
 	protected void checkCanJump(float dY){
 		float fY = y + dY;
 		ArrayList<BlockInstance> blocks = world.getBlocksInRange(x, z, y, dY);
@@ -54,6 +71,9 @@ public class Mob extends Entity{
 		y = fY;
 	}
 	
+	/**
+	 * Check if the mob is getting damaged.
+	 */
 	protected void checkGettingHurt() {
 		if(y < -50 && ((int) y) % 4 == 0) health --;
 		if(stuckInBlock()){
@@ -68,23 +88,36 @@ public class Mob extends Entity{
 		}
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the mob is stuck inside of a block.
+	 */
 	public boolean stuckInBlock(){
 		Position p = new Position(x, y, z);
 		p.normalizeCoords();
 		return world.getBlock(p).base.solid;
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the mob is in water.
+	 */
 	public boolean isInWater(){
 		if(world.getBlock(new Position(x, y, z)).base == Block.water) return true;
 		if(world.getBlock(new Position(x, y + 1, z)).base == Block.water) return true;
 		return false;
 	}
 	
+	/**
+	 * @return Returns the <code>BlockInstance</code> directly under the mob.
+	 */
 	public BlockInstance getBlockUnder(){
 		Position p = new Position(x, y - 1f, z);
 		return world.getBlock(p);
 	}
 
+	/**
+	 * @return Returns <tt>true</tt> if the block under the mob is solid.
+	 * @see getBlockUnder()
+	 */
 	public boolean standingOnSolid(){
 		return getBlockUnder().base.solid;
 	}

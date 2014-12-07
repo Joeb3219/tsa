@@ -7,6 +7,14 @@ import org.newdawn.slick.openal.AudioLoader;
 
 import com.charredsoftware.tsa.util.FileUtilities;
 
+/**
+ * Sound class.
+ * Houses all of the Sounds used in the game.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 1, 2014
+ */
+
 public class Sound {
 
 	public static Sound HIT_GROUND = new Sound("hit_ground.wav");

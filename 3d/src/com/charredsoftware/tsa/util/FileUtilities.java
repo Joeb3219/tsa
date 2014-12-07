@@ -9,25 +9,26 @@ import java.util.ArrayList;
 
 import com.charredsoftware.tsa.CrashReport;
 
+/**
+ * FileUtilities class.
+ * Used to simplify and unify File manipulation.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since November 29, 2014
+ */
+
 public class FileUtilities {
 
-	public static String computersPath = "data/computers/"; //Relative to saves
 	public static String dataPath = "data/"; //Relative to saves
-	public static String defaultsPath = "res/default/";
-	public static String defaultProgramsPath = defaultsPath + "/scripts/";
 	public static String texturesPath = "textures/";
 	public static String soundsPath = "sounds/";
 	public static String savesPath = "res/saves/";
 	public static String crashesPath = "res/crashes/";
-	public static File scriptTempFile = null;
 	
-	static{
-		try {
-			scriptTempFile = File.createTempFile("script_temp_csf", null);
-			scriptTempFile.deleteOnExit();
-		} catch (IOException e) {new CrashReport(e);}
-	}
-	
+	/**
+	 * @param path Path of directory.
+	 * @return Returns an <code>ArrayList</code> of String of names of directories in path.
+	 */
 	public static ArrayList<String> getChildDirectoriesAsString(String path){
 		ArrayList<String> list = new ArrayList<String>();
 		for(String s : getEntries(path)){
@@ -38,6 +39,10 @@ public class FileUtilities {
 		return list;
 	}
 	
+	/**
+	 * @param path Path of directory.
+	 * @return Returns an <code>ArrayList</code> of <code>File</code> of directories in path.
+	 */
 	public static ArrayList<File> getChildDirectories(String path){
 		ArrayList<File> list = new ArrayList<File>();
 		for(String s : getEntries(path)){
@@ -48,10 +53,19 @@ public class FileUtilities {
 		return list;
 	}
 	
+	/**
+	 * @param path Path of directory
+	 * @return Returns all of the children in a path.
+	 */
 	public static String[] getEntries(String path){
 		return (new File(path)).list();
 	}
 	
+	/**
+	 * Copies a file src to a destination dest.
+	 * @param src Source file
+	 * @param dest Destination file.
+	 */
 	public static void copyFile(File src, File dest){
 		try {
 			dest.createNewFile();

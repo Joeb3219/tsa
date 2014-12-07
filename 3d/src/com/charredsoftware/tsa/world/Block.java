@@ -1,8 +1,29 @@
 package com.charredsoftware.tsa.world;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glPopAttrib;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushAttrib;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertex3f;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -12,6 +33,13 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.util.FileUtilities;
+
+/**
+ * Block class. Handles texture loading, id mapping of blocks.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
 
 public class Block {
 
@@ -32,6 +60,13 @@ public class Block {
 	public static Block wall = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
 	public static Block torch = new Block(8, 0, "Torch", false);
 	
+	/**
+	 * Creates a textureless block.
+	 * @param id The ID of the block
+	 * @param meta The meta value of the block
+	 * @param name The name of the block
+	 * @param solid Whether or not block is a solid
+	 */
 	public Block(float id, float meta, String name, boolean solid){
 		this.id = id;
 		this.meta = meta;
@@ -41,6 +76,13 @@ public class Block {
 		blocks.add(this);
 	}
 	
+	/**
+	 * Creates a block
+	 * @param id The ID of the block
+	 * @param meta The meta value of the block
+	 * @param name The name of the block
+	 * @param texture The texture of the block
+	 */
 	public Block(float id, float meta, String name, Texture texture){
 		this.id = id;
 		this.meta = meta;
@@ -49,6 +91,14 @@ public class Block {
 		blocks.add(this);
 	}
 
+	/**
+	 * Creates a block
+	 * @param id The ID of the block
+	 * @param meta The meta value of the block
+	 * @param name The name of the block
+	 * @param texture The texture of the block
+	 * @param solid Whether or not block is solid.
+	 */
 	public Block(float id, float meta, String name, Texture texture, boolean solid){
 		this.id = id;
 		this.meta = meta;
@@ -59,7 +109,10 @@ public class Block {
 	}
 	
 	
-	//Expects id:meta
+	/**
+	 * @param idString As id:meta
+	 * @return Block with given id:meta values
+	 */
 	public static Block getBlock(String idString){
 		float id = Float.parseFloat(idString.split(":")[0]);
 		float meta = Float.parseFloat(idString.split(":")[1]);
@@ -70,6 +123,11 @@ public class Block {
 		return air;
 	}
 	
+	/**
+	 * Loads a texture.
+	 * @param path Path, relative to texturesPath (don't include texturePath)
+	 * @return Loaded Texture
+	 */
 	public static Texture loadTexture(String path){
 		try{
 			if(path.contains("png")) return TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + path));
@@ -78,6 +136,13 @@ public class Block {
 			return null;
 	}
 	
+	/**
+	 * Draws the block with given alpha value.
+	 * @param x X-position
+	 * @param y Y-position
+	 * @param z Z-position
+	 * @param alpha Alpha value
+	 */
 	public void draw(float x, float y, float z, int alpha){
 		glPushAttrib(GL_CURRENT_BIT);
 		glColor4f(.1f, .1f, .1f, alpha);
@@ -86,16 +151,31 @@ public class Block {
 		glPopAttrib();
 	}
 	
+	/**
+	 * Sets up the drawing of block.
+	 * @see drawBlock(x, y, z)
+	 */
 	public void drawSetup(){
 		glEnable(GL_TEXTURE_2D);
 		if(this == Block.air || this == Block.torch || texture == null) return;
 		texture.bind();
 	}
 	
+	/**
+	 * Cleans up the block, for after drawing.
+	 * @see drawBlock(x, y, z)
+	 */
 	public void drawCleanup(){
 		glDisable(GL_TEXTURE_2D);
 	}
 	
+	/**
+	 * Actually draws the block.
+	 * @param x X-position
+	 * @param y Y-position
+	 * @param z Z-position
+	 * @see drawBlock(x, y, z)
+	 */
 	public void drawBlock(float x, float y, float z){
 		if(this == Block.air) return;
 		
@@ -159,6 +239,12 @@ public class Block {
 		
 	}
 	
+	/**
+	 * Calls all of the methods required to draw a full block.
+	 * @param x X-position
+	 * @param y Y-position
+	 * @param z Z-position
+	 */
 	public void draw(float x, float y, float z){
 		if(texture == null) return;
 		drawSetup();

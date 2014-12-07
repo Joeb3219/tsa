@@ -12,6 +12,14 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.tsa.entity.Player;
 
+/**
+ * Camera class. Controls the Frustum.
+ * Handles all of the OpenGL initialization commands.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
+
 public class Camera {
 
 	public float x = 0, y = -2, z = 0;
@@ -20,6 +28,13 @@ public class Camera {
 	public Frustum frustum = Frustum.getInstance();
 	public float yOffset = 0f;
 	
+	/**
+	 * 
+	 * @param fov The Field of View
+	 * @param aspectRatio Aspect rtaio in terms of width:height.
+	 * @param nearClip Distance to clip at, near.
+	 * @param farClip Far distance to clip at.
+	 */
 	public Camera(float fov, float aspectRatio, float nearClip, float farClip){
 		this.fov = fov;
 		this.aspectRatio = aspectRatio;
@@ -29,6 +44,10 @@ public class Camera {
 		initializeProjection();
 	}
 	
+	/**
+	 * Initializes the projection matrix.
+	 * Handles enabling of lighting, textures, etc.
+	 */
 	private void initializeProjection(){
 		glMatrixMode(GL_PROJECTION);
 		gluOrtho2D(0, Display.getWidth(), 0, Display.getHeight());
@@ -71,16 +90,30 @@ public class Camera {
 		frustum.calculateFrustum(fov, Display.getWidth() * 1f / Display.getHeight(), nearClip, farClip);
 	}
 	
+	/**
+	 * Resets the aspect ratio and re-initializes the project.
+	 * @param aspectRatio New aspect ratio in terms of width:height.
+	 */
 	public void resetAspectRatio(float aspectRatio){
 		this.aspectRatio = aspectRatio;
 		initializeProjection();
 	}
 	
+	/**
+	 * Moves the camera.
+	 * @param dir Direction to move in (-1 - 1)
+	 * @param speed Velocity to move at.
+	 * @deprecated All movement is now in the player class. Camera followers player.
+	 */
 	public void move(float dir, float speed){
 		this.z += speed * Math.sin(Math.toRadians(ry + 90 * dir));
 		this.x += speed * Math.cos(Math.toRadians(ry + 90 * dir));
 	}
 	
+	/**
+	 * Sets the camera to be at the position specified (player's pos).
+	 * Resets the frustum.
+	 */
 	public void useView(){
 		Vector3f camera = new Vector3f(x, y, z);
 		Vector3f looking = Main.getInstance().player.getLookingAt();
@@ -95,6 +128,10 @@ public class Camera {
 		glMatrixMode(GL_MODELVIEW);
 	}
 	
+	/**
+	 * Calculates the camera's position based off of the player's position.
+	 * @param player The player the camera is following.
+	 */
 	public void calculatePosition(Player player){
 		x = player.x;
 		yOffset = (float) ((3.0/3.0) * ((player.y % 2 == 0) ? player.y : player.y));

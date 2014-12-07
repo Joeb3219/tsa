@@ -1,6 +1,39 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINEAR_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADRATIC_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLightf;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex2d;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 import java.util.Timer;
@@ -15,7 +48,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.SoundStore;
 
-import com.charredsoftware.tsa.entity.Arrow;
 import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Player;
@@ -28,13 +60,22 @@ import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
+/**
+ * Main class of the game. Used to instantiate & initialize the game.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
+
 public class Main {
 
 	public String gameName = "TSA Entry";
 	public String version = "1.0.15";
 	public Font font;
 	public Player player;
+	/** DESIRED_TPS - {@value} The amount of ticks to occur per second. */
 	public static final int DESIRED_TPS = 30;
+	/** mouseMovementThreshold - {@value} The amount of movement the mouse can move without being detected by game. */
 	private static final float mouseMovementThreshold = 2f;
 	public Camera camera;
 	int displayFPS = 0;
@@ -46,18 +87,28 @@ public class Main {
 	
 	private static Main _INSTANCE = null;
 	
-	
+	/**
+	 * Instantiates Main class.
+	 */
 	private Main(){
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
 		player = new Player(new World(0), camera);
 	}
 	
+	/**
+	 * @return an instance of Main.
+	 */
 	public static Main getInstance(){
 		if(_INSTANCE == null) _INSTANCE = new Main();
 		return _INSTANCE;
 	}
 	
+	
+	/**
+	 * Main method. Creates game instance, runs game loop.
+	 * @param args Command line arguments
+	 */
 	public static void main(String[] args){
 		Main game = getInstance();
 		
@@ -69,11 +120,18 @@ public class Main {
 		game.cleanDisplay();
 	}
 	
+	/**
+	 * Cleans up the display (Display & AL) for shut down of game.
+	 */
 	void cleanDisplay(){
 		Display.destroy();
 		AL.destroy();
 	}
 	
+	/**
+	 * Creates the display window. 
+	 * Sets title, resizable, size.
+	 */
 	private void initializeDisplay(){
 		try{
 			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
@@ -83,6 +141,10 @@ public class Main {
 		}catch(Exception e){new CrashReport(e);}
 	}
 	
+	/**
+	 * Runs every 1/DESIRED_TPS seconds.
+	 * Tick/update method.
+	 */
 	public void tick(){
 		if(cooldown > 0) cooldown --;
 		
@@ -106,6 +168,9 @@ public class Main {
 		SoundStore.get().poll(0);
 	}
 
+	/**
+	 * Handles mouse clicks that are done when mouse is not bound to the screen.
+	 */
 	private void unboundMouseTick(){
 		//TODO: Extract this logic to its own class.
 		if(gameState == GameState.MENU){
@@ -128,12 +193,14 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Checks for keyboard events during a tick.
+	 */
 	private void keyboardTick() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
 			menu = !menu;
 			cooldown = 5f;
 		}
-		if(gameState == GameState.COMPUTER && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) gameState = GameState.GAME;
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn(1f, 1f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
@@ -142,6 +209,9 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Checks for mouse events during a tick.
+	 */
 	private void mouseTick(){
 		float deltaX = Mouse.getDX();
 		float deltaY = Mouse.getDY();
@@ -191,6 +261,9 @@ public class Main {
 		else Mouse.setGrabbed(false);
 	}
 	
+	/**
+	 * Renders the player's flashlight.
+	 */
 	private void playerFlashlight(){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 		if(player.isInWater()){
@@ -209,8 +282,13 @@ public class Main {
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
 	}
 	
+	/** lightInUse - {@value} indicates the light variable in use (up to 8 OpenGL lights may be used). */
 	public static int lightInUse = GL_LIGHT1;
 	
+	/**
+	 * Renders the display.
+	 * @param camera The camera in use.
+	 */
 	public void render(Camera camera){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -277,6 +355,9 @@ public class Main {
 
 	}
 	
+	/**
+	 * The game loop. Handles the render/tick methods.
+	 */
 	private void loop(){
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
@@ -326,6 +407,10 @@ public class Main {
 		AL.destroy();
 	}
 	
+	/**
+	 * Renders the display menu
+	 * @param menu Which menu to render.
+	 */
 	private void renderMenu(String menu){
 		if(menu.equalsIgnoreCase("main")){
 			if(main_menu == null){

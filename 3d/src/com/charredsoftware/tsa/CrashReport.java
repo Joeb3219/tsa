@@ -13,12 +13,24 @@ import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
+/**
+ * CrashReport class.
+ * Generates a crash report if something goes wrong -> handles all checked/unchecked exceptions.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since November 28, 2014
+ */
+
 public class CrashReport {
 
 	public File file;
 	private Throwable t;
 	public String synop = "";
 	
+	/**
+	 * Creates a new Crash Report.
+	 * @param t Throwable (generally an Exception).
+	 */
 	public CrashReport(Throwable t){
 		this.t = t;
 		file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
@@ -39,6 +51,9 @@ public class CrashReport {
 		System.exit(0);
 	}
 	
+	/**
+	 * Generates the report's text.
+	 */
 	private void generateReport(){
 		try{
 			PrintWriter writer = new PrintWriter(file, "UTF-8");

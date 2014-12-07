@@ -1,18 +1,15 @@
 package com.charredsoftware.tsa;
 
+/**
+ * GameState Enum.
+ * All of the game's states.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since November 7, 2014
+ */
+
 public enum GameState {
 
 	LOADING, MENU, GAME,
-	
-	COMPUTER;
-	
-	public SubState subState = SubState.NORMAL;
-
-	
-	//resets gameState && subGameState -> removes excess code from caller.
-	public GameState resetGameState(GameState gameState){
-		gameState.subState = SubState.NORMAL;
-		return gameState;
-	}
 	
 }

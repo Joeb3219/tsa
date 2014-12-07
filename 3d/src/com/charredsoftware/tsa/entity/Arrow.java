@@ -18,6 +18,13 @@ import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
+/**
+ * Arrow class.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 6, 2014
+ */
+
 public class Arrow extends Entity{
 
 	public static Texture texture = null;
@@ -27,6 +34,13 @@ public class Arrow extends Entity{
 	public float rY, rX; //Used to calculate launch angles.
 	public boolean stuckInSolid = false;
 	
+	/**
+	 * Creates a new Arrow.
+	 * Calculates velocities, rotations, etc.
+	 * @param w World to place the arrow in.
+	 * @param p Position at which the arrow starts.
+	 * @param drawBackTime How long the bow was pulled back.
+	 */
 	public Arrow(World w, Position p, float drawBackTime){
 		super(p.x, p.y, p.z);
 		this.world = w;
@@ -41,6 +55,10 @@ public class Arrow extends Entity{
 		beginningVerticalVelocity = verticalVelocity;
 	}
 	
+	/**
+	 * Updates the arrow. Moves it along its path.
+	 * Uses game's physics engine.
+	 */
 	public void update(){
 		if(stuckInSolid || y < 0) return;
 		flyingTime += 0.5f / Main.DESIRED_TPS;
@@ -58,6 +76,9 @@ public class Arrow extends Entity{
 		verticalVelocity = Physics.calculateFinalVelocity(beginningVerticalVelocity, Physics.DOWNWARD_ACCELERATION, flyingTime);
 	}
 	
+	/**
+	 * Moves the arrow if possible, else stops it and plays sound effect.
+	 */
 	public void move(float dx, float dy, float dz){
 		if(!world.getBlock(new Position(dx + x, dy + y, dz + z)).base.solid){
 			x += dx;
@@ -69,6 +90,10 @@ public class Arrow extends Entity{
 		}
 	}
 	
+	/**
+	 * Renders the arrow.
+	 * Enables lighting if possible.
+	 */
 	public void render(){
 		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);

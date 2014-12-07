@@ -7,21 +7,42 @@ import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.Region;
 
+/**
+ * Frustum class.
+ * Used to determine which blocks are in view and which are not.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 30, 2014
+ */
+
 public class Frustum {
 
 	public float nWidth, nHeight, ratio, fov, tFOV, farClip, nearClip;
 	public Vector3f cameraPos, x, y, z;
 	private static Frustum _INSTANCE = null;
 
+	/**
+	 * Creates a singleton Frustum.
+	 */
 	private Frustum(){
 		
 	}
 	
+	/**
+	 * @return Returns an instance of Frustum.
+	 */
 	public static Frustum getInstance(){
 		if(_INSTANCE == null) _INSTANCE = new Frustum();;
 		return _INSTANCE;
 	}
 	
+	/**
+	 * Calculates the frustum's size.
+	 * @param fov Field of View
+	 * @param ratio Aspect Ratio, in terms of width:height.
+	 * @param nearClip Near distance to clip at.
+	 * @param farClip Far distance to clip at.
+	 */
 	public void calculateFrustum(float fov, float ratio, float nearClip, float farClip){
 		this.nearClip = nearClip;
 		this.farClip = farClip;
@@ -32,6 +53,13 @@ public class Frustum {
 		nWidth = nHeight * ratio;
 	}
 	
+	/**
+	 * Sets the camera's position in the frustum.
+	 * @param cameraPos Camera's Position as <code>Vector3f</code>
+	 * @param looking Position the player is looking at, as <code>Vector3f</code>
+	 * @param up Player's up Position as <code>Vector3f</code>
+	 * @see Player.getLookingAt()
+	 */
 	public void setCamera(Vector3f cameraPos, Vector3f looking, Vector3f up){
 		this.cameraPos = new Vector3f(cameraPos);
 		
@@ -44,14 +72,22 @@ public class Frustum {
 		y = new Vector3f(0, Vector3f.dot(x, z), 0);
 	}
 	
+	/**
+	 * @param r Region to test.
+	 * @return Returns <tt>true</tt> if any of the region's testable points are in the frustum.
+	 */
 	public boolean regionInFrustum(Region r){
-		//if(Physics.getDistance(Main.getInstance().player.getPosition(), new Position(r.x * Region._SIZE, Main.getInstance().player.y, r.z * Region._SIZE)) > Main.getInstance().camera.farClip) return false;
 		for(BlockInstance b : r.getFrustumTestBlocks(Main.getInstance().player.y)){
 			if(blockInFrustum(b, false)) return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * @param b Block to test
+	 * @param considerY Whether or not to consider the Y-position.
+	 * @return Returns <tt>true</tt> if the block is in the frustum.
+	 */
 	public boolean blockInFrustum(BlockInstance b, boolean considerY){
 		Vector3f p = b.getPosition().toVector3f();
 		p = Vector3f.sub(p, cameraPos, null);
@@ -70,6 +106,11 @@ public class Frustum {
 		return true;
 	}
 	
+	/**
+	 * @param b Block to test
+	 * @return Returns <tt>true</tt> if the block is in the frustum.
+	 * @see blockInFrustum(b, true);
+	 */
 	public boolean BlockInFrustum(BlockInstance b){
 		return blockInFrustum(b, true);
 	}

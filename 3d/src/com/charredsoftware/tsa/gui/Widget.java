@@ -11,6 +11,14 @@ import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Widget class.
+ * Used to put a Widget onto a Menu
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 30, 2014
+ */
+
 public class Widget {
 
 	public Position pos;
@@ -18,6 +26,15 @@ public class Widget {
 	public float height, width;
 	public String identifier = "null";
 
+	/**
+	 * Creates a new Widget
+	 * @param p Position
+	 * @param text Text to put in button
+	 * @param red Red value
+	 * @param green Green value
+	 * @param blue Blue value
+	 * @param alpha Alpha value
+	 */
 	public Widget(Position p, float width, float height, float red, float green, float blue, float alpha){
 		this.pos = p;
 		this.width = width;
@@ -28,6 +45,9 @@ public class Widget {
 		this.alpha = alpha;
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the mouse is within the widget's bounds.
+	 */
 	public boolean mouseInBounds(){
 		float x = pos.x;
 		float y = pos.y;
@@ -42,6 +62,9 @@ public class Widget {
 		return false;
 	}
 	
+	/**
+	 * Renders the widget to the menu.
+	 */
 	public void render(){
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);

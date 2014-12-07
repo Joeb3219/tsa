@@ -8,6 +8,14 @@ import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Menu class.
+ * Used to create a menu for the Display.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 1, 2014
+ */
+
 public class Menu {
 
 	public float red, green, blue, alpha = 0f;
@@ -15,6 +23,16 @@ public class Menu {
 	public float width, height;
 	public ArrayList<Widget> widgets = new ArrayList<Widget>();
 	
+	/**
+	 * Creates a menu.
+	 * @param p Position to place the menu at.
+	 * @param width Width of the menu
+	 * @param height Height of the menu
+	 * @param red Red value
+	 * @param green Green value 
+	 * @param blue Blue value
+	 * @param alpha Alpha value
+	 */
 	public Menu(Position p, float width, float height, float red, float green, float blue, float alpha){
 		this.pos = p;
 		this.width = width;
@@ -25,6 +43,9 @@ public class Menu {
 		this.alpha = alpha;
 	}
 	
+	/**
+	 * @return Returns a widget if the mouse is within the widget's bounds.
+	 */
 	public Widget getWidgetInBounds(){
 		for(Widget w : widgets){
 			if(w.mouseInBounds()) return w;
@@ -32,6 +53,9 @@ public class Menu {
 		return null;
 	}
 	
+	/**
+	 * Renders the menu to the screen.
+	 */
 	public void render(){
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
