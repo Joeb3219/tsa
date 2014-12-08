@@ -57,11 +57,12 @@ import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
+import com.charredsoftware.tsa.world.Chest;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
 /**
- * Main class of the game. Used to instantiate & initialize the game.
+ * Main class of the game. Used to instantiate, initialize the game.
  * All authors are as below specified (joeb3219) unless otherwise specified above method.
  * @author joeb3219
  * @since October 8, 2014
@@ -73,6 +74,8 @@ public class Main {
 	public String version = "1.0.15";
 	public Font font;
 	public Player player;
+	/** lightInUse - {@value} indicates the light variable in use (up to 8 OpenGL lights may be used). */
+	public static int lightInUse = GL_LIGHT1;
 	/** DESIRED_TPS - {@value} The amount of ticks to occur per second. */
 	public static final int DESIRED_TPS = 30;
 	/** mouseMovementThreshold - {@value} The amount of movement the mouse can move without being detected by game. */
@@ -84,6 +87,7 @@ public class Main {
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	private boolean developer_mode = true;
+	public HUDTextPopups HUDText = new HUDTextPopups(10, 50);
 	
 	private static Main _INSTANCE = null;
 	
@@ -163,6 +167,8 @@ public class Main {
 		
 		keyboardTick();
 		
+		HUDText.update();
+		
 		while(Keyboard.next()){}
 		
 		SoundStore.get().poll(0);
@@ -241,14 +247,17 @@ public class Main {
 			else player.selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
 		}
 		
-		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0) player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0){
+			if(player.world.lookingAt.base == Block.chest) openChest(player.world.lookingAt);
+			else player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+		}
 		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
 		}
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_B) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
-			player.world.addBlock(new BlockInstance(Block.torch, adjacent.x, adjacent.y, adjacent.z));
+			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
 		}
 		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
@@ -261,6 +270,19 @@ public class Main {
 		else Mouse.setGrabbed(false);
 	}
 	
+	/**
+	 * Opens the chest at signified location.
+	 */
+	private void openChest(BlockInstance b){
+		if(!(b instanceof Chest)) return; //Not a chest! Uh oh!
+		Chest c = (Chest) b;
+		c.exists = false;
+		player.world.removeBlock(c);
+		HUDText.popups.add(new TextPopup("You found " + c.arrows + " arrows!"));
+		HUDText.popups.add(new TextPopup("You found " + c.coins + " coins!"));
+		player.bow.arrows += c.arrows;
+	}
+		
 	/**
 	 * Renders the player's flashlight.
 	 */
@@ -281,9 +303,6 @@ public class Main {
 		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
 	}
-	
-	/** lightInUse - {@value} indicates the light variable in use (up to 8 OpenGL lights may be used). */
-	public static int lightInUse = GL_LIGHT1;
 	
 	/**
 	 * Renders the display.
@@ -343,6 +362,8 @@ public class Main {
 			
 			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.maxArrows);
 			font.drawString(10, 30, "Health: " + player.health + "/100");
+			
+			HUDText.render();
 			
 		}
 		

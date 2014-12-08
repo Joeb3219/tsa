@@ -15,7 +15,7 @@ import com.charredsoftware.tsa.world.World;
 
 /**
  * CrashReport class.
- * Generates a crash report if something goes wrong -> handles all checked/unchecked exceptions.
+ * Generates a crash report if something goes wrong; handles all checked/unchecked exceptions.
  * All authors are as below specified (joeb3219) unless otherwise specified above method.
  * @author joeb3219
  * @since November 28, 2014

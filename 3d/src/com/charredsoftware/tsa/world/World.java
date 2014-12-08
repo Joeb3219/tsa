@@ -156,7 +156,7 @@ public class World {
 	/**
 	 * @param b BlockInstance to check/
 	 * @return Returns an <code>ArrayList</code> of <code>BlockInstance</code> that surround the indication block.
-	 * @see getSurroundingBlocks(fx, fy, fz)
+	 * @see #getSurroundingBlocks(float, float, float)
 	 */
 	public ArrayList<BlockInstance> getSurroundingBlocks(BlockInstance b){
 		return getSurroundingBlocks(b.x, b.y, b.z);
@@ -226,7 +226,7 @@ public class World {
 	 * @param z Z-position
 	 * @param yCurrent Y-position
 	 * @param dY Change in Y position to look up/down to.
-	 * @return Returns an <code>ArrayList<code> of <code>BlockInstance</code> that are within indicated bounds.
+	 * @return Returns an <code>ArrayList</code> of <code>BlockInstance</code> that are within indicated bounds.
 	 */
 	public ArrayList<BlockInstance> getBlocksInRange(float x, float z, float yCurrent, float dY){
 		ArrayList<BlockInstance> inRange = getBlocksInY(x, z);
@@ -320,7 +320,7 @@ public class World {
 	/**
 	 * Renders the world.
 	 * Wraps, calls renderMap(blockList).
-	 * @see renderMap(blockList)
+	 * @see #renderMap(Map)
 	 */
 	public void render(){
 		renderedBlocks = 0f;

@@ -116,7 +116,7 @@ public class Mob extends Entity{
 
 	/**
 	 * @return Returns <tt>true</tt> if the block under the mob is solid.
-	 * @see getBlockUnder()
+	 * @see #getBlockUnder()
 	 */
 	public boolean standingOnSolid(){
 		return getBlockUnder().base.solid;

@@ -58,7 +58,7 @@ public class Frustum {
 	 * @param cameraPos Camera's Position as <code>Vector3f</code>
 	 * @param looking Position the player is looking at, as <code>Vector3f</code>
 	 * @param up Player's up Position as <code>Vector3f</code>
-	 * @see Player.getLookingAt()
+	 * @see com.charredsoftware.tsa.entity.Player#getLookingAt()
 	 */
 	public void setCamera(Vector3f cameraPos, Vector3f looking, Vector3f up){
 		this.cameraPos = new Vector3f(cameraPos);
@@ -109,7 +109,7 @@ public class Frustum {
 	/**
 	 * @param b Block to test
 	 * @return Returns <tt>true</tt> if the block is in the frustum.
-	 * @see blockInFrustum(b, true);
+	 * @see #BlockInFrustum(BlockInstance)
 	 */
 	public boolean BlockInFrustum(BlockInstance b){
 		return blockInFrustum(b, true);

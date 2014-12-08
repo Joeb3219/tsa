@@ -39,7 +39,7 @@ public class BlockInstance {
 	
 	/**
 	 * Draws the block.
-	 * @see draw()
+	 * @see #draw()
 	 * @param alpha Alpha value to draw the block with.
 	 */
 	public void draw(int alpha){
@@ -48,7 +48,7 @@ public class BlockInstance {
 	
 	/**
 	 * Draws the block at its position.
-	 * @see Block.draw(x, y, z)
+	 * @see com.charredsoftware.tsa.world.Block#draw(float, float, float)
 	 */
 	public void draw(){
 		base.draw(x, y, z);
@@ -62,7 +62,7 @@ public class BlockInstance {
 	}
 	
 	/**
-	 * @return Returns <tt>true</tt> if same base & position
+	 * @return Returns <tt>true</tt> if same base and position
 	 */
 	public boolean equals(Object o){
 		if(!(o instanceof BlockInstance)) return false;

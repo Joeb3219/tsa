@@ -29,7 +29,8 @@ public class Widget {
 	/**
 	 * Creates a new Widget
 	 * @param p Position
-	 * @param text Text to put in button
+	 * @param width Width of the widget
+	 * @param height Height of the widget
 	 * @param red Red value
 	 * @param green Green value
 	 * @param blue Blue value

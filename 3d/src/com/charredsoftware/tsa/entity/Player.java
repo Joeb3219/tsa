@@ -41,7 +41,7 @@ public class Player extends Mob{
 	
 	/**
 	 * Updates player's movement.
-	 * @see super.update()
+	 * @see com.charredsoftware.tsa.entity.Mob#update()
 	 */
 	public void update(){
 		bow.update();

@@ -60,7 +60,7 @@ public class Position {
 	}
 	
 	/**
-	 * @returns Returns <tt>true</tt> if the two position are equal.
+	 * @return Returns <tt>true</tt> if the two position are equal.
 	 */
 	public boolean equals(Object o){
 		if(!(o instanceof Position)) return false;

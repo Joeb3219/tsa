@@ -29,8 +29,8 @@ public class Bow {
 	
 	/**
 	 * Update method. Calls pullingBack() and release()
-	 * @see pullingBack()
-	 * @see release()
+	 * @see #pullingBack()
+	 * @see #release()
 	 */
 	public void update(){
 		if(arrows > maxArrows) arrows = maxArrows;

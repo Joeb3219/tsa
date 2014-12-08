@@ -59,6 +59,7 @@ public class Block {
 	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
 	public static Block wall = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
 	public static Block torch = new Block(8, 0, "Torch", false);
+	public static Block chest = new Block(8, 0, "Chest", Block.loadTexture("computer.jpg"));
 	
 	/**
 	 * Creates a textureless block.
@@ -153,7 +154,7 @@ public class Block {
 	
 	/**
 	 * Sets up the drawing of block.
-	 * @see drawBlock(x, y, z)
+	 * @see #drawBlock(float, float, float)
 	 */
 	public void drawSetup(){
 		glEnable(GL_TEXTURE_2D);
@@ -163,7 +164,7 @@ public class Block {
 	
 	/**
 	 * Cleans up the block, for after drawing.
-	 * @see drawBlock(x, y, z)
+	 * @see #drawBlock(float, float, float)
 	 */
 	public void drawCleanup(){
 		glDisable(GL_TEXTURE_2D);
@@ -174,7 +175,7 @@ public class Block {
 	 * @param x X-position
 	 * @param y Y-position
 	 * @param z Z-position
-	 * @see drawBlock(x, y, z)
+	 * @see #drawBlock(float, float, float)
 	 */
 	public void drawBlock(float x, float y, float z){
 		if(this == Block.air) return;
