@@ -1,39 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHT1;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINEAR_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADRATIC_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_SPECULAR;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLightf;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.util.Timer;
@@ -70,12 +37,8 @@ import com.charredsoftware.tsa.world.World;
 
 public class Main {
 
-	public String gameName = "TSA Entry";
-	public String version = "1.0.15";
 	public Font font;
 	public Player player;
-	/** lightInUse - {@value} indicates the light variable in use (up to 8 OpenGL lights may be used). */
-	public static int lightInUse = GL_LIGHT1;
 	/** DESIRED_TPS - {@value} The amount of ticks to occur per second. */
 	public static final int DESIRED_TPS = 30;
 	/** mouseMovementThreshold - {@value} The amount of movement the mouse can move without being detected by game. */
@@ -86,8 +49,7 @@ public class Main {
 	public GameState gameState = GameState.MENU;
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
-	private boolean developer_mode = true;
-	public boolean buildMode = true;
+	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 50);
 	
 	private static Main _INSTANCE = null;
@@ -96,6 +58,7 @@ public class Main {
 	 * Instantiates Main class.
 	 */
 	private Main(){
+		controller = GameController.getInstance();
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
 		player = new Player(new World(0), camera);
@@ -141,7 +104,7 @@ public class Main {
 		try{
 			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
 			Display.setResizable(true);
-			Display.setTitle("CharredSoftware: " + gameName + " v." + version + " [Joe B, 2014]");
+			Display.setTitle("CharredSoftware: " + controller.gameName + " v." + controller.version + " [Joe B, 2014]");
 			Display.create();
 		}catch(Exception e){new CrashReport(e);}
 	}
@@ -153,7 +116,7 @@ public class Main {
 	public void tick(){
 		if(cooldown > 0) cooldown --;
 		
-		if(gameState == GameState.MENU && developer_mode) gameState = GameState.GAME;
+		if(gameState == GameState.MENU && controller.developerMode) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) unboundMouseTick(); 
 		
 		
@@ -208,6 +171,7 @@ public class Main {
 			menu = !menu;
 			cooldown = 5f;
 		}
+		controller.keyboardTick();
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn(1f, 1f);
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
@@ -248,11 +212,11 @@ public class Main {
 			else player.selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
 		}
 		
-		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0){
+		if(gameState == GameState.GAME && Mouse.isButtonDown(0)  && controller.buildingMode && cooldown == 0){
 			if(player.world.lookingAt.base == Block.chest) openChest(player.world.lookingAt);
 			else player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
 		}
-		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && cooldown == 0){
+		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && controller.buildingMode && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
 		}
@@ -321,13 +285,18 @@ public class Main {
 		glLoadIdentity();
 		camera.useView();
 
-		playerFlashlight();
+		if(controller.lighting){
+			if(!glIsEnabled(GL_LIGHTING)) glEnable(GL_LIGHTING);
+			playerFlashlight();
+		}else{
+			if(glIsEnabled(GL_LIGHTING)) glDisable(GL_LIGHTING);
+		}
 		
 		for(int i = player.world.entities.size() - 1; i >= 0; i --){
 			player.world.entities.get(i).render();
 		}
 		player.world.render();
-		lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
+		controller.lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
 		
 		//player.hotbar.draw();
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -337,10 +306,10 @@ public class Main {
 		glLoadIdentity();
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		
@@ -365,6 +334,8 @@ public class Main {
 			font.drawString(10, 30, "Health: " + player.health + "/100");
 			
 			HUDText.render();
+			
+			if(controller.developerMode) controller.renderDeveloperText();
 			
 		}
 		

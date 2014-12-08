@@ -356,7 +356,7 @@ public class World {
 			list.get(0).base.drawSetup();
 			
 			for(BlockInstance b : list){
-				if(b == lookingAt) b.draw(100);
+				if(Main.getInstance().controller.buildingMode && b == lookingAt) b.draw(100);
 				else b.draw();
 			}
 			

@@ -45,7 +45,7 @@ public class CrashReport {
 		}
 		
 		String lnBreak = System.getProperty("line.separator");
-		Sys.alert(Main.getInstance().gameName + " " + Main.getInstance().version + ": Crash Report", Main.getInstance().gameName + " has crashed." + lnBreak + lnBreak + synop + lnBreak + lnBreak + "Refer to " + file.getAbsolutePath());
+		Sys.alert(Main.getInstance().controller.gameName + " " + Main.getInstance().controller.version + ": Crash Report", Main.getInstance().controller.gameName + " has crashed." + lnBreak + lnBreak + synop + lnBreak + lnBreak + "Refer to " + file.getAbsolutePath());
 		Main.getInstance().cleanDisplay();
 		
 		System.exit(0);

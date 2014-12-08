@@ -47,11 +47,12 @@ public class Arrow extends Entity{
 			try {
 				if(texture == null) texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "arrow.png"));
 			} catch (IOException e) {new CrashReport(e);}
-		rY = Main.getInstance().camera.ry;
+		
+		rY =  Main.getInstance().camera.ry;
 		rX = Main.getInstance().camera.rx;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
 		horizontalVelocity = (float) (Math.abs(Math.cos(Math.toRadians(rY))) * velocityMagnitude);
-		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude);
+		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude) * ((rY < 0) ? 1 : -1);
 		beginningVerticalVelocity = verticalVelocity;
 	}
 	
@@ -98,20 +99,23 @@ public class Arrow extends Entity{
 		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 	
-		glLight(Main.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-		glLight(Main.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-		glLight(Main.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
-		glLight(Main.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
+		glLight(Main.getInstance().controller.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+		glLight(Main.getInstance().controller.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+		glLight(Main.getInstance().controller.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
+		glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
 		
-		Main.lightInUse ++;
+		Main.getInstance().controller.lightInUse ++;
 		
 		glEnable(GL_TEXTURE_2D);
 		texture.bind();
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		glRotatef(rX, 1, 0, 1);
-		glRotatef(rY - 270, 0, 1, 0);
+		if(Math.abs(rX) <= 86f) glRotatef(-rY, 1, 0, 0);
+		else{
+			glRotatef(-rY, 1, 0, 0);
+			glRotatef(rX, 0, 1, 0);
+		}
 		
 		glBegin(GL_QUADS);
 		

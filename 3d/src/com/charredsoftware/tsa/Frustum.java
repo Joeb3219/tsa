@@ -77,7 +77,7 @@ public class Frustum {
 	 * @return Returns <tt>true</tt> if any of the region's testable points are in the frustum.
 	 */
 	public boolean regionInFrustum(Region r){
-		for(BlockInstance b : r.getFrustumTestBlocks(Main.getInstance().player.y)){
+		for(BlockInstance b : r.getFrustumTestBlocks(0)){
 			if(blockInFrustum(b, false)) return true;
 		}
 		return false;
@@ -101,7 +101,7 @@ public class Frustum {
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;
-	 	if (pcx - 1 > aux || pcx + 1 < -aux) return false;
+	 	if (considerY && (pcx - 1 > aux || pcx + 1 < -aux)) return false;
 
 		return true;
 	}
