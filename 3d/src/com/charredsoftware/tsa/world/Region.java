@@ -179,6 +179,7 @@ public class Region {
 	 * @param block <code>BlockInstance</code> to add the region.
 	 */
 	public void addBlock(BlockInstance block){
+		if(block.base == Block.air) return;
 		for(int i = 0; i < blocks.size() - 1; i ++){
 			BlockInstance b = blocks.get(i);
 			if(b.x == block.x && b.y == block.y && b.z == block.z){

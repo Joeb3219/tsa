@@ -87,6 +87,7 @@ public class Main {
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	private boolean developer_mode = true;
+	public boolean buildMode = true;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 50);
 	
 	private static Main _INSTANCE = null;

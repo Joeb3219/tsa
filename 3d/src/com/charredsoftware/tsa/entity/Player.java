@@ -44,7 +44,7 @@ public class Player extends Mob{
 	 * @see com.charredsoftware.tsa.entity.Mob#update()
 	 */
 	public void update(){
-		bow.update();
+		if(!Main.getInstance().buildMode) bow.update();
 		
 		checkMovement((isCrouching) ? 4f : 1f);
 		
