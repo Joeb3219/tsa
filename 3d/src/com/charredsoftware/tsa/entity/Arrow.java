@@ -96,7 +96,6 @@ public class Arrow extends Entity{
 	 * Enables lighting if possible.
 	 */
 	public void render(){
-		
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 	
 		glLight(Main.getInstance().controller.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
@@ -111,11 +110,10 @@ public class Arrow extends Entity{
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		if(Math.abs(rX) <= 86f) glRotatef(-rY, 1, 0, 0);
-		else{
-			glRotatef(-rY, 1, 0, 0);
-			glRotatef(rX, 0, 1, 0);
-		}
+		glRotatef(-rY, 1, 0, 0);
+		glRotatef(180, 1, 0, 0);
+		glRotatef((rX > 180) ? rX : -rX, 0, 1, 0);
+		if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
 		
 		glBegin(GL_QUADS);
 		
