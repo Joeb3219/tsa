@@ -1,6 +1,37 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glIsEnabled;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glVertex2d;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 import java.util.Timer;
@@ -17,6 +48,7 @@ import org.newdawn.slick.openal.SoundStore;
 
 import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
+import com.charredsoftware.tsa.entity.Spinner;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.gui.Button;
 import com.charredsoftware.tsa.gui.Menu;
@@ -51,6 +83,7 @@ public class Main {
 	private Menu main_menu, options_menu;
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 50);
+	public DialogHUD HUDDialog;
 	
 	private static Main _INSTANCE = null;
 	
@@ -62,6 +95,9 @@ public class Main {
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
 		player = new Player(new World(0), camera);
+		HUDDialog = new DialogHUD();
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
+		player.world.entities.add(new Spinner(1, 6, 1));
 	}
 	
 	/**
@@ -120,17 +156,24 @@ public class Main {
 		else if(gameState == GameState.MENU) unboundMouseTick(); 
 		
 		
-		if(gameState == GameState.GAME){
+		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
 			player.update();
-			for(Entity e : player.world.entities) e.update();
+			for(int i = 0; i < player.world.entities.size(); i ++){
+				Entity e = player.world.entities.get(i);
+				if(e.markedForDeletion){
+					player.world.entities.remove(i);
+					i++;
+				}else player.world.entities.get(i).update();
+			}
 			
 			mouseTick();
 		}
 		
 		camera.calculatePosition(player);
 		
-		keyboardTick();
+		if(!HUDDialog.hasDialogs()) keyboardTick();
 		
+		HUDDialog.update();
 		HUDText.update();
 		
 		while(Keyboard.next()){}
@@ -212,9 +255,9 @@ public class Main {
 			else player.selectedBlock = Block.blocks.get(Block.blocks.size() - 1);
 		}
 		
-		if(gameState == GameState.GAME && Mouse.isButtonDown(0)  && controller.buildingMode && cooldown == 0){
+		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0){
 			if(player.world.lookingAt.base == Block.chest) openChest(player.world.lookingAt);
-			else player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+			else if(controller.buildingMode) player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
 		}
 		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && controller.buildingMode && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
@@ -253,16 +296,6 @@ public class Main {
 	 */
 	private void playerFlashlight(){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-		if(player.isInWater()){
-			glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1f);
-			glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);
-			glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.16f);
-		}else{
-			glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
-			glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);
-			glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2f);		
-		}
-		
 		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
 		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
 		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
@@ -330,7 +363,9 @@ public class Main {
 	
 			glLoadIdentity();
 			
-			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.maxArrows);
+			if(HUDDialog.hasDialogs()) HUDDialog.render();
+			
+			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.default_maxArrows);
 			font.drawString(10, 30, "Health: " + player.health + "/100");
 			
 			HUDText.render();
@@ -340,10 +375,22 @@ public class Main {
 		}
 		
 
-		glEnable(GL_LIGHTING);
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
+		
+		if(controller.buildingMode){
+			glPushMatrix();
+			glEnable(GL_TEXTURE_2D);
+			glViewport(10, 10, 74, 74);
+			glLoadIdentity();
+			glRotatef(60, 1, 0, 0);
+			glRotatef(60, 0, 1, 0);
+			glRotatef(60, 0, 0, 1);
+			player.selectedBlock.draw(0f,0f,0f);
+			glPopMatrix();
+		}
+		glEnable(GL_LIGHTING);
 		glMatrixMode(GL_MODELVIEW);
 
 	}

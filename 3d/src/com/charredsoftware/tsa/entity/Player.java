@@ -103,7 +103,7 @@ public class Player extends Mob{
 		}
 
 		if(isJumping) walking = false;
-		if(walking && !Sound.WALKING.audio.isPlaying()) Sound.WALKING.playSfx();
+		if(walking && !Sound.WALKING.audio.isPlaying() && !isCrouching) Sound.WALKING.playSfx();
 		if(!walking && Sound.WALKING.audio.isPlaying()) Sound.WALKING.audio.stop();
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
@@ -158,4 +158,10 @@ public class Player extends Mob{
 		return v;
 	}
 	
+	/**
+	 * @param damage Amount of damage to deal to player.
+	 */
+	public void damageMob(float damage){
+		super.damageMob(damage);
+	}
 }

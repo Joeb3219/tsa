@@ -17,14 +17,23 @@ public class Bow {
 
 	public float drawBackTime = 0f;
 	public static final float maxDrawBackTime = 3f;
-	public static final int maxArrows = 25;
+	public static final int default_maxArrows = 25;
+	public int maxArrows = 0;
 	public int arrows = 25;
 	
 	/**
 	 * Creates a new Bow.
 	 */
 	public Bow(){
-		
+		maxArrows = default_maxArrows;
+	}
+	
+	/**
+	 * Creates a new Bow.
+	 * @param arrows Max number of arrows the bow holds.
+	 */
+	public Bow(int arrows){
+		maxArrows = arrows;
 	}
 	
 	/**
@@ -58,7 +67,7 @@ public class Bow {
 		Sound.BOW_PULLBACK.audio.stop();
 		arrows --;
 		Position player = Main.getInstance().player.getPosition();
-		Arrow a = new Arrow(Main.getInstance().player.world, new Position(player.x, player.y + 1, player.z), drawBackTime);
+		Arrow a = new Arrow(Main.getInstance().player, Main.getInstance().player.world, new Position(player.x, player.y + 1, player.z), drawBackTime, Main.getInstance().camera.rx, Main.getInstance().camera.ry);
 		drawBackTime = 0f;
 		Sound.BOW_SHOT.playSfxIfNotPlaying();
 	}

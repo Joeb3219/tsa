@@ -17,6 +17,7 @@ public class Entity {
 	public float currentVelocity = 0f, movingSpeed = 0.7f, beginningJumpingVelocity = 0f, currentJumpingVelocity = 0f;
 	public final float defaultStartJumpingVelocity = 1.4f;
 	public World world;
+	public boolean markedForDeletion = false;
 
 	/**
 	 * Creates a new Entity
@@ -93,5 +94,5 @@ public class Entity {
 	public void render(){
 		
 	}
-	
+
 }

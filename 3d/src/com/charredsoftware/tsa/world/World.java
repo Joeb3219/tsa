@@ -11,6 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.entity.Arrow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.util.FileUtilities;
 
@@ -206,6 +207,7 @@ public class World {
 			if(x == r.x && z == r.z) return r;
 		}
 		
+		if(!Main.getInstance().controller.buildingMode) return regions.get(0);
 		Region r = new Region(this, x, z);
 		regions.add(r);
 		r.generate();

@@ -33,6 +33,8 @@ public class Arrow extends Entity{
 	public float flyingTime = 0f;
 	public float rY, rX; //Used to calculate launch angles.
 	public boolean stuckInSolid = false;
+	public boolean shouldBeLit = true;
+	public Entity shooter;
 	
 	/**
 	 * Creates a new Arrow.
@@ -41,15 +43,16 @@ public class Arrow extends Entity{
 	 * @param p Position at which the arrow starts.
 	 * @param drawBackTime How long the bow was pulled back.
 	 */
-	public Arrow(World w, Position p, float drawBackTime){
+	public Arrow(Entity shooter, World w, Position p, float drawBackTime, float rX, float rY){
 		super(p.x, p.y, p.z);
+		this.shooter = shooter;
 		this.world = w;
 			try {
 				if(texture == null) texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "arrow.png"));
 			} catch (IOException e) {new CrashReport(e);}
 		
-		rY =  Main.getInstance().camera.ry;
-		rX = Main.getInstance().camera.rx;
+		this.rY = rY;
+		this.rX = rX;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
 		horizontalVelocity = (float) (Math.abs(Math.cos(Math.toRadians(rY))) * velocityMagnitude);
 		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude) * ((rY < 0) ? 1 : -1);
@@ -61,7 +64,8 @@ public class Arrow extends Entity{
 	 * Uses game's physics engine.
 	 */
 	public void update(){
-		if(stuckInSolid || y < 0) return;
+		if(y <= 0) markedForDeletion = true;
+		if(stuckInSolid || markedForDeletion) return;
 		flyingTime += 0.5f / Main.DESIRED_TPS;
 		double ryCos = Math.cos(Math.toRadians(rY));
 		float hVelocity = horizontalVelocity / _STEPS;
@@ -71,10 +75,28 @@ public class Arrow extends Entity{
 		for(float step = 0; step < _STEPS; step ++){
 			Position last = getPosition();
 			move(v.getX(), v.getY(), v.getZ());
+			checkIfHitMob();
 			if(last.equals(getPosition())) break; //Nothing has changed -> no movement -> get out of here!
 		}
 		
 		verticalVelocity = Physics.calculateFinalVelocity(beginningVerticalVelocity, Physics.DOWNWARD_ACCELERATION, flyingTime);
+		
+	}
+	
+	/**
+	 * Checks if the arrow has hit a mob.
+	 */
+	private void checkIfHitMob(){
+		for(Entity e : world.entities){
+			if(!(e instanceof Mob)) continue;
+			Mob m = (Mob) e;
+			if(m.health <= 0) continue;
+			if(m.arrowHit(this)){
+				stuckInSolid = true;
+				Sound.ARROW_HIT.playSfx();
+				markedForDeletion = true;
+			}
+		}
 	}
 	
 	/**
@@ -96,14 +118,16 @@ public class Arrow extends Entity{
 	 * Enables lighting if possible.
 	 */
 	public void render(){
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
 	
-		glLight(Main.getInstance().controller.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-		glLight(Main.getInstance().controller.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-		glLight(Main.getInstance().controller.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
-		glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
-		
-		Main.getInstance().controller.lightInUse ++;
+		if(shouldBeLit){
+			if(stuckInSolid && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
+			FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+			glLight(Main.getInstance().controller.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+			glLight(Main.getInstance().controller.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+			glLight(Main.getInstance().controller.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
+			glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
+			Main.getInstance().controller.lightInUse ++;
+		}
 		
 		glEnable(GL_TEXTURE_2D);
 		texture.bind();

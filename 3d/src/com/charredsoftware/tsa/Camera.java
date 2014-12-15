@@ -65,21 +65,20 @@ public class Camera {
 		
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
 		
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
-		
 		for(int i = GL_LIGHT0 - 1; i < GL_LIGHT7; i ++){
 			glLightf(i, GL_CONSTANT_ATTENUATION, 1.25f);
 			glLightf(i, GL_LINEAR_ATTENUATION, .5f);
 			glLightf(i, GL_QUADRATIC_ATTENUATION, 1.0f);
 			glEnable(i);
 		}
-
-		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.35f);
-		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1f);
-		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.08f);
+		
+		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
+		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
+		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2f);
 		
 		glEnable(GL_COLOR_MATERIAL);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);

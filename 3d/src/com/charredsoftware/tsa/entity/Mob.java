@@ -4,6 +4,7 @@ import java.util.ArrayList;
 	
 
 
+
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
@@ -120,6 +121,26 @@ public class Mob extends Entity{
 	 */
 	public boolean standingOnSolid(){
 		return getBlockUnder().base.solid;
+	}
+	
+	/**
+	 * @param a Arrow
+	 * @return Returns <tt>true</tt> if an arrow has hit the mob.
+	 */
+	public boolean arrowHit(Arrow a){
+		if(a.shooter == this) return false;
+		if(Math.abs(a.x - x) > 1) return false;
+		if(Math.abs(a.z - z) > 1) return false;
+		if(a.y < y || a.y > y + height) return false;
+		return true;
+	}
+	
+	/**
+	 * Damages the mob.
+	 * @param damage Amount of damage
+	 */
+	public void damageMob(float damage){
+		health -= damage;
 	}
 	
 }
