@@ -33,7 +33,7 @@ public class Entity {
 	 * @param z Z-position
 	 */
 	public Entity(float x, float y, float z){
-		if(!(this instanceof Player)) Main.getInstance().player.world.entities.add(this);
+		if(!(this instanceof Player)) Main.getInstance().player.world.existingEntities.add(this);
 		this.x = x;
 		this.y = y;
 		this.z = z;

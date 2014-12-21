@@ -18,17 +18,33 @@ public class GameController {
 	public String gameName = "The Enigma Machine";
 	public String version = "1.0.2";
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false;
+	public float soundVolume = 0.5f;
 	public int lightInUse = GL_LIGHT1;
+	private float cooldown = 0f;
 	
 	/**
 	 * Things to check on keyboard updates.
 	 */
 	public void keyboardTick(){
+		if(cooldown > 0) cooldown --;
 		if(developerMode){
-			if(Keyboard.isKeyDown(Keyboard.KEY_L)) lighting = !lighting;
-			if(Keyboard.isKeyDown(Keyboard.KEY_B)) buildingMode = !buildingMode;
-			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) Main.getInstance().player.bow.arrows ++;
-			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)) Main.getInstance().player.bow.arrows --;
+			if(Keyboard.isKeyDown(Keyboard.KEY_L) && cooldown == 0){
+				cooldown = 4f;
+				lighting = !lighting;
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_B) && cooldown == 0){
+				cooldown = 4f;
+				buildingMode = !buildingMode;
+				if(!buildingMode) Main.getInstance().player.world.save();
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_UP) && cooldown == 0){
+				cooldown = 4f;
+				Main.getInstance().player.bow.arrows ++;
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && cooldown == 0){
+				cooldown = 4f;
+				Main.getInstance().player.bow.arrows --;
+			}
 		}
 		
 		while(Keyboard.next()){}
@@ -41,10 +57,11 @@ public class GameController {
 		Font font = Main.getInstance().font;
 		float xStart = Display.getWidth() - font.getWidth("DEVELOPER MODE: DEVELOPER MODE: ");
 		font.drawString(xStart, 10, "DEVELOPER MODE");
-		font.drawString(xStart, 30, "FPS: " + Main.getInstance().displayFPS);
-		font.drawString(xStart, 50, "Lighting: " + lighting);
-		font.drawString(xStart, 70, "Building: " + buildingMode);
-		font.drawString(xStart, 90, "Entities: " + Main.getInstance().player.world.entities.size());
+		font.drawString(xStart, 30, Main.getInstance().player.getPosition().toStringWithIntegers());
+		font.drawString(xStart, 50, "FPS: " + Main.getInstance().displayFPS);
+		font.drawString(xStart, 70, "Lighting: " + lighting);
+		font.drawString(xStart, 90, "Building: " + buildingMode);
+		font.drawString(xStart, 110, "Entities: " + Main.getInstance().player.world.existingEntities.size());
 		
 	}
 	

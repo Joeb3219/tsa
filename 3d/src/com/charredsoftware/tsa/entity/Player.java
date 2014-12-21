@@ -23,6 +23,7 @@ public class Player extends Mob{
 	private Camera camera; //Used to calculate motion.
 	public Block selectedBlock = Block.air;
 	public boolean walking = false;
+	public float score = 0f;
 	public Bow bow = new Bow();
 	
 	/**
@@ -161,7 +162,17 @@ public class Player extends Mob{
 	/**
 	 * @param damage Amount of damage to deal to player.
 	 */
-	public void damageMob(float damage){
+	public void damageMob(int damage){
 		super.damageMob(damage);
 	}
+	
+	/**
+	 * @return Returns <tt>true</tt> if the arrow hit the player.
+	 */
+	public boolean arrowHit(Arrow a){
+		boolean hit = super.arrowHit(a);
+		if(hit) damageMob(3);
+		return hit;
+	}
+	
 }

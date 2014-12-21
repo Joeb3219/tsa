@@ -42,6 +42,13 @@ public class Position {
 	}
 	
 	/**
+	 * @return Returns a String of the x/y/z values, but with all values as integers.
+	 */
+	public String toStringWithIntegers(){
+		return "[x/y/z] {" + (int) x + "/" + (int) y + "/" + (int) z + "}";
+	}
+	
+	/**
 	 * Converts decimal to whole number.
 	 */
 	public void normalizeCoords(){

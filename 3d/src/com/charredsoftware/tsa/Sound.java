@@ -24,6 +24,7 @@ public class Sound {
 	public static Sound ARROW_HIT = new Sound("arrow_hit.wav");
 	public static Sound BOW_PULLBACK = new Sound("bow_pullback.wav");
 	public static Sound OUT_OF_ARROWS = new Sound("out_of_arrows.wav");
+	public static Sound OPENING_CHEST = new Sound("chest_open.wav");
 	
 	private String path;
 	public Audio audio;
@@ -39,7 +40,7 @@ public class Sound {
 	}
 	
 	public void playSfx(){
-		audio.playAsSoundEffect(1f, 1f, false);
+		audio.playAsSoundEffect(1f, Main.getInstance().controller.soundVolume, false);
 	}
 	
 	public void playSfx(float x, float y, float z){

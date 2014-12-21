@@ -1,9 +1,6 @@
 package com.charredsoftware.tsa.entity;
 
 import java.util.ArrayList;
-	
-
-
 
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.world.Block;
@@ -19,10 +16,12 @@ import com.charredsoftware.tsa.world.Position;
 
 public class Mob extends Entity{
 
+	public MobType identifier = MobType.GENERIC;
 	public int health = 20;
 	public float height = 2f;
 	public boolean isJumping, isCrouching = false;
 	protected float jumpingTime = 0;
+	public float killBonus = 0f;
 	
 	/**
 	 * Creates a new Mob.
@@ -128,6 +127,7 @@ public class Mob extends Entity{
 	 * @return Returns <tt>true</tt> if an arrow has hit the mob.
 	 */
 	public boolean arrowHit(Arrow a){
+		if(a.markedForDeletion || a.stuckInSolid) return false;
 		if(a.shooter == this) return false;
 		if(Math.abs(a.x - x) > 1) return false;
 		if(Math.abs(a.z - z) > 1) return false;
@@ -139,7 +139,7 @@ public class Mob extends Entity{
 	 * Damages the mob.
 	 * @param damage Amount of damage
 	 */
-	public void damageMob(float damage){
+	public void damageMob(int damage){
 		health -= damage;
 	}
 	

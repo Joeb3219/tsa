@@ -6,16 +6,18 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.entity.Entity;
+import com.charredsoftware.tsa.entity.Mob;
+import com.charredsoftware.tsa.entity.MobType;
 import com.charredsoftware.tsa.entity.Player;
+import com.charredsoftware.tsa.entity.Spinner;
 
 /**
  * Region class.
@@ -30,6 +32,7 @@ public class Region {
 	/** _HEIGHT - {@value} Height of chunk*/
 	public static final float _HEIGHT = 128;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
+	public ArrayList<Entity> entitiesToLoad = new ArrayList<Entity>(); //Entities that should be loaded/saved into the world.
 	public float x, z;
 	public World world;
 	
@@ -56,7 +59,23 @@ public class Region {
 			
 			PrintWriter writer = new PrintWriter(file, "UTF-8");
 
-			writer.println("<Blocks>");
+			writer.println("<Region>");
+			
+			//Mobs
+			writer.println("<mobs>");
+			for(Entity e : entitiesToLoad){
+				if(!(e instanceof Mob)) continue;
+				Mob m = (Mob) e;
+				writer.println("<mob>");
+				writer.println("<id>" + m.identifier.id + "</id>");
+				writer.println("<position>" + m.x + ":" + m.y + ":" + m.z + "</position>");
+				writer.println("<json></json>");
+				writer.println("</mob>");
+			}
+			writer.println("</mobs>");
+			
+			//Blocks
+			writer.println("<blocks>");
 			
 			for(BlockInstance b : blocks){
 				writer.println("<block>");
@@ -71,7 +90,9 @@ public class Region {
 			writer.println("<data>0:0:0</data>");
 			writer.println("</block>");
 			
-			writer.println("</Blocks>");
+			writer.println("</blocks>");
+			
+			writer.println("</Region>");
 			
 			writer.close();
 		} catch (IOException e) {new CrashReport(e);}
@@ -125,40 +146,79 @@ public class Region {
 	 */
 	public void generate(File file){
 		try {
-			Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
-			NodeList base = d.getElementsByTagName("block");
-			for(int i = 0; i < base.getLength() - 1; i ++){
-				Node n = base.item(i);
-				NodeList children = n.getChildNodes();
-				float bx = 0, by = 0, bz = 0, bspecial = 0;
-				String json = "";
-				Block bbase = Block.air;
-				for(int l = 0; l < children.getLength() - 1; l ++){
-					Node c = children.item(l);
-					String value = c.getTextContent();
-					if(value.equals("") || value.equals(" ")) continue;
-					if(c.getNodeName().equals("position")){
-						bx = Float.parseFloat(value.split(":")[0]);
-						by = Float.parseFloat(value.split(":")[1]);
-						bz = Float.parseFloat(value.split(":")[2]);
-					}else if(c.getNodeName().equals("data")){
-						bspecial = Float.parseFloat(value.split(":")[2]);
-						bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
-					}else if(c.getNodeName().equals("json")){
-						json = value;
-					}
+			loadMobs(file);
+			loadBlocks(file);
+		} catch (Exception e) {
+			new CrashReport(e);
+		}
+	}
+	
+	/**
+	 * Loads the mobs.
+	 * @param file File to load from.
+	 */
+	private void loadMobs(File file) throws Exception{
+		Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+		NodeList base = d.getElementsByTagName("mob");
+		for(int i = 0; i < base.getLength(); i ++){
+			Node n = base.item(i);
+			NodeList children = n.getChildNodes();
+			float bx = 0, by = 0, bz = 0;
+			String json = "";
+			MobType type = MobType.GENERIC;
+			for(int l = 0; l < children.getLength() - 1; l ++){
+				Node c = children.item(l);
+				String value = c.getTextContent();
+				if(value.equals("") || value.equals(" ")) continue;
+				if(c.getNodeName().equals("position")){
+					bx = Float.parseFloat(value.split(":")[0]);
+					by = Float.parseFloat(value.split(":")[1]);
+					bz = Float.parseFloat(value.split(":")[2]);
+				}else if(c.getNodeName().equals("id")){
+					System.out.println(value);
+					type = MobType.fromString(value);
+				}else if(c.getNodeName().equals("json")){
+					json = value;
 				}
-				BlockInstance b = new BlockInstance(bbase, bx, by, bz);
-				b.special = bspecial;
-				b.initJson = json;
-				addBlock(b);
-				
 			}
+			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(bx, by, bz));
 			
-		} catch (IOException e) {new CrashReport(e);} catch (SAXException e) {
-			new CrashReport(e);
-		} catch (ParserConfigurationException e) {
-			new CrashReport(e);
+		}
+	}
+	
+	/**
+	 * Loads the blocks
+	 * @param file File to load from
+	 */
+	private void loadBlocks(File file) throws Exception{
+		Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+		NodeList base = d.getElementsByTagName("block");
+		for(int i = 0; i < base.getLength() - 1; i ++){
+			Node n = base.item(i);
+			NodeList children = n.getChildNodes();
+			float bx = 0, by = 0, bz = 0, bspecial = 0;
+			String json = "";
+			Block bbase = Block.air;
+			for(int l = 0; l < children.getLength() - 1; l ++){
+				Node c = children.item(l);
+				String value = c.getTextContent();
+				if(value.equals("") || value.equals(" ")) continue;
+				if(c.getNodeName().equals("position")){
+					bx = Float.parseFloat(value.split(":")[0]);
+					by = Float.parseFloat(value.split(":")[1]);
+					bz = Float.parseFloat(value.split(":")[2]);
+				}else if(c.getNodeName().equals("data")){
+					bspecial = Float.parseFloat(value.split(":")[2]);
+					bbase = Block.getBlock(value.split(":")[0] + ":" + value.split(":")[1]);
+				}else if(c.getNodeName().equals("json")){
+					json = value;
+				}
+			}
+			BlockInstance b = new BlockInstance(bbase, bx, by, bz);
+			b.special = bspecial;
+			b.initJson = json;
+			addBlock(b);
+			
 		}
 	}
 	

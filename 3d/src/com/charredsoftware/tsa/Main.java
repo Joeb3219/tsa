@@ -82,7 +82,7 @@ public class Main {
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	public GameController controller;
-	public HUDTextPopups HUDText = new HUDTextPopups(10, 50);
+	public HUDTextPopups HUDText = new HUDTextPopups(10, 70);
 	public DialogHUD HUDDialog;
 	
 	private static Main _INSTANCE = null;
@@ -97,7 +97,6 @@ public class Main {
 		player = new Player(new World(0), camera);
 		HUDDialog = new DialogHUD();
 		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
-		player.world.entities.add(new Spinner(1, 6, 1));
 	}
 	
 	/**
@@ -158,12 +157,12 @@ public class Main {
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
 			player.update();
-			for(int i = 0; i < player.world.entities.size(); i ++){
-				Entity e = player.world.entities.get(i);
+			for(int i = 0; i < player.world.existingEntities.size(); i ++){
+				Entity e = player.world.existingEntities.get(i);
 				if(e.markedForDeletion){
-					player.world.entities.remove(i);
+					player.world.existingEntities.remove(i);
 					i++;
-				}else player.world.entities.get(i).update();
+				}else player.world.existingEntities.get(i).update();
 			}
 			
 			mouseTick();
@@ -193,12 +192,10 @@ public class Main {
 					gameState = GameState.GAME;
 					if(w.identifier.equalsIgnoreCase("new_world")){
 						player.world = new World();
-						player.world.generate();
 						player.spawn(1, 1);
 					}else{
 						System.out.println("Loading world " + w.identifier);
 						player.world = new World(Integer.parseInt(w.identifier));
-						player.world.generate();
 						player.spawn(1, 1);
 					}
 				}
@@ -263,7 +260,7 @@ public class Main {
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
 		}
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_B) && player.world.lookingAt.base.solid && cooldown == 0){
+		if(controller.developerMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
 		}
@@ -283,12 +280,14 @@ public class Main {
 	 */
 	private void openChest(BlockInstance b){
 		if(!(b instanceof Chest)) return; //Not a chest! Uh oh!
+		Sound.OPENING_CHEST.playSfxIfNotPlaying();
 		Chest c = (Chest) b;
 		c.exists = false;
 		player.world.removeBlock(c);
 		HUDText.popups.add(new TextPopup("You found " + c.arrows + " arrows!"));
 		HUDText.popups.add(new TextPopup("You found " + c.coins + " coins!"));
 		player.bow.arrows += c.arrows;
+		player.score += c.coins * 2;
 	}
 		
 	/**
@@ -325,8 +324,8 @@ public class Main {
 			if(glIsEnabled(GL_LIGHTING)) glDisable(GL_LIGHTING);
 		}
 		
-		for(int i = player.world.entities.size() - 1; i >= 0; i --){
-			player.world.entities.get(i).render();
+		for(int i = player.world.existingEntities.size() - 1; i >= 0; i --){
+			player.world.existingEntities.get(i).render();
 		}
 		player.world.render();
 		controller.lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
@@ -367,6 +366,7 @@ public class Main {
 			
 			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.default_maxArrows);
 			font.drawString(10, 30, "Health: " + player.health + "/100");
+			font.drawString(10, 50, "Score: " + player.score);
 			
 			HUDText.render();
 			
@@ -402,11 +402,8 @@ public class Main {
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
 		
-		player.world.generate();
 		player.spawn(1, 1);
 		
-		Timer t = new Timer();
-		//t.scheduleAtFixedRate(new TimerTask(){public void run(){Main.world.save();}}, 5, 5000);
 		
 		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
@@ -440,8 +437,7 @@ public class Main {
 			Display.update();
 		}
 		
-		t.cancel();
-		player.world.save();
+		//player.world.save();
 		
 		Display.destroy();
 		AL.destroy();

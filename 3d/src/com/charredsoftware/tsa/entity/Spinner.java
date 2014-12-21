@@ -27,6 +27,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
+import com.charredsoftware.tsa.TextPopup;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -44,6 +45,8 @@ public class Spinner extends Mob{
 	 */
 	public Spinner(float x, float y, float z){
 		super();
+		identifier = MobType.SPINNER;
+		killBonus = 5f;
 		if(texture == null){
 			try {
 				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
@@ -60,7 +63,14 @@ public class Spinner extends Mob{
 	 * Updates the mob.
 	 */
 	public void update(){
-		if(health <= 0) return;
+		System.out.println(health);
+		if(health <= 0){
+			Main.getInstance().player.score += killBonus;
+			Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));
+			markedForDeletion = true;
+			return;
+		}
+		facing -= 1;
 		if(r.nextInt(100) <= 5){
 			Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 2, facing, 0);
 			a.shouldBeLit = false;
@@ -74,7 +84,8 @@ public class Spinner extends Mob{
 	 */
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
-		if(hit) damageMob(2f);
+		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
+		if(hit) damageMob(2);
 		return hit;
 	}
 	
@@ -88,7 +99,7 @@ public class Spinner extends Mob{
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		glRotatef(-- facing, 0, 1, 0);
+		glRotatef(facing, 0, 1, 0);
 		
 		glBegin(GL_QUADS);
 		
@@ -133,6 +144,7 @@ public class Spinner extends Mob{
 		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
 	
 		glEnd();
+
 		
 		glPopMatrix();
 	}

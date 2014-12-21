@@ -11,8 +11,8 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
 import com.charredsoftware.tsa.Main;
-import com.charredsoftware.tsa.entity.Arrow;
 import com.charredsoftware.tsa.entity.Entity;
+import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.util.FileUtilities;
 
 /**
@@ -28,7 +28,7 @@ public class World {
 	public BlockInstance lookingAt = new BlockInstance(Block.air, 0, -10000, 0);
 	public int id;
 	public File dir;
-	public ArrayList<Entity> entities = new ArrayList<Entity>();
+	public ArrayList<Entity> existingEntities = new ArrayList<Entity>();
 	
 	/**
 	 * Generates a new world with the next highest ID.
@@ -36,6 +36,7 @@ public class World {
 	public World(){
 		this.id = getNextId();
 		this.dir = new File(FileUtilities.savesPath + id);
+		generate();
 	}
 	
 	/**
@@ -45,6 +46,7 @@ public class World {
 	public World(int id){
 		this.id = id;
 		this.dir = new File(FileUtilities.savesPath + id);
+		generate();
 	}
 	
 	/**
@@ -106,8 +108,9 @@ public class World {
 			Region r = new Region(this, Float.parseFloat(coordinates.split("l")[0]), Float.parseFloat(coordinates.split("l")[1].split(".csf")[0]));
 			regions.add(r);
 			r.generate(new File(dir.getAbsolutePath(), s));
-			
 		}
+		
+		for(Region r : regions) existingEntities.addAll(r.entitiesToLoad);
 	}
 
 	/**
@@ -407,6 +410,16 @@ public class World {
 	 */
 	public ArrayList<BlockInstance> getBlocksInRegion(float x, float z){
 		return findRegion(x, z).blocks;
+	}
+	
+	/**
+	 * Adds a mob to the world.
+	 * Used to ensure that mobs get added to level, and can be killed later without affecting world loading/saving.
+	 * @param m The mob to add.
+	 */
+	public void addMob(Mob m){
+		findRegion(m.x, m.z).entitiesToLoad.add(m);
+		existingEntities.add(m);
 	}
 	
 }
