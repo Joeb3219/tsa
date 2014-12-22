@@ -2,9 +2,14 @@ package com.charredsoftware.tsa;
 
 import static org.lwjgl.opengl.GL11.GL_LIGHT1;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Font;
+
+import com.charredsoftware.tsa.entity.Entity;
+import com.charredsoftware.tsa.entity.Mob;
 
 /**
  * GameController class. Used to have a single place to store info about the current game session.
@@ -44,6 +49,15 @@ public class GameController {
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN) && cooldown == 0){
 				cooldown = 4f;
 				Main.getInstance().player.bow.arrows --;
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_P) && cooldown == 0){
+				cooldown = 4f;
+				ArrayList<Entity> entities = Main.getInstance().player.world.existingEntities;
+				for(int i = 0; i < entities.size() - 1; i ++){
+					if(!(entities.get(i) instanceof Mob)){
+						entities.remove(i);
+					}
+				}
 			}
 		}
 		
