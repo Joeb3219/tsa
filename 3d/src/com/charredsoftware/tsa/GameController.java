@@ -23,9 +23,11 @@ public class GameController {
 	public String gameName = "The Enigma Machine";
 	public String version = "1.0.2";
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false;
+	public boolean applet = false;
 	public float soundVolume = 0.5f;
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
+	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
 	
 	/**
 	 * Things to check on keyboard updates.
@@ -77,6 +79,26 @@ public class GameController {
 		font.drawString(xStart, 90, "Building: " + buildingMode);
 		font.drawString(xStart, 110, "Entities: " + Main.getInstance().player.world.existingEntities.size());
 		
+	}
+	
+	/**
+	 * @return Returns the amount of time left in the game as a string
+	 */
+	public String getRemainingTimeAsString(){
+		String result = "";
+		int seconds = timeLeft / Main.DESIRED_TPS;
+		int minutes = seconds / 60;
+		int actualSeconds = seconds - (minutes * 60);
+		int microSeconds = ( timeLeft - (minutes * 60 * Main.DESIRED_TPS) - (actualSeconds * Main.DESIRED_TPS) ) * 2;
+		
+		if(minutes < 10) result += "0";
+		result += minutes + ":";
+		if(actualSeconds < 10) result += "0";
+		result += actualSeconds + ":";
+		if(microSeconds < 10) result += "0";
+		result += microSeconds;
+		
+		return result;
 	}
 	
 	private GameController(){

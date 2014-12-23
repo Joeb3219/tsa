@@ -82,7 +82,7 @@ public class Main {
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	public GameController controller;
-	public HUDTextPopups HUDText = new HUDTextPopups(10, 70);
+	public HUDTextPopups HUDText = new HUDTextPopups(10, 90);
 	public DialogHUD HUDDialog;
 	
 	private static Main _INSTANCE = null;
@@ -150,6 +150,7 @@ public class Main {
 	 */
 	public void tick(){
 		if(cooldown > 0) cooldown --;
+		controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && controller.developerMode) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) unboundMouseTick(); 
@@ -366,7 +367,8 @@ public class Main {
 			
 			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.default_maxArrows);
 			font.drawString(10, 30, "Health: " + player.health + "/100");
-			font.drawString(10, 50, "Score: " + player.score);
+			font.drawString(10, 50, "Time Remaining: " + controller.getRemainingTimeAsString());
+			font.drawString(10, 70, "Score: " + player.score);
 			
 			HUDText.render();
 			

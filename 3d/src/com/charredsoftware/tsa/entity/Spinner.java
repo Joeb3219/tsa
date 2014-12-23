@@ -85,7 +85,7 @@ public class Spinner extends Mob{
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
-		if(hit) damageMob(5);
+		if(hit) damageMob(a.calculateDamage());
 		return hit;
 	}
 	

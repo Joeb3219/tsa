@@ -27,12 +27,17 @@ public class AppletMain extends Applet{
 					super.removeNotify();
 				}
 			};
+			
+			
 			display_parent.setSize(getWidth(),getHeight());
 			add(display_parent);
 			display_parent.setFocusable(true);
 			display_parent.requestFocus();
 			display_parent.setIgnoreRepaint(true);
 			setVisible(true);
+			
+			Main.main(new String[0]);
+			System.out.println("Testificate");
 		} catch (Exception e) {
 			System.err.println(e);
 			throw new RuntimeException("Unable to create display");

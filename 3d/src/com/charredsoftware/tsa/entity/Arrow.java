@@ -1,6 +1,22 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_LIGHT7;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertex3f;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -30,7 +46,7 @@ public class Arrow extends Entity{
 	public static Texture texture = null;
 	public float beginningVerticalVelocity = 0f, verticalVelocity = 0f, horizontalVelocity = 0f;
 	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 8; //Number of steps to take in movement.
-	public float flyingTime = 0f;
+	public float drawBackTime, flyingTime = 0f;
 	public float rY, rX; //Used to calculate launch angles.
 	public boolean stuckInSolid = false;
 	public boolean shouldBeLit = true;
@@ -54,6 +70,7 @@ public class Arrow extends Entity{
 		this.rY = rY;
 		this.rX = rX;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
+		this.drawBackTime = drawBackTime;
 		horizontalVelocity = (float) (Math.abs(Math.cos(Math.toRadians(rY))) * velocityMagnitude);
 		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude) * ((rY < 0) ? 1 : -1);
 		beginningVerticalVelocity = verticalVelocity;
@@ -191,6 +208,18 @@ public class Arrow extends Entity{
 		glEnd();
 		
 		glPopMatrix();
+	}
+	
+	/**
+	 * @return Returns the amount of damage that the arrow will do.
+	 */
+	public int calculateDamage(){
+		int maxDamage = 5;
+		/*float velocity = (float) Math.sqrt(Math.pow(horizontalVelocity, 2) + Math.pow(verticalVelocity, 2));
+		float maxVelocity = (float) Math.sqrt(Math.pow((float) (Math.abs(Math.cos(Math.toRadians(rY))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2) + Math.pow((float) (Math.abs(Math.sin(Math.toRadians(rX))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2));
+		velocity = (velocity > maxVelocity) ?  maxVelocity : velocity;
+		return (int) (maxDamage * (velocity / maxVelocity * 1f) );*/
+		return (int) (maxDamage * ((drawBackTime < Bow.maxDrawBackTime - 1) ? drawBackTime + 1 : drawBackTime) / Bow.maxDrawBackTime);
 	}
 	
 }

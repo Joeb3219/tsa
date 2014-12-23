@@ -33,13 +33,17 @@ public class CrashReport {
 	 */
 	public CrashReport(Throwable t){
 		this.t = t;
-		file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
+		if(!Main.getInstance().controller.applet) file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
 		try {
 			if(t instanceof Exception){
 				((Exception) t).printStackTrace();
 			}
-			file.createNewFile();
-			generateReport();
+			if(Main.getInstance().controller.applet){
+				t.printStackTrace();
+			}else{
+				file.createNewFile();
+				generateReport();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
