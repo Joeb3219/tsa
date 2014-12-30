@@ -32,6 +32,7 @@ import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.Region;
 import com.charredsoftware.tsa.world.World;
 
 /**
@@ -144,12 +145,11 @@ public class Arrow extends Entity{
 	
 		if(shouldBeLit){
 			if(stuckInSolid && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
-			FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-			glLight(Main.getInstance().controller.lightInUse, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-			glLight(Main.getInstance().controller.lightInUse, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
-			glLight(Main.getInstance().controller.lightInUse, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
-			glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ x, y, z, 1f }))).flip());
-			Main.getInstance().controller.lightInUse ++;
+			
+			if(!markedForDeletion){
+				glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
+				Main.getInstance().controller.lightInUse ++;
+			}
 		}
 		
 		glEnable(GL_TEXTURE_2D);
@@ -219,7 +219,8 @@ public class Arrow extends Entity{
 		float maxVelocity = (float) Math.sqrt(Math.pow((float) (Math.abs(Math.cos(Math.toRadians(rY))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2) + Math.pow((float) (Math.abs(Math.sin(Math.toRadians(rX))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2));
 		velocity = (velocity > maxVelocity) ?  maxVelocity : velocity;
 		return (int) (maxDamage * (velocity / maxVelocity * 1f) );*/
-		return (int) (maxDamage * ((drawBackTime < Bow.maxDrawBackTime - 1) ? drawBackTime + 1 : drawBackTime) / Bow.maxDrawBackTime);
+		//return (int) (maxDamage * ((drawBackTime < Bow.maxDrawBackTime - 1) ? drawBackTime + 1 : drawBackTime) / Bow.maxDrawBackTime);
+		return 5;
 	}
 	
 }

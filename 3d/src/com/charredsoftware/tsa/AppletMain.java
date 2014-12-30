@@ -17,6 +17,7 @@ public class AppletMain extends Applet{
 					super.addNotify();
 					try {
 						Display.setParent(display_parent);
+						Main.main(new String[0]);  
 					} catch (LWJGLException e) {
 						e.printStackTrace();
 					}
@@ -36,8 +37,6 @@ public class AppletMain extends Applet{
 			display_parent.setIgnoreRepaint(true);
 			setVisible(true);
 			
-			Main.main(new String[0]);
-			System.out.println("Testificate");
 		} catch (Exception e) {
 			System.err.println(e);
 			throw new RuntimeException("Unable to create display");

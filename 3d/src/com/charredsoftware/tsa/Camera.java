@@ -1,7 +1,36 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHT7;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_TWO_SIDE;
+import static org.lwjgl.opengl.GL11.GL_LINEAR_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADRATIC_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLightModel;
+import static org.lwjgl.opengl.GL11.glLightModeli;
+import static org.lwjgl.opengl.GL11.glLightf;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.util.glu.GLU.gluOrtho2D;
+import static org.lwjgl.util.glu.GLU.gluPerspective;
 
 import java.nio.FloatBuffer;
 
@@ -11,6 +40,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.tsa.entity.Player;
+import com.charredsoftware.tsa.world.Region;
 
 /**
  * Camera class. Controls the Frustum.
@@ -27,6 +57,7 @@ public class Camera {
 	public float fov, aspectRatio, nearClip, farClip;
 	public Frustum frustum = Frustum.getInstance();
 	public float yOffset = 0f;
+	public FloatBuffer buffer;
 	
 	/**
 	 * 
@@ -61,7 +92,7 @@ public class Camera {
 		
 		glEnable(GL_LIGHTING);
 		
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+		buffer = BufferUtils.createFloatBuffer(4);
 		
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
 		
@@ -72,9 +103,17 @@ public class Camera {
 			glEnable(i);
 		}
 		
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
+		for(int i = GL_LIGHT0 + 1; i <= GL_LIGHT7; i ++){
+			System.out.println(i);
+			glLight(i, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+			glLight(i, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
+			glLight(i, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());
+			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0f, Region._HEIGHT + 16f, 0f, 1f}))).flip());
+		}
+
+		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
 		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
 		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);
@@ -82,7 +121,6 @@ public class Camera {
 		
 		glEnable(GL_COLOR_MATERIAL);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-		
 		
 		glClearColor(0 / 255f, 0 / 255f, 0 / 255f, 1f);
 		
@@ -120,6 +158,11 @@ public class Camera {
 		frustum.setCamera(camera, looking, up);
 		
 		glLoadIdentity();
+
+		for(int i = GL_LIGHT0 + 1; i < GL_LIGHT7; i ++){
+			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0f, Region._HEIGHT + 16f, 0f, 1f }))).flip());
+		}
+		
 		glRotatef(ry, 1, 0, 0);
 		glRotatef(rx, 0, 1, 0);
 		glRotatef(rz, 0, 0, 1);

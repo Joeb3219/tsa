@@ -78,6 +78,7 @@ public class GameController {
 		font.drawString(xStart, 70, "Lighting: " + lighting);
 		font.drawString(xStart, 90, "Building: " + buildingMode);
 		font.drawString(xStart, 110, "Entities: " + Main.getInstance().player.world.existingEntities.size());
+		font.drawString(xStart, 130, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
 		
 	}
 	

@@ -30,7 +30,9 @@ public class Region {
 	/** _SIZE - {@value} Size of chunk*/
 	public static final float _SIZE = 16;
 	/** _HEIGHT - {@value} Height of chunk*/
-	public static final float _HEIGHT = 128;
+	public static final float _HEIGHT = 64;
+	/** _FRUSTUM_CHECK_BLOCK_INTERVAL - {@value} Number of blocks between layers to be checked in region exclusion from culling. */
+	public static final float _FRUSTUM_CHECK_BLOCK_INTERVAL = 8;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public ArrayList<Entity> entitiesToLoad = new ArrayList<Entity>(); //Entities that should be loaded/saved into the world.
 	public float x, z;
@@ -110,21 +112,40 @@ public class Region {
 	}
 	
 	/**
-	 * @param y Y-position to test blocks at.
+	 * @return Returns the layer on which the lowest block is.
+	 */
+	public float getLowestLayer(){
+		float baseX = x * _SIZE;
+		float baseZ = z * _SIZE;
+		for(float i = -1; i < _HEIGHT; i ++){
+			for(float x = 0; x < _SIZE; x += 2){
+				for(float z = 0; z < _SIZE; z += 2){
+					float fX = baseX + x;
+					float fZ = baseZ + z;
+					if(getBlock(new Position(fX, i, fZ)).base != Block.air) return i;
+				}
+			}
+		}
+		return -1f;
+	}
+	
+	/**
 	 * @return Returns blocks in region to test against frustum; Limits number of regions to render.
 	 */
-	public ArrayList<BlockInstance> getFrustumTestBlocks(float y){
+	public ArrayList<BlockInstance> getFrustumTestBlocks(){
 		ArrayList<BlockInstance> testBlocks = new ArrayList<BlockInstance>();
 		float baseX = x * _SIZE;
 		float baseZ = z * _SIZE;
-		for(float x = 0; x < _SIZE; x += 2){
-			for(float z = 0; z < _SIZE; z += 2){
-				float fX = baseX + x;
-				float fZ = baseZ + z;
-				testBlocks.add(getBlock(new Position(fX, y, fZ)));
+		for(float y = getLowestLayer(); y < _HEIGHT; y += _FRUSTUM_CHECK_BLOCK_INTERVAL){
+			for(float x = 0; x < _SIZE; x += 2){
+				for(float z = 0; z < _SIZE; z += 2){
+					float fX = baseX + x;
+					float fZ = baseZ + z;
+					BlockInstance b = getBlock(new Position(fX, y, fZ));
+					if(b.base != Block.air) testBlocks.add(b);
+				}
 			}
 		}
-		
 		return testBlocks;
 	}
 

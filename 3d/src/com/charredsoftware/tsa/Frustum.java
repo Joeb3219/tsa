@@ -77,8 +77,21 @@ public class Frustum {
 	 * @return Returns <tt>true</tt> if any of the region's testable points are in the frustum.
 	 */
 	public boolean regionInFrustum(Region r){
-		for(BlockInstance b : r.getFrustumTestBlocks(0)){
-			if(blockInFrustum(b, false)) return true;
+		/*
+		 * TODO: Let's rewrite the regionInFrustum checks!
+		 * 
+		 * Instead of using a considerY flag, let's actually check y levels.
+		 * Current system will always render other regions if looking straight down, which makes no damn sense (doesn't look for y values).
+		 * Instead, let's throw in, starting at lowest level, 8x8 blocks per layer, for every 6-8? layers in a region.
+		 * If a block isn't in that spot, don't add it to the list -> only things in the list are to be added.
+		 * Then iterate over them. You might end up checking more than if you only did bottom layer, but more accuracy.
+		 * Possibly even less total rendered blocks. CPU performance is low, GPU is high. Nada good.
+		 */
+		for(BlockInstance b : r.getFrustumTestBlocks()){
+			if(blockInFrustum(b, false)){
+				
+				return true;
+			}
 		}
 		return false;
 	}
@@ -97,11 +110,11 @@ public class Frustum {
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
-	 	if (considerY && (pcy - 1 > aux || pcy + 1 < -aux)) return false;
+	 	if ((pcy - 1 > aux || pcy + 1 < -aux)) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;
-	 	if (considerY && (pcx - 1 > aux || pcx + 1 < -aux)) return false;
+	 	if ((pcx - 1 > aux || pcx + 1 < -aux)) return false;
 
 		return true;
 	}
@@ -109,7 +122,7 @@ public class Frustum {
 	/**
 	 * @param b Block to test
 	 * @return Returns <tt>true</tt> if the block is in the frustum.
-	 * @see #BlockInFrustum(BlockInstance)
+	 * @see #blockInFrustum(BlockInstance)
 	 */
 	public boolean BlockInFrustum(BlockInstance b){
 		return blockInFrustum(b, true);

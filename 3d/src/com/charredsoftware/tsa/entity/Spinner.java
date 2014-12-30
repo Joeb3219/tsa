@@ -63,7 +63,6 @@ public class Spinner extends Mob{
 	 * Updates the mob.
 	 */
 	public void update(){
-		System.out.println(health);
 		if(health <= 0){
 			Main.getInstance().player.score += killBonus;
 			Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));

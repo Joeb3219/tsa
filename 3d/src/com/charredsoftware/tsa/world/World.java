@@ -322,6 +322,7 @@ public class World {
 		return inY;
 	}
 	
+	public float regionsRendered = 0f;
 	/**
 	 * Renders the world.
 	 * Wraps, calls renderMap(blockList).
@@ -329,12 +330,14 @@ public class World {
 	 */
 	public void render(){
 		renderedBlocks = 0f;
+		regionsRendered = 0f;
 		//Creates map of textures & blocks that have those textures -> renders all similar textures at once.
 		Map<Texture, ArrayList<BlockInstance>> blockList = new HashMap<Texture, ArrayList<BlockInstance>>();
 		
 		for(Region r : regions){
 			ArrayList<BlockInstance> renderable = r.getRenderableBlocks();
 			renderedBlocks += renderable.size();
+			if(renderable.size() != 0) regionsRendered ++;
 			//Add each renderable block to the map
 			for(BlockInstance b : renderable){
 				if(blockList.containsKey(b.base.texture)) blockList.get(b.base.texture).add(b);
@@ -344,7 +347,7 @@ public class World {
 		
 		renderMap(blockList);
 		
-		lookingAt = getBlockLookingAt();
+		if(Main.getInstance().controller.buildingMode) lookingAt = getBlockLookingAt();
 	}
 	
 	/**

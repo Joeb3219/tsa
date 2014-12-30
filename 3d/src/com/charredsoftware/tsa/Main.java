@@ -85,7 +85,7 @@ public class Main {
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 90);
 	public DialogHUD HUDDialog;
 	
-	private static Main _INSTANCE = null;
+	private static Main _INSTANCE = new Main();
 	
 	/**
 	 * Instantiates Main class.
@@ -137,9 +137,11 @@ public class Main {
 	 */
 	private void initializeDisplay(){
 		try{
-			Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
-			Display.setResizable(true);
-			Display.setTitle("CharredSoftware: " + controller.gameName + " v." + controller.version + " [Joe B, 2014]");
+			if(!controller.applet){ 
+				Display.setDisplayMode(new DisplayMode(1200, 1200 * 9 / 16));
+				Display.setResizable(true);
+				Display.setTitle("CharredSoftware: " + controller.gameName + " v." + controller.version + " [Joe B, 2014]");
+			}
 			Display.create();
 		}catch(Exception e){new CrashReport(e);}
 	}
@@ -261,9 +263,12 @@ public class Main {
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
 		}
-		if(controller.developerMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
+		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
+		}
+		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
+			//TODO: Code to place mobs.
 		}
 		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
@@ -295,11 +300,7 @@ public class Main {
 	 * Renders the player's flashlight.
 	 */
 	private void playerFlashlight(){
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
 	}
 	
 	/**
