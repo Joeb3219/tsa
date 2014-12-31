@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.world.Position;
 
@@ -49,7 +50,15 @@ public class MainMenu extends Menu{
 		if(Mouse.isButtonDown(0)){
 			for(Button b : buttons){
 				if(!b.mouseInBounds()) continue;
-				System.out.println(b.identifier);
+				if(b.identifier.equalsIgnoreCase("play")){
+					Main.getInstance().gameState = GameState.GAME;
+				}
+				if(b.identifier.equalsIgnoreCase("level_editor")){
+									
+								}
+				if(b.identifier.equalsIgnoreCase("settings")){
+					
+				}
 			}
 		}
 	}
