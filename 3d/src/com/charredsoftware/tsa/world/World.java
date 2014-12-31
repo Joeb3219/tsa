@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
@@ -347,7 +348,7 @@ public class World {
 		
 		renderMap(blockList);
 		
-		if(Main.getInstance().controller.buildingMode) lookingAt = getBlockLookingAt();
+		if(Main.getInstance().controller.buildingMode || Mouse.isButtonDown(0)) lookingAt = getBlockLookingAt();
 	}
 	
 	/**

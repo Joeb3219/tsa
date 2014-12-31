@@ -1,5 +1,7 @@
 package com.charredsoftware.tsa;
 
+import org.newdawn.slick.Color;
+
 /**
  * TextPopup class. Holds data to be displayed on the HUDTextPopups
  * All authors are as below specified (joeb3219) unless otherwise specified above method.
@@ -32,8 +34,8 @@ public class TextPopup {
 	 * @param x X-position
 	 * @param y Y-position
 	 */
-	public void render(float x, float y){
-		Main.getInstance().font.drawString(x, y, text);
+	public void render(float x, float y, float alpha){
+		Main.getInstance().font.drawString(x, y, text, new Color(1f, 1f, 1f, alpha));
 	}
 	
 }

@@ -104,7 +104,6 @@ public class Camera {
 		}
 		
 		for(int i = GL_LIGHT0 + 1; i <= GL_LIGHT7; i ++){
-			System.out.println(i);
 			glLight(i, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
 			glLight(i, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 255f / 255f, 36f / 255f, 0f / 255f, 1.0f }))).flip());
 			glLight(i, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.4f, 0.4f, 0.4f, 1.0f }))).flip());

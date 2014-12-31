@@ -15,7 +15,7 @@ public class HUDTextPopups {
 
 	public ArrayList<TextPopup> popups = new ArrayList<TextPopup>();
 	/** Value - {@value} Number of ticks until a popup stops displaying. */
-	public static final float POPUP_LIFESPAN = Main.DESIRED_TPS * 4;
+	public static final float POPUP_LIFESPAN = Main.DESIRED_TPS * 4, POPUP_FADE_TICKS = Main.DESIRED_TPS * 1;
 	public float x, y;
 	
 	/**
@@ -34,7 +34,7 @@ public class HUDTextPopups {
 	public void update(){
 		ArrayList<TextPopup> forRemoval = new ArrayList<TextPopup>();
 		for(TextPopup t : popups){
-			if(t.displayTick >= POPUP_LIFESPAN){
+			if(t.displayTick >= POPUP_LIFESPAN + POPUP_FADE_TICKS){
 				forRemoval.add(t);
 				continue;
 			}
@@ -51,7 +51,12 @@ public class HUDTextPopups {
 		float ySpace = font.getHeight("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		float current = 0;
 		for(TextPopup t : popups){
-			t.render(x, y + (ySpace * current));
+			float alpha = 1f;
+			if(t.displayTick >= POPUP_LIFESPAN){
+				float difference = t.displayTick - POPUP_LIFESPAN;
+				alpha = 1f - ((1f * difference) / POPUP_FADE_TICKS);
+			}
+			t.render(x, y + (ySpace * current), alpha);
 			current ++;
 		}
 	}
