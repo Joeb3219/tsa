@@ -163,6 +163,15 @@ public class Camera {
 			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0f, Region._HEIGHT + 16f, 0f, 1f }))).flip());
 		}
 		
+		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS && !Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED){
+			for(int i = GL_LIGHT0 + 1; i < GL_LIGHT7; i ++){
+				glLightf(i, GL_CONSTANT_ATTENUATION, .75f / 2f);
+				glLightf(i, GL_LINEAR_ATTENUATION, .25f / 2f);
+				glLightf(i, GL_QUADRATIC_ATTENUATION, .5f / 2f);
+			}
+			Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED = true;
+		}
+		
 		glRotatef(ry, 1, 0, 0);
 		glRotatef(rx, 0, 1, 0);
 		glRotatef(rz, 0, 0, 1);

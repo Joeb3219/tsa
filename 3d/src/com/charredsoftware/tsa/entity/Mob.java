@@ -22,6 +22,7 @@ public class Mob extends Entity{
 	public boolean isJumping, isCrouching = false;
 	protected float jumpingTime = 0;
 	public float killBonus = 0f;
+	public float shielding = 0f; //1f is total shielding.
 	
 	/**
 	 * Creates a new Mob.

@@ -56,6 +56,7 @@ public class Spinner extends Mob{
 		this.y = y;
 		this.z = z;
 		this.height = 2f;
+		this.shielding = 0.25f;
 		this.mass = 50f;
 	}
 	
@@ -84,7 +85,7 @@ public class Spinner extends Mob{
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
-		if(hit) damageMob(a.calculateDamage());
+		if(hit) damageMob(a.calculateDamage(this));
 		return hit;
 	}
 	

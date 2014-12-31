@@ -1,11 +1,8 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.GL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHT7;
 import static org.lwjgl.opengl.GL11.GL_POSITION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_SPECULAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -21,7 +18,6 @@ import static org.lwjgl.opengl.GL11.glVertex3f;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -32,7 +28,6 @@ import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
-import com.charredsoftware.tsa.world.Region;
 import com.charredsoftware.tsa.world.World;
 
 /**
@@ -71,6 +66,7 @@ public class Arrow extends Entity{
 		this.rY = rY;
 		this.rX = rX;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
+		if((shooter instanceof Player) && ((Player)shooter).bow.UPGRADE_FURTHER_SHOTS) velocityMagnitude *= 2;
 		this.drawBackTime = drawBackTime;
 		horizontalVelocity = (float) (Math.abs(Math.cos(Math.toRadians(rY))) * velocityMagnitude);
 		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude) * ((rY < 0) ? 1 : -1);
@@ -213,14 +209,15 @@ public class Arrow extends Entity{
 	/**
 	 * @return Returns the amount of damage that the arrow will do.
 	 */
-	public int calculateDamage(){
+	public int calculateDamage(Mob m){
 		int maxDamage = 5;
-		/*float velocity = (float) Math.sqrt(Math.pow(horizontalVelocity, 2) + Math.pow(verticalVelocity, 2));
-		float maxVelocity = (float) Math.sqrt(Math.pow((float) (Math.abs(Math.cos(Math.toRadians(rY))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2) + Math.pow((float) (Math.abs(Math.sin(Math.toRadians(rX))) * DRAWBACK_MULTIPLIER * Bow.maxDrawBackTime), 2));
-		velocity = (velocity > maxVelocity) ?  maxVelocity : velocity;
-		return (int) (maxDamage * (velocity / maxVelocity * 1f) );*/
-		//return (int) (maxDamage * ((drawBackTime < Bow.maxDrawBackTime - 1) ? drawBackTime + 1 : drawBackTime) / Bow.maxDrawBackTime);
-		return 5;
+		if(!(shooter instanceof Player)) return maxDamage;
+		int damage = 0;
+		Bow bow = Main.getInstance().player.bow;
+		
+		damage = (int) (maxDamage * 2 * (1f - m.shielding) * ((bow.UPGRADE_MORE_DAMAGE) ? 2 : 1));
+		
+		return damage;
 	}
 	
 }
