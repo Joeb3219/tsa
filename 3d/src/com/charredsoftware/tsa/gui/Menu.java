@@ -1,20 +1,29 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
-
-/**
- * Menu class.
- * Used to create a menu for the Display.
- * All authors are as below specified (joeb3219) unless otherwise specified above method.
- * @author joeb3219
- * @since December 1, 2014
- */
 
 public class Menu {
 
@@ -23,16 +32,6 @@ public class Menu {
 	public float width, height;
 	public ArrayList<Widget> widgets = new ArrayList<Widget>();
 	
-	/**
-	 * Creates a menu.
-	 * @param p Position to place the menu at.
-	 * @param width Width of the menu
-	 * @param height Height of the menu
-	 * @param red Red value
-	 * @param green Green value 
-	 * @param blue Blue value
-	 * @param alpha Alpha value
-	 */
 	public Menu(Position p, float width, float height, float red, float green, float blue, float alpha){
 		this.pos = p;
 		this.width = width;
@@ -43,9 +42,6 @@ public class Menu {
 		this.alpha = alpha;
 	}
 	
-	/**
-	 * @return Returns a widget if the mouse is within the widget's bounds.
-	 */
 	public Widget getWidgetInBounds(){
 		for(Widget w : widgets){
 			if(w.mouseInBounds()) return w;
@@ -53,9 +49,6 @@ public class Menu {
 		return null;
 	}
 	
-	/**
-	 * Renders the menu to the screen.
-	 */
 	public void render(){
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);

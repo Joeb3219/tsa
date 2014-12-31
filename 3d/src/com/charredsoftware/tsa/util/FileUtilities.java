@@ -24,6 +24,7 @@ public class FileUtilities {
 	public static String soundsPath = "sounds/";
 	public static String savesPath = "res/saves/";
 	public static String crashesPath = "res/crashes/";
+	public static String themesPath = "themes/";
 	
 	/**
 	 * @param path Path of directory.
