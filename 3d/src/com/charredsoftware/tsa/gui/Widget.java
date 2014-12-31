@@ -31,10 +31,8 @@ public class Widget {
 		float x = pos.x;
 		float y = pos.y;
 		
-		System.out.println(Mouse.getX() + ", " + Mouse.getY() + " :: " + x + ", " + y);
-		
 		if(Mouse.getX() >= x && Mouse.getX() <= x + width){
-			if(Mouse.getY() >= y && Mouse.getY() <= y + width){
+			if(Mouse.getY() >= y && Mouse.getY() <= y + height){
 				return true;
 			}
 		}

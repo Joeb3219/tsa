@@ -21,35 +21,43 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.util.ArrayList;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.world.Position;
 
-public class Menu {
+public class MainMenu extends Menu{
+	
+	public ArrayList<Button> buttons = new ArrayList<Button>();
 
-	public float red, green, blue, alpha = 0f;
-	public Position pos;
-	public float width, height;
-	public ArrayList<Widget> widgets = new ArrayList<Widget>();
-	
-	public Menu(Position p, float width, float height){
-		this.pos = p;
-		this.width = width;
-		this.height = height;
-	}
-	
-	public Widget getWidgetInBounds(){
-		for(Widget w : widgets){
-			if(w.mouseInBounds()) return w;
-		}
-		return null;
+	public MainMenu() {
+		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
+		float textHeight = Main.getInstance().font.getHeight("sample text");
+		Button b = new Button(this, 60, "Play Game", 1f, 1f, 1f, 1f);
+		b.identifier = "play";
+		buttons.add(b);
+		b = new Button(this, 60 + textHeight + 10, "Level Editor", 1f, 1f, 1f, 1f);
+		b.identifier = "level_editor";
+		buttons.add(b);
+		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings", 1f, 1f, 1f, 1f);
+		b.identifier = "settings";
+		buttons.add(b);
 	}
 	
 	public void update(){
-		
+		if(Mouse.isButtonDown(0)){
+			for(Button b : buttons){
+				if(!b.mouseInBounds()) continue;
+				System.out.println(b.identifier);
+			}
+		}
 	}
 	
 	public void render(){
+		this.height = Display.getHeight();
+		this.width = Display.getWidth();
+		
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -63,19 +71,18 @@ public class Menu {
 
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
-		glVertex2f(pos.x, pos.y);
-		glVertex2f(pos.x + width, pos.y);
-		glVertex2f(pos.x + width, pos.y + height);
-		glVertex2f(pos.x, pos.y + height);
+		glVertex2f(0, 0);
+		glVertex2f(width, 0);
+		glVertex2f(width, height);
+		glVertex2f(0, height);
 		glEnd();
 		
-		for(Widget w : widgets) w.render();
+		for(Button b : buttons) b.render();
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
-		
 	}
 	
 }

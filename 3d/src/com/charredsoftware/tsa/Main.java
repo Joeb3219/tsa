@@ -49,6 +49,7 @@ import com.charredsoftware.tsa.gui.Dialog;
 import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.DialogHUD;
 import com.charredsoftware.tsa.gui.HUDTextPopups;
+import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
 import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.gui.Widget;
@@ -154,7 +155,7 @@ public class Main {
 		controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && controller.developerMode) gameState = GameState.GAME;
-		else if(gameState == GameState.MENU) unboundMouseTick(); 
+		else if(gameState == GameState.MENU) main_menu.update();
 		
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
@@ -182,29 +183,6 @@ public class Main {
 		SoundStore.get().poll(0);
 	}
 
-	/**
-	 * Handles mouse clicks that are done when mouse is not bound to the screen.
-	 */
-	private void unboundMouseTick(){
-		//TODO: Extract this logic to its own class.
-		if(gameState == GameState.MENU){
-			if(Mouse.isButtonDown(0)){
-				Widget w = main_menu.getWidgetInBounds();
-				if(w != null){
-					gameState = GameState.GAME;
-					if(w.identifier.equalsIgnoreCase("new_world")){
-						player.world = new World();
-						player.spawn(1, 1);
-					}else{
-						System.out.println("Loading world " + w.identifier);
-						player.world = new World(Integer.parseInt(w.identifier));
-						player.spawn(1, 1);
-					}
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Checks for keyboard events during a tick.
 	 */
@@ -451,19 +429,7 @@ public class Main {
 	 */
 	private void renderMenu(String menu){
 		if(menu.equalsIgnoreCase("main")){
-			if(main_menu == null){
-				main_menu = new Menu(new Position(0, 0, 0), Display.getWidth(), Display.getHeight(), 0f, 0f, 0f, 1f);
-				float standardX = Display.getWidth() - Button.standardWidth - 10f;
-				float standardY = Display.getHeight() - Button.standardHeight - 40f;
-				Button button = new Button(new Position(standardX, standardY, 0), "New World", 1f, 1f, 1f, 1f);
-				button.identifier = "new_world";
-				main_menu.widgets.add(button);
-				for(String s : FileUtilities.getChildDirectoriesAsString(FileUtilities.savesPath)){
-					button = new Button(new Position(standardX, standardY - (Button.standardHeight + 10) * main_menu.widgets.size(), 0), "World " + s, 100f, 100f, 100f, 255f);
-					button.identifier = s;
-					main_menu.widgets.add(button);
-				}
-			}
+			if(main_menu == null) main_menu = new MainMenu();
 			main_menu.render();
 			return;
 		}
