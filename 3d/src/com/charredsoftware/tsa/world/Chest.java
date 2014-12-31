@@ -26,11 +26,18 @@ public class Chest extends BlockInstance{
 	}
 	
 	/**
+	 * @return Returns a string containing the chest's special JSON.
+	 */
+	public String getSpecialJson(){
+		return generateChestJson();
+	}
+	
+	/**
 	 * @return Returns a string consisting of ARROW and COIN in json.
 	 */
 	public String generateChestJson(){
 		String json = "{";
-		json += "\"arrows\":\"" + arrows + "\"";
+		json += "\"arrows\":\"" + arrows + "\",";
 		json += "\"coins\":\"" + coins + "\"";
 		return json + "}";
 	}

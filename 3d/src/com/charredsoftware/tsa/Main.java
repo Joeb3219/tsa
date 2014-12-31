@@ -1,11 +1,9 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_AMBIENT;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
 import static org.lwjgl.opengl.GL11.GL_LIGHT1;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
@@ -13,7 +11,6 @@ import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_POSITION;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_SPECULAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -34,9 +31,7 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
-import java.util.Timer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
@@ -48,10 +43,14 @@ import org.newdawn.slick.openal.SoundStore;
 
 import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
-import com.charredsoftware.tsa.entity.Spinner;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.gui.Button;
+import com.charredsoftware.tsa.gui.Dialog;
+import com.charredsoftware.tsa.gui.DialogAuthor;
+import com.charredsoftware.tsa.gui.DialogHUD;
+import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.Menu;
+import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;

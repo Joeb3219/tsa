@@ -58,7 +58,6 @@ public class Block {
 	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.jpg"), false);
 	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
 	public static Block wall = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
-	public static Block torch = new Block(8, 0, "Torch", false);
 	public static Block chest = new Block(8, 0, "Chest", Block.loadTexture("chest.jpg"));
 	
 	/**
@@ -158,7 +157,7 @@ public class Block {
 	 */
 	public void drawSetup(){
 		glEnable(GL_TEXTURE_2D);
-		if(this == Block.air || this == Block.torch || texture == null) return;
+		if(this == Block.air || texture == null) return;
 		texture.bind();
 	}
 	
@@ -229,15 +228,6 @@ public class Block {
 		
 		glPopMatrix();
 	
-		if(this == Block.torch){
-			FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-			
-			glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 2f, 2f, 2f, 1f }))).flip());
-			glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 0.8f, 0.8f, 0.8f, 1.0f }))).flip());
-			glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 1.0f, 1.0f, 1.0f, 1.0f }))).flip());
-			glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 1f, z, y, x }))).flip());
-		}
-		
 	}
 	
 	/**

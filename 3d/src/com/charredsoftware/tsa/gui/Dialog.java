@@ -1,4 +1,4 @@
-package com.charredsoftware.tsa;
+package com.charredsoftware.tsa.gui;
 
 /**
  * The Dialog class. Used to hold actual dialog messages.
@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
+
+import com.charredsoftware.tsa.Main;
 
 public class Dialog {
 

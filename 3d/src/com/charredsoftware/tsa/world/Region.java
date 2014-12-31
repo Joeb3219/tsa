@@ -236,6 +236,7 @@ public class Region {
 				}
 			}
 			BlockInstance b = new BlockInstance(bbase, bx, by, bz);
+			if(bbase == Block.chest) b = new Chest(bx, by, bz, json);
 			b.special = bspecial;
 			b.initJson = json;
 			addBlock(b);

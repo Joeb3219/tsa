@@ -27,7 +27,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
-import com.charredsoftware.tsa.TextPopup;
+import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 

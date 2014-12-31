@@ -3933,11 +3933,6 @@
 <json></json>
 </block>
 <block>
-<position>0.0:6.0:-1.0</position>
-<data>8.0:0.0:-1.0</data>
-<json></json>
-</block>
-<block>
 <position>0.0:-1000:-1.0</position>
 <data>0:0:0</data>
 </block>

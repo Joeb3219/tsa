@@ -1,6 +1,8 @@
-package com.charredsoftware.tsa;
+package com.charredsoftware.tsa.gui;
 
 import org.newdawn.slick.Color;
+
+import com.charredsoftware.tsa.Main;
 
 /**
  * TextPopup class. Holds data to be displayed on the HUDTextPopups

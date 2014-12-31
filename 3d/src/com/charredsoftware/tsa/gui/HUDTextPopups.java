@@ -1,8 +1,10 @@
-package com.charredsoftware.tsa;
+package com.charredsoftware.tsa.gui;
 
 import java.util.ArrayList;
 
 import org.newdawn.slick.Font;
+
+import com.charredsoftware.tsa.Main;
 
 /**
  * HUDTextPopups class. Displays information to the player in form of TextPopups.

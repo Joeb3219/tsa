@@ -1,4 +1,4 @@
-package com.charredsoftware.tsa;
+package com.charredsoftware.tsa.gui;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
+
+import com.charredsoftware.tsa.Main;
 
 /**
  * The DialogHUD class. Contains many HUD messages.

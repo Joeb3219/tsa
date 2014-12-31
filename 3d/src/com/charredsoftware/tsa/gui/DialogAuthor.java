@@ -1,4 +1,4 @@
-package com.charredsoftware.tsa;
+package com.charredsoftware.tsa.gui;
 
 public enum DialogAuthor {
 
