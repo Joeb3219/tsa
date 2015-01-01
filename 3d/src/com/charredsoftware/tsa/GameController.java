@@ -22,7 +22,7 @@ public class GameController {
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
 	public String version = "1.0.2";
-	public boolean developerMode = false, buildingMode = false, lighting = true, displayDialogs = false;
+	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false, showMainMenu = true;
 	public boolean applet = false;
 	public float soundVolume = 0.5f;
 	public int lightInUse = GL_LIGHT1;

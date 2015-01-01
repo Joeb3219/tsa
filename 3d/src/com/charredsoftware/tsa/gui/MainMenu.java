@@ -17,20 +17,27 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
+import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
 public class MainMenu extends Menu{
 	
 	public ArrayList<Button> buttons = new ArrayList<Button>();
+	private Texture logo;
 
 	public MainMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
@@ -44,6 +51,9 @@ public class MainMenu extends Menu{
 		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings", 1f, 1f, 1f, 1f);
 		b.identifier = "settings";
 		buttons.add(b);
+		try {
+			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
+		} catch (IOException e) {new CrashReport(e);}
 	}
 	
 	public void update(){
@@ -87,6 +97,14 @@ public class MainMenu extends Menu{
 		glEnd();
 		
 		for(Button b : buttons) b.render();
+		
+		logo.bind();
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex2f(Display.getWidth() - 16 - 512, Display.getHeight() - 512 - 16);
+		glTexCoord2f(1f, 0f); glVertex2f(Display.getWidth() - 16, Display.getHeight() - 512 - 16);
+		glTexCoord2f(1f, 1f); glVertex2f(Display.getWidth() - 16, Display.getHeight() - 16);
+		glTexCoord2f(0f, 1f); glVertex2f(Display.getWidth() - 16 - 512, Display.getHeight() - 16);
+		glEnd();
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

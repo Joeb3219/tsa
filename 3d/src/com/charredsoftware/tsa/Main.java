@@ -44,7 +44,6 @@ import org.newdawn.slick.openal.SoundStore;
 import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Player;
-import com.charredsoftware.tsa.gui.Button;
 import com.charredsoftware.tsa.gui.Dialog;
 import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.DialogHUD;
@@ -52,12 +51,9 @@ import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
 import com.charredsoftware.tsa.gui.TextPopup;
-import com.charredsoftware.tsa.gui.Widget;
-import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Chest;
-import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
 /**
@@ -82,7 +78,7 @@ public class Main {
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	public GameController controller;
-	public HUDTextPopups HUDText = new HUDTextPopups(10, 90);
+	public HUDTextPopups HUDText = new HUDTextPopups(10, 110);
 	public DialogHUD HUDDialog;
 	
 	private static Main _INSTANCE = new Main();
@@ -154,7 +150,7 @@ public class Main {
 		if(cooldown > 0) cooldown --;
 		controller.timeLeft -= 1;
 		
-		if(gameState == GameState.MENU && controller.developerMode) gameState = GameState.GAME;
+		if(gameState == GameState.MENU && !controller.showMainMenu) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) main_menu.update();
 		
 		
@@ -271,6 +267,7 @@ public class Main {
 		HUDText.popups.add(new TextPopup("You found " + c.coins + " coins!"));
 		player.bow.arrows += c.arrows;
 		player.score += c.coins * 2;
+		player.coins += c.coins;
 	}
 		
 	/**
@@ -346,7 +343,8 @@ public class Main {
 			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.default_maxArrows);
 			font.drawString(10, 30, "Health: " + player.health + "/100");
 			font.drawString(10, 50, "Time Remaining: " + controller.getRemainingTimeAsString());
-			font.drawString(10, 70, "Score: " + player.score);
+			font.drawString(10, 70, "Coins: " + player.coins);
+			font.drawString(10, 90, "Score: " + player.score);
 			
 			HUDText.render();
 			

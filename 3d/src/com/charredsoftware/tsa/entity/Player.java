@@ -24,6 +24,7 @@ public class Player extends Mob{
 	public Block selectedBlock = Block.air;
 	public boolean walking = false;
 	public float score = 0f;
+	public int coins = 0;
 	public Bow bow = new Bow();
 	
 	/**

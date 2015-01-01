@@ -35,7 +35,7 @@ public class DialogHUD {
 	 * @return Returns <tt>true</tt> if more dialogs are waiting to be displayed.
 	 */
 	public boolean hasDialogs(){
-		if(Main.getInstance().controller.developerMode) return false;
+		if(!Main.getInstance().controller.displayDialogs) return false;
 		if(dialogs.size() > 0) return true;
 		return false;
 	}
