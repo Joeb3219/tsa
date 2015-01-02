@@ -18,6 +18,7 @@ public class Entity {
 	public final float defaultStartJumpingVelocity = 1.4f;
 	public World world;
 	public boolean markedForDeletion = false;
+	private Position p = new Position(0, 0, 0);
 
 	/**
 	 * Creates a new Entity
@@ -84,7 +85,10 @@ public class Entity {
 	 * @return Returns the Position.
 	 */
 	public Position getPosition(){
-		return new Position(x, y, z);
+		p.x = x;
+		p.y = y;
+		p.z = z;
+		return p;
 	}
 	
 	/**

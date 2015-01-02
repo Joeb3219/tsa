@@ -18,6 +18,7 @@ import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.entity.MobType;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
+import com.charredsoftware.tsa.entity.Stalker;
 
 /**
  * Region class.
@@ -203,6 +204,7 @@ public class Region {
 				}
 			}
 			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(bx, by, bz));
+			if(type == MobType.STALKER) entitiesToLoad.add(new Stalker(bx, by, bz));
 			
 		}
 	}

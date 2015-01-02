@@ -50,6 +50,7 @@ import com.charredsoftware.tsa.gui.DialogHUD;
 import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
+import com.charredsoftware.tsa.gui.OptionsMenu;
 import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
@@ -74,7 +75,7 @@ public class Main {
 	public Camera camera;
 	int displayFPS = 0;
 	public boolean menu = false;
-	public GameState gameState = GameState.MENU;
+	public GameState gameState = GameState.MENU, previousState = GameState.MENU;
 	private float cooldown = 0f;
 	private Menu main_menu, options_menu;
 	public GameController controller;
@@ -147,11 +148,23 @@ public class Main {
 	 * Tick/update method.
 	 */
 	public void tick(){
-		if(cooldown > 0) cooldown --;
+		if(cooldown > 0 && gameState != GameState.MENU && gameState != GameState.SETTINGS) cooldown --;
 		controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && !controller.showMainMenu) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) main_menu.update();
+		if(gameState == GameState.SETTINGS){
+			if(options_menu == null) options_menu = new OptionsMenu();
+			options_menu.update();
+		}
+		if(menu){
+			if(options_menu == null) options_menu = new OptionsMenu();
+			previousState = gameState;
+			gameState = GameState.SETTINGS;
+			options_menu.update();
+			menu = !menu;
+			Mouse.setGrabbed(false);
+		}
 		
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
@@ -185,7 +198,7 @@ public class Main {
 	private void keyboardTick() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
 			menu = !menu;
-			cooldown = 5f;
+			cooldown = 10f;
 		}
 		controller.keyboardTick();
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn(1f, 1f);
@@ -287,6 +300,10 @@ public class Main {
 		
 		if(gameState == GameState.MENU){
 			renderMenu("main");
+			return;
+		}
+		if(gameState == GameState.SETTINGS){
+			renderMenu("settings");
 			return;
 		}
 		
@@ -429,6 +446,11 @@ public class Main {
 		if(menu.equalsIgnoreCase("main")){
 			if(main_menu == null) main_menu = new MainMenu();
 			main_menu.render();
+			return;
+		}
+		if(menu.equalsIgnoreCase("settings")){
+			if(options_menu == null) options_menu = new OptionsMenu();
+			options_menu.render();
 			return;
 		}
 	}

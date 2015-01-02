@@ -24,6 +24,9 @@ public class Button extends Widget{
 
 	public String text;
 	public static final float standardWidth = 200, standardHeight = 75;
+	public float checkedRed = 64 / 255f, checkedGreen = 64 / 255f, checkedBlue = 64 / 255f, checkedAlpha = 255 / 255f;
+	public boolean checked = false, checkable = true;
+	public static final int padding = 16;
 	
 	/**
 	 * Creates a new button
@@ -34,8 +37,8 @@ public class Button extends Widget{
 	 * @param blue Blue value
 	 * @param alpha Alpha value
 	 */
-	public Button(Position p, String text, float red, float green, float blue, float alpha){
-		super(p, 200, 75, red, green, blue, alpha);
+	public Button(Position p, String text){
+		super(p, 200, 75, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.text = text;
 	}
 	
@@ -45,13 +48,9 @@ public class Button extends Widget{
 	 * @param text Text to put in button
 	 * @param width Width of the button
 	 * @param height Height of the button
-	 * @param red Red value
-	 * @param green Green value
-	 * @param blue Blue value
-	 * @param alpha Alpha value
 	 */
-	public Button(Position p, String text, float width, float height, float red, float green, float blue, float alpha) {
-		super(p, width, height, red, green, blue, alpha);
+	public Button(Position p, String text, float width, float height) {
+		super(p, width, height, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.text = text;
 	}
 	
@@ -60,13 +59,9 @@ public class Button extends Widget{
 	 * @param m The menu which the button is within.
 	 * @param yPosition the y-Position of the button.
 	 * @param text Text to put in button
-	 * @param red Red value
-	 * @param green Green value
-	 * @param blue Blue value
-	 * @param alpha Alpha value
 	 */
-	public Button(Menu m, float yPosition, String text, float red, float green, float blue, float alpha){
-		super(new Position(-1, yPosition, -1), -1, -1, red, green, blue, alpha);
+	public Button(Menu m, float yPosition, String text){
+		super(new Position(-1, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.text = text;
 	}
 	
@@ -80,9 +75,9 @@ public class Button extends Widget{
 		float w = this.width;
 		float h = this.height;
 		if(width == -1 && height == -1){
-			w = Main.getInstance().font.getWidth(text);
+			w = Main.getInstance().font.getWidth(text + ((checkable) ? ((checked) ? ": ON" : ": OFF") : ""));
 			h = Main.getInstance().font.getHeight(text);
-			x = (Display.getWidth() - w) / 2;
+			x = (Display.getWidth() - w) / 2 - padding / 2;
 		}
 		
 		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
@@ -97,21 +92,32 @@ public class Button extends Widget{
 	 * Renders the button to the screen.
 	 */
 	public void render(){
+		String stateText = (checkable) ? ((checked) ? ": ON" : ": OFF") : "";
+		float alpha = this.alpha;
+		float red = this.red;
+		float green = this.green;
+		float blue = this.blue;
+		if(checked){
+			red = this.checkedRed;
+			green = this.checkedGreen;
+			blue = this.checkedBlue;
+			alpha = this.checkedAlpha;
+		}
 		if(width == -1 && height == -1){
-			float width = Main.getInstance().font.getWidth(text);
+			float width = Main.getInstance().font.getWidth(text + stateText) + padding;
 			float height = Main.getInstance().font.getHeight(text);
-			float xPos = (Display.getWidth() - width) / 2;
-			glBegin(GL_QUADS);
+			float xPos = (Display.getWidth() - width) / 2 - padding / 2;
 			glColor4f(red, green, blue, alpha);
+			glBegin(GL_QUADS);
 			glVertex2f(xPos, pos.y);
 			glVertex2f(xPos + width, pos.y);
 			glVertex2f(xPos + width, pos.y + height);
 			glVertex2f(xPos, pos.y + height);
 			glEnd();
-			Main.getInstance().font.drawString(xPos, pos.y, text);
+			Main.getInstance().font.drawString(xPos + padding / 2, pos.y, text + stateText);
 		}else{
-			glBegin(GL_QUADS);
 			glColor4f(red, green, blue, alpha);
+			glBegin(GL_QUADS);
 			glVertex2f(pos.x, pos.y);
 			glVertex2f(pos.x + width, pos.y);
 			glVertex2f(pos.x + width, pos.y + height);

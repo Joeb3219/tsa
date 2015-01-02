@@ -25,6 +25,12 @@ import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Menu class. Generic menu.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 12, 2014
+ */
 public class Menu {
 
 	public float red, green, blue, alpha = 0f;
@@ -32,12 +38,21 @@ public class Menu {
 	public float width, height;
 	public ArrayList<Widget> widgets = new ArrayList<Widget>();
 	
+	/**
+	 * Creates a menu object.
+	 * @param p Position of the menu
+	 * @param width Width of the menu
+	 * @param height Height of the menu
+	 */
 	public Menu(Position p, float width, float height){
 		this.pos = p;
 		this.width = width;
 		this.height = height;
 	}
 	
+	/**
+	 * @return Returns a Widget if the mouse is hovering over it.
+	 */
 	public Widget getWidgetInBounds(){
 		for(Widget w : widgets){
 			if(w.mouseInBounds()) return w;
@@ -45,10 +60,16 @@ public class Menu {
 		return null;
 	}
 	
+	/**
+	 * Generic update method.
+	 */
 	public void update(){
 		
 	}
 	
+	/**
+	 * Generic render method.
+	 */
 	public void render(){
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);

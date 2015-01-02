@@ -1,24 +1,6 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,28 +16,45 @@ import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Main Menu class.
+ * Extends Menu, loads the menu shown on game opening.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since October 8, 2014
+ */
 public class MainMenu extends Menu{
 	
 	public ArrayList<Button> buttons = new ArrayList<Button>();
 	private Texture logo;
 
+	/**
+	 * Creates a MainMenu object.
+	 */
 	public MainMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		Button b = new Button(this, 60, "Play Game", 1f, 1f, 1f, 1f);
+		Button b = new Button(this, 60, "Play Game");
 		b.identifier = "play";
+		b.checkable = false;
 		buttons.add(b);
-		b = new Button(this, 60 + textHeight + 10, "Level Editor", 1f, 1f, 1f, 1f);
+		b = new Button(this, 60 + textHeight + 10, "Level Editor");
 		b.identifier = "level_editor";
+		b.checkable = false;
 		buttons.add(b);
-		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings", 1f, 1f, 1f, 1f);
+		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings");
 		b.identifier = "settings";
+		b.checkable = false;
 		buttons.add(b);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
 		} catch (IOException e) {new CrashReport(e);}
 	}
 	
+	/**
+	 * Updates the menu.
+	 * Catches mouse clicks.
+	 */
 	public void update(){
 		if(Mouse.isButtonDown(0)){
 			for(Button b : buttons){
@@ -67,12 +66,16 @@ public class MainMenu extends Menu{
 									
 								}
 				if(b.identifier.equalsIgnoreCase("settings")){
-					
+					Main.getInstance().previousState = Main.getInstance().gameState;
+					Main.getInstance().gameState = GameState.SETTINGS;
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Renders the menu.
+	 */
 	public void render(){
 		this.height = Display.getHeight();
 		this.width = Display.getWidth();
@@ -85,11 +88,13 @@ public class MainMenu extends Menu{
 		glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST); 
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 
-		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
+		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(width, 0);
 		glVertex2f(width, height);
@@ -97,6 +102,9 @@ public class MainMenu extends Menu{
 		glEnd();
 		
 		for(Button b : buttons) b.render();
+		
+		glEnable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
 		
 		logo.bind();
 		glBegin(GL_QUADS);

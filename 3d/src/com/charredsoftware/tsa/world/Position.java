@@ -1,5 +1,6 @@
 package com.charredsoftware.tsa.world;
 
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -89,6 +90,25 @@ public class Position {
 	 */
 	public Vector3f toVector3f(){
 		return new Vector3f(x, y, z);
+	}
+	
+	/**
+	 * Converts the position to a <code>Vector2f</code>
+	 * @return Returns a <code>Vector2f</code> with the same x/z coordinates as the Position.
+	 */
+	public Vector2f toVector2f(){
+		return new Vector2f(x, z);
+	}
+	
+	/**
+	 * @param p Position to compare to
+	 * @return Returns the distance between this position and position P.
+	 */
+	public float calculateDistance(Position p){
+		float dX = x - p.x;
+		float dY = y - p.y;
+		float dZ = z - p.z;
+		return (float) Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2) + Math.pow(dZ, 2));
 	}
 	
 }
