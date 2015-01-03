@@ -131,6 +131,17 @@ public class OptionsMenu extends Menu{
 				}
 				if(w.identifier.contains("control_")){
 					((ControlSwitcher) w).update();
+					for(Widget wp : widgets){
+						if(wp instanceof ControlSwitcher){
+							ControlSwitcher cs = (ControlSwitcher) wp;
+							if(cs.identifier.equalsIgnoreCase("control_forward")) Main.getInstance().controller.control_forward = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_backward")) Main.getInstance().controller.control_backward = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_jump")) Main.getInstance().controller.control_jump = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_crouch")) Main.getInstance().controller.control_crouch = cs.currentKey;
+						}
+					}
 				}
 			}
 		}

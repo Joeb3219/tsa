@@ -59,7 +59,7 @@ public class Player extends Mob{
 	 * Handles all jumping code.
 	 */
 	private void checkJumping() {
-		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !isJumping && standingOnSolid()){
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_jump) && !isJumping && standingOnSolid()){
 			isJumping = true;
 			currentJumpingVelocity = defaultStartJumpingVelocity;
 			beginningJumpingVelocity = defaultStartJumpingVelocity;
@@ -91,16 +91,16 @@ public class Player extends Mob{
 	 */
 	private void checkMovement(float speedModifier) {
 		walking = false;
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_forward)){
 			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx + 90))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx + 90))));
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_backward)){
 			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx + 90))), 0,(float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx + 90))));
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_strafe_right)){
 			move((float) (movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx))), 0, (float) (movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx))));
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_strafe_left)){
 			move((float) (-movingSpeed / speedModifier * Math.cos(Math.toRadians(camera.rx))), 0, (float) (-movingSpeed / speedModifier * Math.sin(Math.toRadians(camera.rx))));
 		}
 
@@ -108,7 +108,7 @@ public class Player extends Mob{
 		if(walking && !Sound.WALKING.audio.isPlaying() && !isCrouching) Sound.WALKING.playSfx();
 		if(!walking && Sound.WALKING.audio.isPlaying()) Sound.WALKING.audio.stop();
 		
-		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) isCrouching = true;
+		if(Keyboard.isKeyDown(Main.getInstance().controller.control_crouch)) isCrouching = true;
 		else isCrouching = false;
 	}
 	
