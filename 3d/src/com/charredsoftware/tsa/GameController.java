@@ -25,7 +25,7 @@ public class GameController {
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false, showMainMenu = true;
 	public boolean fullscreen = false;
 	public boolean applet = false;
-	public float soundVolume = 0.5f;
+	public float soundVolume = 0.5f, musicVolume = 0.5f;
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
@@ -104,6 +104,13 @@ public class GameController {
 	}
 	
 	private GameController(){
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void loadSettings(){
 		
 	}
 	

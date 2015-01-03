@@ -58,9 +58,33 @@ public class OptionsMenu extends Menu{
 		b.identifier = "fullscreen";
 		b.checked = Main.getInstance().controller.fullscreen;
 		widgets.add(b);
-		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Volume", 0, 100, 50);
+		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sound Volume", 0, 100, 50);
 		s.identifier = "volume_slider";
 		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, 50);
+		s.identifier = "music_slider";
+		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, 65);
+		s.identifier = "fov_slider";
+		widgets.add(s);
+		ControlSwitcher cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move forward", Keyboard.KEY_W);
+		cs.identifier = "control_forward";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move Backward", Keyboard.KEY_S);
+		cs.identifier = "control_backward";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Left", Keyboard.KEY_A);
+		cs.identifier = "control_strafe_left";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Right", Keyboard.KEY_D);
+		cs.identifier = "control_strafe_right";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Crouch", Keyboard.KEY_LCONTROL);
+		cs.identifier = "control_crouch";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Keyboard.KEY_SPACE);
+		cs.identifier = "control_jump";
+		widgets.add(cs);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
 		} catch (IOException e) {new CrashReport(e);}
@@ -94,6 +118,20 @@ public class OptionsMenu extends Menu{
 					s.update();
 					Main.getInstance().controller.soundVolume = s.current / 100f;
 				}
+				if(w.identifier.equalsIgnoreCase("music_slider")){
+					Slider s = (Slider) w;
+					s.update();
+					Main.getInstance().controller.musicVolume = s.current / 100f;
+				}
+				if(w.identifier.equalsIgnoreCase("fov_slider")){
+					Slider s = (Slider) w;
+					s.update();
+					Main.getInstance().camera.fov = s.current;
+					Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
+				}
+				if(w.identifier.contains("control_")){
+					((ControlSwitcher) w).update();
+				}
 			}
 		}
 	}
@@ -125,6 +163,8 @@ public class OptionsMenu extends Menu{
 		
 		String title = "Settings";
 		Main.getInstance().titleFont.drawString((Display.getWidth() - Main.getInstance().titleFont.getWidth(title)) / 2, 64, title);
+		String escapeMessage = "Press Escape to return to the previous screen.";
+		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(escapeMessage)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4, escapeMessage);
 		
 		for(Widget w : widgets) w.render();
 		
