@@ -15,6 +15,7 @@ public class Widget {
 	public Position pos;
 	public float red, green, blue, alpha;
 	public float height, width;
+	public int value;
 	public String identifier = "null";
 
 	public Widget(Position p, float width, float height, float red, float green, float blue, float alpha){

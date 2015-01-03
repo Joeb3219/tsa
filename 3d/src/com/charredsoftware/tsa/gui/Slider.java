@@ -11,8 +11,8 @@ import com.charredsoftware.tsa.world.Position;
 public class Slider extends Widget{
 
 	public String text;
-	public float current, max, min;
-	public float padding = 16;
+	public float value, max, min;
+	public int padding = 16;
 	public float highlightRed = 98 / 255f, highlightGreen = 113 / 255f, highlightBlue = 227 / 255f;
 	
 	/**
@@ -29,7 +29,7 @@ public class Slider extends Widget{
 		this.text = text;
 		this.max = max;
 		this.min = min;
-		this.current = defaultValue;
+		this.value = defaultValue;
 		
 	}
 	
@@ -54,7 +54,7 @@ public class Slider extends Widget{
 	}
 	
 	private String getDisplayText(){
-		return text + ": " + ((int) current) + "/" + ((int) max);
+		return text + ": " + ((int) value) + "/" + ((int) max);
 	}
 	
 	private float getWidth(){
@@ -68,7 +68,7 @@ public class Slider extends Widget{
 	public void update(){
 		float xPos = (Display.getWidth() - getWidth()) / 2 - padding / 2;
 		float relativeX = (Mouse.getX() - xPos);
-		current = convertWidthToValue(relativeX);
+		value = convertWidthToValue(relativeX);
 	}
 	
 	public void render(){
@@ -77,7 +77,7 @@ public class Slider extends Widget{
 		float width = getWidth();
 		float height = getHeight();
 		float xPos = (Display.getWidth() - width) / 2 - padding / 2;
-		float valueWidth = convertValueToWidth(current);
+		float valueWidth = convertValueToWidth(value);
 		glColor4f(red, green, blue, alpha);
 		glBegin(GL_QUADS);
 		glVertex2f(xPos + width - valueWidth, pos.y);

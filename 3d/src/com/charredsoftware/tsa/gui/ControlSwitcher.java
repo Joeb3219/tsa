@@ -19,14 +19,13 @@ import com.charredsoftware.tsa.world.Position;
 public class ControlSwitcher extends Widget{
 
 	public String controlName;
-	public int currentKey;
 	public float padding = 16f;
 	public float selectRed = 122 / 255f, selectGreen = 180 / 255f, selectBlue = 250 / 255f;
 	
 	public ControlSwitcher(Menu m, float yPosition, String controlName, int defaultKey){
 		super(new Position(-1, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 1 / 255f);
 		this.controlName = controlName;
-		this.currentKey = defaultKey;
+		this.value = defaultKey;
 	}
 	
 	public void update(){
@@ -38,7 +37,7 @@ public class ControlSwitcher extends Widget{
 				Display.update();
 				Keyboard.poll();
 				if(Keyboard.next()){
-					currentKey = Keyboard.getEventKey();
+					value = Keyboard.getEventKey();
 					keyFound = true;
 				}
 			}while(!keyFound);
@@ -90,7 +89,7 @@ public class ControlSwitcher extends Widget{
 		glEnd();
 		glEnable(GL_TEXTURE_2D);
 		Main.getInstance().font.drawString(xPos, pos.y, controlName + ":");
-		Main.getInstance().font.drawString(xPos + identifierWidth + padding / 2, pos.y, Keyboard.getKeyName(currentKey));
+		Main.getInstance().font.drawString(xPos + identifierWidth + padding / 2, pos.y, Keyboard.getKeyName(value));
 	}
 	
 	private float getWidth(){
@@ -106,7 +105,7 @@ public class ControlSwitcher extends Widget{
 	}
 	
 	private String getDisplayText(){
-		return controlName + ": " + Keyboard.getKeyName(currentKey);
+		return controlName + ": " + Keyboard.getKeyName(value);
 	}
 	
 }

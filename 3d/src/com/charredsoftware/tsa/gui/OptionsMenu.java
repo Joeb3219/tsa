@@ -58,31 +58,31 @@ public class OptionsMenu extends Menu{
 		b.identifier = "fullscreen";
 		b.checked = Main.getInstance().controller.fullscreen;
 		widgets.add(b);
-		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sound Volume", 0, 100, 50);
+		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sound Volume", 0, 100, Main.getInstance().controller.soundVolume);
 		s.identifier = "volume_slider";
 		widgets.add(s);
-		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, 50);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, Main.getInstance().controller.musicVolume);
 		s.identifier = "music_slider";
 		widgets.add(s);
-		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, 65);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, Main.getInstance().camera.fov);
 		s.identifier = "fov_slider";
 		widgets.add(s);
-		ControlSwitcher cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move forward", Keyboard.KEY_W);
+		ControlSwitcher cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move forward", Main.getInstance().controller.control_forward);
 		cs.identifier = "control_forward";
 		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move Backward", Keyboard.KEY_S);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move Backward", Main.getInstance().controller.control_backward);
 		cs.identifier = "control_backward";
 		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Left", Keyboard.KEY_A);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Left", Main.getInstance().controller.control_strafe_left);
 		cs.identifier = "control_strafe_left";
 		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Right", Keyboard.KEY_D);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Right", Main.getInstance().controller.control_strafe_right);
 		cs.identifier = "control_strafe_right";
 		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Crouch", Keyboard.KEY_LCONTROL);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Crouch", Main.getInstance().controller.control_crouch);
 		cs.identifier = "control_crouch";
 		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Keyboard.KEY_SPACE);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Main.getInstance().controller.control_jump);
 		cs.identifier = "control_jump";
 		widgets.add(cs);
 		try {
@@ -116,17 +116,17 @@ public class OptionsMenu extends Menu{
 				if(w.identifier.equalsIgnoreCase("volume_slider")){
 					Slider s = (Slider) w;
 					s.update();
-					Main.getInstance().controller.soundVolume = s.current / 100f;
+					Main.getInstance().controller.soundVolume = s.value / 100f;
 				}
 				if(w.identifier.equalsIgnoreCase("music_slider")){
 					Slider s = (Slider) w;
 					s.update();
-					Main.getInstance().controller.musicVolume = s.current / 100f;
+					Main.getInstance().controller.musicVolume = s.value / 100f;
 				}
 				if(w.identifier.equalsIgnoreCase("fov_slider")){
 					Slider s = (Slider) w;
 					s.update();
-					Main.getInstance().camera.fov = s.current;
+					Main.getInstance().camera.fov = s.value;
 					Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
 				}
 				if(w.identifier.contains("control_")){
@@ -134,12 +134,12 @@ public class OptionsMenu extends Menu{
 					for(Widget wp : widgets){
 						if(wp instanceof ControlSwitcher){
 							ControlSwitcher cs = (ControlSwitcher) wp;
-							if(cs.identifier.equalsIgnoreCase("control_forward")) Main.getInstance().controller.control_forward = cs.currentKey;
-							if(cs.identifier.equalsIgnoreCase("control_backward")) Main.getInstance().controller.control_backward = cs.currentKey;
-							if(cs.identifier.equalsIgnoreCase("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.currentKey;
-							if(cs.identifier.equalsIgnoreCase("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.currentKey;
-							if(cs.identifier.equalsIgnoreCase("control_jump")) Main.getInstance().controller.control_jump = cs.currentKey;
-							if(cs.identifier.equalsIgnoreCase("control_crouch")) Main.getInstance().controller.control_crouch = cs.currentKey;
+							if(cs.identifier.equalsIgnoreCase("control_forward")) Main.getInstance().controller.control_forward = cs.value;
+							if(cs.identifier.equalsIgnoreCase("control_backward")) Main.getInstance().controller.control_backward = cs.value;
+							if(cs.identifier.equalsIgnoreCase("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.value;
+							if(cs.identifier.equalsIgnoreCase("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.value;
+							if(cs.identifier.equalsIgnoreCase("control_jump")) Main.getInstance().controller.control_jump = cs.value;
+							if(cs.identifier.equalsIgnoreCase("control_crouch")) Main.getInstance().controller.control_crouch = cs.value;
 						}
 					}
 				}

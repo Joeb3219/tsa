@@ -25,6 +25,7 @@ public class FileUtilities {
 	public static String savesPath = "res/saves/";
 	public static String crashesPath = "res/crashes/";
 	public static String themesPath = "themes/";
+	public static String settingsFile = "settings.csf";
 	
 	/**
 	 * @param path Path of directory.

@@ -77,7 +77,7 @@ public class Main {
 	public boolean menu = false;
 	public GameState gameState = GameState.MENU, previousState = GameState.MENU;
 	private float cooldown = 0f;
-	private Menu main_menu, options_menu;
+	public Menu main_menu, options_menu;
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 110);
 	public DialogHUD HUDDialog;
@@ -94,6 +94,7 @@ public class Main {
 		player = new Player(new World(0), camera);
 		HUDDialog = new DialogHUD();
 		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
+		controller.loadSettings();
 	}
 	
 	/**
@@ -434,7 +435,7 @@ public class Main {
 			Display.update();
 		}
 		
-		//player.world.save();
+		controller.saveSettings();
 		
 		Display.destroy();
 		AL.destroy();
