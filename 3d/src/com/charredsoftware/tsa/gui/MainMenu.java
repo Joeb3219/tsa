@@ -26,7 +26,7 @@ import com.charredsoftware.tsa.world.Position;
 public class MainMenu extends Menu{
 	
 	public ArrayList<Button> buttons = new ArrayList<Button>();
-	private Texture logo;
+	private Texture logo, gameLogo;
 
 	/**
 	 * Creates a MainMenu object.
@@ -34,20 +34,21 @@ public class MainMenu extends Menu{
 	public MainMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		Button b = new Button(this, 60, "Play Game");
+		Button b = new Button(this, 160, "Play Game");
 		b.identifier = "play";
 		b.checkable = false;
 		buttons.add(b);
-		b = new Button(this, 60 + textHeight + 10, "Level Editor");
+		b = new Button(this, buttons.get(buttons.size() - 1).pos.y + textHeight +  10, "Level Editor");
 		b.identifier = "level_editor";
 		b.checkable = false;
 		buttons.add(b);
-		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings");
+		b = new Button(this, buttons.get(buttons.size() - 1).pos.y + textHeight +  10, "Settings");
 		b.identifier = "settings";
 		b.checkable = false;
 		buttons.add(b);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
+			gameLogo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "enigmalogo.png"));
 		} catch (IOException e) {new CrashReport(e);}
 	}
 	
@@ -112,6 +113,14 @@ public class MainMenu extends Menu{
 		glTexCoord2f(1f, 0f); glVertex2f(Display.getWidth() - 16, Display.getHeight() - 512 - 16);
 		glTexCoord2f(1f, 1f); glVertex2f(Display.getWidth() - 16, Display.getHeight() - 16);
 		glTexCoord2f(0f, 1f); glVertex2f(Display.getWidth() - 16 - 512, Display.getHeight() - 16);
+		glEnd();
+		
+		gameLogo.bind();
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex2f(Display.getWidth() / 2- 128, 16);
+		glTexCoord2f(1f, 0f); glVertex2f(Display.getWidth() / 2 + 128, 16);
+		glTexCoord2f(1f, 1f); glVertex2f(Display.getWidth() / 2 + 128, 16 + 128);
+		glTexCoord2f(0f, 1f); glVertex2f(Display.getWidth() / 2 - 128, 16 + 128);
 		glEnd();
 		
 		glEnable(GL_DEPTH_TEST);

@@ -66,7 +66,7 @@ import com.charredsoftware.tsa.world.World;
 
 public class Main {
 
-	public Font font;
+	public Font font, titleFont;
 	public Player player;
 	/** DESIRED_TPS - {@value} The amount of ticks to occur per second. */
 	public static final int DESIRED_TPS = 30;
@@ -396,6 +396,8 @@ public class Main {
 	private void loop(){
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
+		awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 26);
+		titleFont = new TrueTypeFont(awtFont, false);
 		
 		player.spawn(1, 1);
 		

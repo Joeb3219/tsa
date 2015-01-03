@@ -50,22 +50,16 @@ public class OptionsMenu extends Menu{
 	public OptionsMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		Button b = new Button(this, 60, "Developer Mode");
+		Button b = new Button(this, 160, "Developer Mode");
 		b.identifier = "developer_mode";
 		b.checked = Main.getInstance().controller.developerMode;
 		widgets.add(b);
-		b = new Button(this, 60 + textHeight + 10, "Fullscreen");
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Fullscreen");
 		b.identifier = "fullscreen";
 		b.checked = Main.getInstance().controller.fullscreen;
 		widgets.add(b);
-		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings");
-		b.identifier = "settings";
-		widgets.add(b);
-		Slider s = new Slider(this, 60 + textHeight + 10 + textHeight + 10 + textHeight + 10, "Volume", 0, 100, 50);
+		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Volume", 0, 100, 50);
 		s.identifier = "volume_slider";
-		widgets.add(s);
-		s = new Slider(this, 60 + textHeight + 10 + textHeight + 10 + textHeight + 10 + textHeight + 10, "Testing", 0, 100, 50);
-		s.identifier = "testing";
 		widgets.add(s);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
@@ -128,6 +122,9 @@ public class OptionsMenu extends Menu{
 		glVertex2f(width, height);
 		glVertex2f(0, height);
 		glEnd();
+		
+		String title = "Settings";
+		Main.getInstance().titleFont.drawString((Display.getWidth() - Main.getInstance().titleFont.getWidth(title)) / 2, 64, title);
 		
 		for(Widget w : widgets) w.render();
 		
