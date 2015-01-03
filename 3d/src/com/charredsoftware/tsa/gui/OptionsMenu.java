@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.io.IOException;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -53,8 +54,9 @@ public class OptionsMenu extends Menu{
 		b.identifier = "developer_mode";
 		b.checked = Main.getInstance().controller.developerMode;
 		widgets.add(b);
-		b = new Button(this, 60 + textHeight + 10, "Level Editor");
-		b.identifier = "level_editor";
+		b = new Button(this, 60 + textHeight + 10, "Fullscreen");
+		b.identifier = "fullscreen";
+		b.checked = Main.getInstance().controller.fullscreen;
 		widgets.add(b);
 		b = new Button(this, 60 + textHeight + 10 + textHeight + 10, "Settings");
 		b.identifier = "settings";
@@ -82,9 +84,14 @@ public class OptionsMenu extends Menu{
 					((Button) w).checked = !((Button) w).checked;
 					Main.getInstance().controller.developerMode = ((Button) w).checked;
 				}
-				if(w.identifier.equalsIgnoreCase("level_editor")){
-									
-								}
+				if(w.identifier.equalsIgnoreCase("fullscreen")){
+					((Button) w).checked = !((Button) w).checked;
+					Main.getInstance().controller.fullscreen = ((Button) w).checked;
+					try {
+						if(Main.getInstance().controller.fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+						else Display.setFullscreen(false);
+					} catch (LWJGLException e) {new CrashReport(e);}
+				}
 				if(w.identifier.equalsIgnoreCase("settings")){
 					
 				}

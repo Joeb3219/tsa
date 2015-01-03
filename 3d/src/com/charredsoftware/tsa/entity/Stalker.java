@@ -56,6 +56,13 @@ public class Stalker extends Mob{
 		height = 2f;
 	}
 	
+	public boolean arrowHit(Arrow a){
+		boolean hit = super.arrowHit(a);
+		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
+		if(hit) damageMob(a.calculateDamage(this));
+		return hit;
+	}
+	
 	public void update(){
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
