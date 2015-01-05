@@ -39,7 +39,7 @@ public class GameController {
 	public boolean fullscreen = false;
 	public boolean applet = false;
 	public float soundVolume = 0.5f, musicVolume = 0.5f;
-	public int control_forward = Keyboard.KEY_W, control_backward = Keyboard.KEY_S, control_strafe_left = Keyboard.KEY_A, control_strafe_right = Keyboard.KEY_D, control_jump = Keyboard.KEY_SPACE, control_crouch = Keyboard.KEY_LCONTROL;
+	public int control_forward = Keyboard.KEY_W, control_backward = Keyboard.KEY_S, control_strafe_left = Keyboard.KEY_A, control_strafe_right = Keyboard.KEY_D, control_jump = Keyboard.KEY_SPACE, control_crouch = Keyboard.KEY_LCONTROL, control_buy = Keyboard.KEY_Z;
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
@@ -158,6 +158,7 @@ public class GameController {
 						if(identifier.equalsIgnoreCase("control_strafe_right")) control_strafe_right = Integer.parseInt(value);
 						if(identifier.equalsIgnoreCase("control_jump")) control_jump = Integer.parseInt(value);
 						if(identifier.equalsIgnoreCase("control_crouch")) control_crouch = Integer.parseInt(value);
+						if(identifier.equalsIgnoreCase("control_buy")) control_buy = Integer.parseInt(value);
 					}
 				}
 			}

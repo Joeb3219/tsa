@@ -51,6 +51,7 @@ import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
 import com.charredsoftware.tsa.gui.OptionsMenu;
+import com.charredsoftware.tsa.gui.StoreMenu;
 import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
@@ -74,10 +75,9 @@ public class Main {
 	private static final float mouseMovementThreshold = 2f;
 	public Camera camera;
 	int displayFPS = 0;
-	public boolean menu = false;
 	public GameState gameState = GameState.MENU, previousState = GameState.MENU;
 	private float cooldown = 0f;
-	public Menu main_menu, options_menu;
+	public Menu main_menu, options_menu, transactions_menu;
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 110);
 	public DialogHUD HUDDialog;
@@ -158,15 +158,10 @@ public class Main {
 			if(options_menu == null) options_menu = new OptionsMenu();
 			options_menu.update();
 		}
-		if(menu){
-			if(options_menu == null) options_menu = new OptionsMenu();
-			previousState = gameState;
-			gameState = GameState.SETTINGS;
-			options_menu.update();
-			menu = !menu;
-			Mouse.setGrabbed(false);
+		if(gameState == GameState.TRANSACTIONS){
+			if(transactions_menu == null) transactions_menu = new StoreMenu();
+			transactions_menu.update();
 		}
-		
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
 			player.update();
@@ -198,7 +193,16 @@ public class Main {
 	 */
 	private void keyboardTick() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
-			menu = !menu;
+			if(options_menu == null) options_menu = new OptionsMenu();
+			previousState = gameState;
+			gameState = GameState.SETTINGS;
+			Mouse.setGrabbed(false);
+			cooldown = 10f;
+		}
+		if(Keyboard.isKeyDown(controller.control_buy) && cooldown == 0 && gameState == GameState.GAME){
+			previousState = gameState;
+			gameState = GameState.TRANSACTIONS;
+			Mouse.setGrabbed(false);
 			cooldown = 10f;
 		}
 		controller.keyboardTick();
@@ -261,11 +265,8 @@ public class Main {
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
 		
 		//Reset mouse position
-		if(!menu) {
-			Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
-			Mouse.setGrabbed(true);
-		}
-		else Mouse.setGrabbed(false);
+		Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() / 2);
+		Mouse.setGrabbed(true);
 	}
 	
 	/**
@@ -305,6 +306,10 @@ public class Main {
 		}
 		if(gameState == GameState.SETTINGS){
 			renderMenu("settings");
+			return;
+		}
+		if(gameState == GameState.TRANSACTIONS){
+			renderMenu("transactions");
 			return;
 		}
 		
@@ -454,6 +459,11 @@ public class Main {
 		if(menu.equalsIgnoreCase("settings")){
 			if(options_menu == null) options_menu = new OptionsMenu();
 			options_menu.render();
+			return;
+		}
+		if(menu.equalsIgnoreCase("transactions")){
+			if(transactions_menu == null) transactions_menu = new StoreMenu();
+			transactions_menu.render();
 			return;
 		}
 	}

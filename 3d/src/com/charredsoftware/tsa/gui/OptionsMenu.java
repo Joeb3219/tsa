@@ -27,6 +27,7 @@ import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -85,6 +86,29 @@ public class OptionsMenu extends Menu{
 		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Main.getInstance().controller.control_jump);
 		cs.identifier = "control_jump";
 		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Buy/Sell", Main.getInstance().controller.control_buy);
+		cs.identifier = "control_buy";
+		widgets.add(cs);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To shoot a bow, hold down right click and then release.");
+		b.identifier = "null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "The longer you hold the right click button, the further the shot will go.");
+		b.identifier = "null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To open chests, press left click.");
+		b.identifier = "null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
+		b.identifier = "back";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Quit");
+		b.identifier = "quit";
+		b.checkable = false;
+		widgets.add(b);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
 		} catch (IOException e) {new CrashReport(e);}
@@ -143,10 +167,22 @@ public class OptionsMenu extends Menu{
 						}
 					}
 				}
+				if(w.identifier.equalsIgnoreCase("quit")){
+					Main.getInstance().controller.saveSettings();
+					AL.destroy();
+					Display.destroy();
+					System.exit(0);
+				}
+				if(w.identifier.equalsIgnoreCase("back")){
+					Main.getInstance().gameState = Main.getInstance().previousState;
+				}
 			}
 		}
 	}
 	
+	/**
+	 * Renders the menu
+	 */
 	public void render(){
 		this.height = Display.getHeight();
 		this.width = Display.getWidth();

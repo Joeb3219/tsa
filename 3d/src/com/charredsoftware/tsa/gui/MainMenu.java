@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -46,6 +47,10 @@ public class MainMenu extends Menu{
 		b.identifier = "settings";
 		b.checkable = false;
 		buttons.add(b);
+		b = new Button(this, buttons.get(buttons.size() - 1).pos.y + textHeight +  10, "Quit");
+		b.identifier = "quit";
+		b.checkable = false;
+		buttons.add(b);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
 			gameLogo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "enigmalogo.png"));
@@ -69,6 +74,12 @@ public class MainMenu extends Menu{
 				if(b.identifier.equalsIgnoreCase("settings")){
 					Main.getInstance().previousState = Main.getInstance().gameState;
 					Main.getInstance().gameState = GameState.SETTINGS;
+				}
+				if(b.identifier.equalsIgnoreCase("quit")){
+					Main.getInstance().controller.saveSettings();
+					AL.destroy();
+					Display.destroy();
+					System.exit(0);
 				}
 			}
 		}
