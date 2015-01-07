@@ -21,7 +21,7 @@ public class FileUtilities {
 
 	public static String dataPath = "data/"; //Relative to saves
 	public static String texturesPath = "textures/";
-	public static String soundsPath = "sounds/";
+	public static String soundsPath = "res/sounds/";
 	public static String savesPath = "res/saves/";
 	public static String crashesPath = "res/crashes/";
 	public static String themesPath = "themes/";
@@ -39,6 +39,14 @@ public class FileUtilities {
 		}
 		
 		return list;
+	}
+	
+	public static String getBaseDirectory(){
+		if(!FileUtilities.class.getResource("FileUtilities.class").getPath().contains("jar:")) return "";
+		try{
+			return FileUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "resources/";
+		}catch(Exception e){new CrashReport(e);}
+		return "";
 	}
 	
 	/**

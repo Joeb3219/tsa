@@ -1,6 +1,7 @@
 package com.charredsoftware.tsa;
 
-import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -50,8 +51,8 @@ public class Sound {
 	private void loadSound(){
 		if(path.contains("wav"))
 			try {
-				audio = AudioLoader.getAudio("WAV", ClassLoader.getSystemResourceAsStream(FileUtilities.soundsPath + path));
-			} catch (IOException e) {new CrashReport(e);}
+				audio = AudioLoader.getAudio("WAV", new BufferedInputStream(new FileInputStream(FileUtilities.getBaseDirectory() + FileUtilities.soundsPath + path)));
+			} catch (Exception e) {new CrashReport(e);}
 	}
 	
 }

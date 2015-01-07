@@ -126,7 +126,7 @@ public class GameController {
 	 */
 	public void loadSettings(){
 		try{
-			File dir = new File(FileUtilities.savesPath);
+			File dir = new File(FileUtilities.getBaseDirectory() + FileUtilities.savesPath);
 			File file = new File(dir.getAbsolutePath() + "/" + FileUtilities.settingsFile);
 			Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
 			NodeList base = d.getElementsByTagName("setting");
@@ -170,7 +170,7 @@ public class GameController {
 	 */
 	public void saveSettings(){
 		try{
-		File dir = new File(FileUtilities.savesPath);
+		File dir = new File(FileUtilities.getBaseDirectory() + FileUtilities.savesPath);
 		File file = new File(dir.getAbsolutePath() + "/" + FileUtilities.settingsFile);
 		PrintWriter writer = new PrintWriter(file, "UTF-8");
 		writer.println("<Settings>");

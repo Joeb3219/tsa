@@ -21,11 +21,11 @@
 </setting>
 <setting>
 <id>control_forward</id>
-<value>17</value>
+<value>30</value>
 </setting>
 <setting>
 <id>control_backward</id>
-<value>31</value>
+<value>30</value>
 </setting>
 <setting>
 <id>control_strafe_left</id>
@@ -33,7 +33,7 @@
 </setting>
 <setting>
 <id>control_strafe_right</id>
-<value>32</value>
+<value>30</value>
 </setting>
 <setting>
 <id>control_crouch</id>

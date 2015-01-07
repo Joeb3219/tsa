@@ -131,8 +131,8 @@ public class Block {
 	 */
 	public static Texture loadTexture(String path){
 		try{
-			if(path.contains("png")) return TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + path));
-			else return TextureLoader.getTexture("jpg", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + path));
+			if(path.contains("png")) return TextureLoader.getTexture("png", Block.class.getClassLoader().getResourceAsStream(FileUtilities.texturesPath + path));
+			else return TextureLoader.getTexture("jpg", Block.class.getClassLoader().getResourceAsStream(FileUtilities.texturesPath + path));
 		}catch(Exception e){new CrashReport(e);}
 			return null;
 	}

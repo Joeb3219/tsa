@@ -32,6 +32,8 @@ public class CrashReport {
 	 * @param t Throwable (generally an Exception).
 	 */
 	public CrashReport(Throwable t){
+		t.printStackTrace();
+		System.exit(0);
 		this.t = t;
 		if(!Main.getInstance().controller.applet) file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
 		try {

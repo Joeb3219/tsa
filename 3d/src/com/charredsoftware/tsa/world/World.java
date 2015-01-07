@@ -1,6 +1,7 @@
 package com.charredsoftware.tsa.world;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
+import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Mob;
@@ -36,7 +38,7 @@ public class World {
 	 */
 	public World(){
 		this.id = getNextId();
-		this.dir = new File(FileUtilities.savesPath + id);
+		this.dir = new File(FileUtilities.getBaseDirectory() + FileUtilities.savesPath + id);
 		generate();
 	}
 	
@@ -46,7 +48,7 @@ public class World {
 	 */
 	public World(int id){
 		this.id = id;
-		this.dir = new File(FileUtilities.savesPath + id);
+		this.dir = new File(FileUtilities.getBaseDirectory() + FileUtilities.savesPath + id);
 		generate();
 	}
 	
