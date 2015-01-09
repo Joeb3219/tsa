@@ -47,6 +47,7 @@ import com.charredsoftware.tsa.world.Position;
 public class OptionsMenu extends Menu{
 
 	private Texture logo;
+	public float cooldown = 10f;
 	
 	public OptionsMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
@@ -114,7 +115,6 @@ public class OptionsMenu extends Menu{
 		} catch (IOException e) {new CrashReport(e);}
 	}
 	
-	private float cooldown = 10f;
 	public void update(){
 		if(cooldown > 0) cooldown -= 1;
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0) Main.getInstance().gameState = Main.getInstance().previousState;

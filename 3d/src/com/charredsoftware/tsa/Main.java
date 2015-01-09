@@ -194,6 +194,7 @@ public class Main {
 	private void keyboardTick() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0 && gameState == GameState.GAME){
 			if(options_menu == null) options_menu = new OptionsMenu();
+			((OptionsMenu)options_menu).cooldown = 10f;
 			previousState = gameState;
 			gameState = GameState.SETTINGS;
 			Mouse.setGrabbed(false);
