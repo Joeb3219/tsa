@@ -1,34 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
-import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHT7;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_TWO_SIDE;
-import static org.lwjgl.opengl.GL11.GL_LINEAR_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADRATIC_ATTENUATION;
-import static org.lwjgl.opengl.GL11.GL_SPECULAR;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLightModel;
-import static org.lwjgl.opengl.GL11.glLightModeli;
-import static org.lwjgl.opengl.GL11.glLightf;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.gluOrtho2D;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 
@@ -63,14 +35,17 @@ public class Camera {
 	 * 
 	 * @param fov The Field of View
 	 * @param aspectRatio Aspect rtaio in terms of width:height.
-	 * @param nearClip Distance to clip at, near.
 	 * @param farClip Far distance to clip at.
 	 */
-	public Camera(float fov, float aspectRatio, float nearClip, float farClip){
+	public Camera(float fov, float aspectRatio, float farClip){
 		this.fov = fov;
 		this.aspectRatio = aspectRatio;
-		this.nearClip = nearClip;
 		this.farClip = farClip;
+
+		this.nearClip = (float) (0.01f / Math.sqrt(1 + Math.pow(Math.tan(fov/180*Math.PI), 2)
+                * (Math.pow(aspectRatio, 2) + 1)));
+		
+		System.out.println(this.nearClip);
 		
 		initializeProjection();
 	}
@@ -176,6 +151,9 @@ public class Camera {
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);
+		
+
+		glDepthRange(0,1);
 	}
 	
 	/**

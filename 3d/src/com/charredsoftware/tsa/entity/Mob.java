@@ -2,6 +2,7 @@ package com.charredsoftware.tsa.entity;
 
 import java.util.ArrayList;
 
+import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
@@ -23,6 +24,8 @@ public class Mob extends Entity{
 	protected float jumpingTime = 0;
 	public float killBonus = 0f;
 	public float shielding = 0f; //1f is total shielding.
+	public float ticksSinceDeath = 0f;
+	public static final float _TICKS_AFTER_DEATH_TILL_DELETION = Main.DESIRED_TPS * 3;
 	
 	/**
 	 * Creates a new Mob.

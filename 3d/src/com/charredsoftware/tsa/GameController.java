@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.lwjgl.input.Keyboard;
@@ -43,6 +44,7 @@ public class GameController {
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
+	public String sessionName;
 	
 	/**
 	 * Things to check on keyboard updates.
@@ -203,6 +205,19 @@ public class GameController {
 	public static GameController getInstance(){
 		if(_INSTANCE == null) _INSTANCE = new GameController();
 		return _INSTANCE;
+	}
+	
+	public boolean isJar(){
+		return GameController.class.getResource("GameController.class").getPath().contains("jar:");
+	}
+	
+	public boolean isInDemoMode(){
+		if(isJar()) return false;
+		return true;
+	}
+	
+	public void requestSessionName(){
+		String path = JOptionPane.showInputDialog(null, "Enter a username");
 	}
 	
 }

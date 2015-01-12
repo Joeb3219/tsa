@@ -19,6 +19,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -48,12 +49,18 @@ public class Stalker extends Mob{
 		this.y = startingY;
 		this.z = startingZ;
 		identifier = MobType.STALKER;
+		texture = getTexture();
+		height = 2f;
+		shielding = 0.5f;
+	}
+	
+	public Texture getTexture(){
 		if(texture == null){
 			try {
 				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
 			} catch (IOException e) {new CrashReport(e);}
 		}
-		height = 2f;
+		return texture;
 	}
 	
 	public boolean arrowHit(Arrow a){
@@ -64,6 +71,15 @@ public class Stalker extends Mob{
 	}
 	
 	public void update(){
+		if(health <= 0){
+			if(ticksSinceDeath == 0){
+				Main.getInstance().player.score += killBonus;
+				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Stalker and received " + killBonus + " points!"));
+			}
+			if(ticksSinceDeath > _TICKS_AFTER_DEATH_TILL_DELETION) markedForDeletion = true;
+			else ticksSinceDeath ++;
+			return;
+		}
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
 			System.out.println("FOLLOWING! STALKING!");
@@ -125,6 +141,10 @@ public class Stalker extends Mob{
 		glPushMatrix();
 		glTranslatef(x, y, z);
 		glRotatef(facing + ((facing == 180 || facing == 0) ? 90 : 270), 0, 1, 0);
+		if(ticksSinceDeath > 0){
+			glRotatef(90, 1, 0, 0);
+			glRotatef(facing, 0, 0, 1);
+		}
 		
 		glBegin(GL_QUADS);
 		

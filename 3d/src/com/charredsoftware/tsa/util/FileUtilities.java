@@ -8,6 +8,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import com.charredsoftware.tsa.CrashReport;
+import com.charredsoftware.tsa.GameController;
+import com.charredsoftware.tsa.Main;
 
 /**
  * FileUtilities class.

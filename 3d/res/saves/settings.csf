@@ -17,7 +17,7 @@
 </setting>
 <setting>
 <id>fov_slider</id>
-<value>65.0</value>
+<value>65.04425</value>
 </setting>
 <setting>
 <id>control_forward</id>

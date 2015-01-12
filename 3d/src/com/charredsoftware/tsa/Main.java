@@ -32,6 +32,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
@@ -44,6 +45,8 @@ import org.newdawn.slick.openal.SoundStore;
 import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Player;
+import com.charredsoftware.tsa.entity.Spinner;
+import com.charredsoftware.tsa.entity.Stalker;
 import com.charredsoftware.tsa.gui.Dialog;
 import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.DialogHUD;
@@ -90,7 +93,7 @@ public class Main {
 	private Main(){
 		controller = GameController.getInstance();
 		initializeDisplay();
-		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 0.3f, 75f);
+		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 75f);
 		player = new Player(new World(0), camera);
 		HUDDialog = new DialogHUD();
 		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
@@ -260,7 +263,26 @@ public class Main {
 			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
 		}
 		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
-			//TODO: Code to place mobs.
+			Sys.alert("Placing mobs", "Press 1 to place a Spinner, 2 to place a Stalker, 3 to place a Worker, 4 to place Dr.Sputnik");
+			boolean keyFound = false;
+			int value = ' ';
+			do{
+				Display.update();
+				Keyboard.poll();
+				Keyboard.next();
+				Display.update();
+				Keyboard.poll();
+				if(Keyboard.next()){
+					value = Keyboard.getEventKey();
+					if(Character.isDigit(value)) keyFound = true;
+					value = ((char) value);
+				}
+			}while(!keyFound);
+			value = Character.getNumericValue(value);
+			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 3) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 		}
 		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;

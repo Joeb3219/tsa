@@ -36,6 +36,7 @@ public class Spinner extends Mob{
 	public float facing = 0; //In degrees.
 	public static Texture texture = null;
 	private Random r = new Random();
+	public static final float _FOV_TO_SHOOT = 60;
 	
 	/**
 	 * Creates a new Spinner Mob
@@ -47,11 +48,7 @@ public class Spinner extends Mob{
 		super();
 		identifier = MobType.SPINNER;
 		killBonus = 5f;
-		if(texture == null){
-			try {
-				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
-			} catch (IOException e) {new CrashReport(e);}
-		}
+		texture = getTexture();
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -60,14 +57,26 @@ public class Spinner extends Mob{
 		this.mass = 50f;
 	}
 	
+	public Texture getTexture(){
+		if(texture == null){
+			try {
+				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
+			} catch (IOException e) {new CrashReport(e);}
+		}
+		return texture;
+	}
+	
 	/**
 	 * Updates the mob.
 	 */
 	public void update(){
 		if(health <= 0){
-			Main.getInstance().player.score += killBonus;
-			Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));
-			markedForDeletion = true;
+			if(ticksSinceDeath == 0){
+				Main.getInstance().player.score += killBonus;
+				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));
+			}
+			if(ticksSinceDeath > _TICKS_AFTER_DEATH_TILL_DELETION) markedForDeletion = true;
+			else ticksSinceDeath ++;
 			return;
 		}
 		facing -= 1;
@@ -89,17 +98,30 @@ public class Spinner extends Mob{
 		return hit;
 	}
 	
+	public boolean determineIfShouldShoot(){
+		float angle = (float) Math.atan2(Main.getInstance().player.z - z, Main.getInstance().player.x - x);
+		
+		angle = (float) Math.toDegrees(angle);
+		if(angle < 0) angle += 360;
+		
+		if(Math.abs(facing - Math.abs(angle)) <= _FOV_TO_SHOOT) return true;
+		
+		return false;
+	}
+	
 	/**
 	 * Renders the mob.
 	 */
 	public void render(){
-		if(health <= 0) return;
-		
 		texture.bind();
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
 		glRotatef(facing, 0, 1, 0);
+		if(ticksSinceDeath > 0){
+			glRotatef(90, 1, 0, 0);
+			glRotatef(facing, 0, 0, 1);
+		}
 		
 		glBegin(GL_QUADS);
 		
