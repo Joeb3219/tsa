@@ -358,7 +358,8 @@ public class World {
 		
 		renderMap(blockList);
 		
-		if(Main.getInstance().controller.buildingMode || Mouse.isButtonDown(0)) lookingAt = getBlockLookingAt();
+//		if(Main.getInstance().controller.buildingMode || Mouse.isButtonDown(0)) lookingAt = getBlockLookingAt();
+		lookingAt = getBlockLookingAt();
 	}
 	
 	/**

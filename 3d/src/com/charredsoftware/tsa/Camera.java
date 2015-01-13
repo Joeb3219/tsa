@@ -42,10 +42,7 @@ public class Camera {
 		this.aspectRatio = aspectRatio;
 		this.farClip = farClip;
 
-		this.nearClip = (float) (0.05f / Math.sqrt(1 + Math.pow(Math.tan(fov/180*Math.PI), 2)
-                * (Math.pow(aspectRatio, 2) + 1)));
-		
-		System.out.println(this.nearClip);
+		this.nearClip = 0.0001f;
 		
 		initializeProjection();
 	}

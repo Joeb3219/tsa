@@ -33,7 +33,7 @@ public class Block {
 	public static Block wood = new Block(4, 0, "Wood", Block.loadTexture("wood.jpg"));
 	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.jpg"), false);
 	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
-	public static Block wall = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
+	public static Block end = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
 	public static Block chest = new Block(8, 0, "Chest", Block.loadTexture("chest.jpg"));
 	public static Block charredBlock = new Block(-2, 0, "charredblock", Block.loadTexture("charredsoftware.png"));
 	

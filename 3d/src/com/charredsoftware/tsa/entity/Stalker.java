@@ -18,7 +18,9 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
+import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -83,7 +85,9 @@ public class Stalker extends Mob{
 		}
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
-			System.out.println("FOLLOWING! STALKING!");
+			Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, 90 - Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition()) , 0);
+			a.shouldBeLit = false;
+			Sound.BOW_SHOT.playSfx();
 		}else{
 			boolean changedDirection = false;
 			if(r.nextInt(65) == 1 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){
@@ -141,7 +145,7 @@ public class Stalker extends Mob{
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		glRotatef(facing + ((facing == 180 || facing == 0) ? 90 : 270), 0, 1, 0);
+		glRotatef(90 - facing, 0, 1, 0);
 		if(ticksSinceDeath > 0){
 			glRotatef(90, 1, 0, 0);
 			glRotatef(facing, 0, 0, 1);

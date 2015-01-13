@@ -1,5 +1,6 @@
 package com.charredsoftware.tsa.physics;
 
+import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.world.Position;
 
 /**
@@ -87,6 +88,20 @@ public class Physics {
 		float dY = b.y - a.y;
 		float dZ = b.z - a.z;
 		return (float) Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2) + Math.pow(dZ, 2));
+	}
+	
+	/**
+	 * @param a Position a
+	 * @param b Position b
+	 * @return Returns the 2D angle between a and b.
+	 */
+	public static float calculate2DAngle(Position a, Position b){
+		float angle = (float) Math.atan2(a.z - b.z, a.x - b.x);
+		
+		angle = (float) Math.toDegrees(angle);
+		if(angle < 0) angle += 360;
+		
+		return angle;
 	}
 	
 }

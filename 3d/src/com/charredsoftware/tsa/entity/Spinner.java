@@ -8,15 +8,7 @@ package com.charredsoftware.tsa.entity;
  * @since December 12th, 2014
  */
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.Random;
@@ -28,6 +20,7 @@ import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
+import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -36,7 +29,7 @@ public class Spinner extends Mob{
 	public float facing = 0; //In degrees.
 	public static Texture texture = null;
 	private Random r = new Random();
-	public static final float _FOV_TO_SHOOT = 60;
+	public static final float _FOV_TO_SHOOT = 30, _DISTANCE_TO_SHOOT = 5f;
 	
 	/**
 	 * Creates a new Spinner Mob
@@ -80,12 +73,20 @@ public class Spinner extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
-		facing -= 1;
-		if(r.nextInt(100) <= 5){
-			Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 2, facing, 0);
-			a.shouldBeLit = false;
-			Sound.BOW_SHOT.playSfx();
+		if(determineIfShouldShoot()){
+			facing += 2;
+			if(!determineIfShouldShoot()) facing -= 4;
+			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 5){
+				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, 360 - Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition()) , 0);
+				a.shouldBeLit = false;
+				Sound.BOW_SHOT.playSfx();
+			}
+		}else{
+			facing -= 1;
+			if(facing <= 0) facing = 360;
+			if(facing > 360) facing = 0;
 		}
+		
 	}
 	
 	/**
@@ -100,13 +101,18 @@ public class Spinner extends Mob{
 		return hit;
 	}
 	
+	/**
+	 * @return Returns the angle, relative to facing direction.
+	 */
+	public float getRelativeAngle(){
+		return Math.abs(facing - Math.abs(Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition())));
+	}
+	
+	/**
+	 * @return Returns <tt>true</tt> if should shoot the bow.
+	 */
 	public boolean determineIfShouldShoot(){
-		float angle = (float) Math.atan2(Main.getInstance().player.z - z, Main.getInstance().player.x - x);
-		
-		angle = (float) Math.toDegrees(angle);
-		if(angle < 0) angle += 360;
-		
-		if(Math.abs(facing - Math.abs(angle)) <= _FOV_TO_SHOOT) return true;
+		if(getRelativeAngle() <= _FOV_TO_SHOOT) return true;
 		
 		return false;
 	}
@@ -119,7 +125,7 @@ public class Spinner extends Mob{
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
-		glRotatef(facing, 0, 1, 0);
+		glRotatef(90 - facing, 0, 1, 0);
 		if(ticksSinceDeath > 0){
 			glRotatef(90, 1, 0, 0);
 			glRotatef(facing, 0, 0, 1);
