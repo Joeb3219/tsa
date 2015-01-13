@@ -64,6 +64,16 @@ public class Region {
 
 			writer.println("<Region>");
 			
+			//Settings
+			writer.println("<settings>");
+			if((((int) world.spawn.x / 16) == x) && (((int) world.spawn.z / 16) == z)){
+				writer.println("<setting>");
+				writer.println("<key>spawn</key>");
+				writer.println("<value>" + world.spawn.x + ":" + world.spawn.y + ":" + world.spawn.z + "</value>");
+				writer.println("</setting>");
+			}
+			writer.println("</settings>");
+			
 			//Mobs
 			writer.println("<mobs>");
 			for(Entity e : entitiesToLoad){
@@ -168,10 +178,39 @@ public class Region {
 	 */
 	public void generate(File file){
 		try {
+			loadSettings(file);
 			loadMobs(file);
 			loadBlocks(file);
 		} catch (Exception e) {
 			new CrashReport(e);
+		}
+	}
+	
+	/**
+	 * Loads any regional/world settings.
+	 * @param file File to load from.
+	 */
+	private void loadSettings(File file) throws Exception{
+		Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
+		NodeList base = d.getElementsByTagName("setting");
+		for(int i = 0; i < base.getLength(); i ++){
+			Node n = base.item(i);
+			NodeList children = n.getChildNodes();
+			String key = "";
+			for(int l = 0; l < children.getLength() - 1; l ++){
+				Node c = children.item(l);
+				String value = c.getTextContent();
+				if(value.equals("") || value.equals(" ")) continue;
+				if(c.getNodeName().equals("key")){
+					key = value;
+				}else if(c.getNodeName().equals("value")){
+					if(key.equalsIgnoreCase("spawn")){
+						String[] values = value.split(":");
+						world.spawn = new Position(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]));
+					}
+				}
+			}
+			
 		}
 	}
 	
@@ -280,6 +319,19 @@ public class Region {
 	public void removeBlock(BlockInstance block){
 		if(blocks.contains(block)){
 			blocks.remove(block);
+		}
+	}
+	
+	/**
+	 * @param pos <code>Position</code> to empty in region,
+	 */
+	public void removeBlock(Position pos){
+		for(int i = 0; i < blocks.size(); i ++){
+			BlockInstance b = blocks.get(i);
+			if(b.getPosition().equals(pos)){
+				blocks.remove(b);
+				i ++;
+			}
 		}
 	}
 

@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL11.glVertex3f;
 import java.io.IOException;
 import java.util.Random;
 
-import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -67,10 +66,12 @@ public class Stalker extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(a.calculateDamage(this));
+		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
 		return hit;
 	}
 	
 	public void update(){
+		if(Main.getInstance().controller.buildingMode) return;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.score += killBonus;

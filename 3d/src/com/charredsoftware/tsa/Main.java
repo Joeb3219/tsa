@@ -31,6 +31,7 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -59,6 +60,7 @@ import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Chest;
+import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
 /**
@@ -93,7 +95,7 @@ public class Main {
 	private Main(){
 		controller = GameController.getInstance();
 		initializeDisplay();
-		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 75f);
+		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 20f);
 		player = new Player(new World(0), camera);
 		HUDDialog = new DialogHUD();
 		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
@@ -153,7 +155,7 @@ public class Main {
 	 */
 	public void tick(){
 		if(cooldown > 0 && gameState != GameState.MENU && gameState != GameState.SETTINGS) cooldown --;
-		controller.timeLeft -= 1;
+		if(!controller.buildingMode) controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && !controller.showMainMenu) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) main_menu.update();
@@ -210,11 +212,57 @@ public class Main {
 			cooldown = 10f;
 		}
 		controller.keyboardTick();
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn(1f, 1f);
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn();
+		/*if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
 			player.world = new World();
 			player.world.generate();
 			player.spawn(1, 1);
+		}*/
+		if(gameState == GameState.GAME && controller.buildingMode && controller.developerMode && cooldown == 0 && Keyboard.isKeyDown(Keyboard.KEY_I)){
+			ArrayList<Position> fillPositions = player.leftWand.getPositionsBetween(player.rightWand);
+			for(Position p : fillPositions){
+				player.world.removeBlock(p);
+				if(player.selectedBlock != Block.charredBlock) player.world.addBlock(new BlockInstance(player.selectedBlock, p.x, p.y, p.z));
+			}
+		}
+		if(gameState == GameState.GAME && controller.buildingMode && controller.developerMode && cooldown == 0 && Keyboard.isKeyDown(Keyboard.KEY_O)){
+			player.world.spawn.x = player.x;
+			player.world.spawn.y = player.y;
+			player.world.spawn.z = player.z;
+		}
+		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
+			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
+			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
+		}
+		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
+			Sys.alert("Placing mobs", "Press 1 to place a Spinner, 2 to place a Stalker, 3 to place a Worker, 4 to place Dr.Sputnik");
+			boolean keyFound = false;
+			int value = ' ';
+			do{
+				Display.update();
+				Keyboard.poll();
+				Keyboard.next();
+				Display.update();
+				Keyboard.poll();
+				if(Keyboard.next()){
+					value = Keyboard.getEventKey();
+					try{
+						Integer.parseInt(Keyboard.getKeyName(value));
+						keyFound = true;
+					}catch(Exception e){
+						keyFound = false;
+					}
+				}
+			}while(!keyFound);
+			value = Integer.parseInt(Keyboard.getKeyName(value));
+			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 3) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+		}
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_K) && cooldown == 0){
+			cooldown = 10f;
+			controller.removeMobMode = !controller.removeMobMode;
 		}
 	}
 	
@@ -252,37 +300,17 @@ public class Main {
 		
 		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0){
 			if(player.world.lookingAt.base == Block.chest) openChest(player.world.lookingAt);
-			else if(controller.buildingMode) player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+			else if(controller.buildingMode){
+				if(player.selectedBlock == Block.charredBlock) player.leftWand = player.world.lookingAt.getPosition();
+				else player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));
+			}
 		}
 		if(gameState == GameState.GAME && Mouse.isButtonDown(1) && player.world.lookingAt.base.solid && controller.buildingMode && cooldown == 0){
-			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
-			player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
-		}
-		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
-			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
-			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
-		}
-		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
-			Sys.alert("Placing mobs", "Press 1 to place a Spinner, 2 to place a Stalker, 3 to place a Worker, 4 to place Dr.Sputnik");
-			boolean keyFound = false;
-			int value = ' ';
-			do{
-				Display.update();
-				Keyboard.poll();
-				Keyboard.next();
-				Display.update();
-				Keyboard.poll();
-				if(Keyboard.next()){
-					value = Keyboard.getEventKey();
-					if(Character.isDigit(value)) keyFound = true;
-					value = ((char) value);
-				}
-			}while(!keyFound);
-			value = Character.getNumericValue(value);
-			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 3) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(player.selectedBlock == Block.charredBlock) player.rightWand = player.world.lookingAt.getPosition();
+			else{
+				BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
+				player.world.addBlock(new BlockInstance(player.selectedBlock, adjacent.x, adjacent.y, adjacent.z));
+			}
 		}
 		
 		if(Mouse.isButtonDown(1) || Mouse.isButtonDown(0)) cooldown = 3f;
@@ -428,7 +456,7 @@ public class Main {
 		awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 26);
 		titleFont = new TrueTypeFont(awtFont, false);
 		
-		player.spawn(1, 1);
+		player.spawn();
 		
 		
 		long lastTime = System.nanoTime();

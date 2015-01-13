@@ -21,7 +21,8 @@ import com.charredsoftware.tsa.world.World;
 public class Player extends Mob{
 
 	private Camera camera; //Used to calculate motion.
-	public Block selectedBlock = Block.air;
+	public Block selectedBlock = Block.bricks;
+	public Position leftWand = new Position(0, 0, 0), rightWand = new Position(0, 0, 0);
 	public boolean walking = false;
 	public float score = 0f;
 	public int coins = 0;
@@ -46,7 +47,7 @@ public class Player extends Mob{
 	 * @see com.charredsoftware.tsa.entity.Mob#update()
 	 */
 	public void update(){
-		if(!Main.getInstance().controller.buildingMode) bow.update();
+		bow.update();
 		
 		checkMovement((isCrouching) ? 4f : 1f);
 		
@@ -133,11 +134,9 @@ public class Player extends Mob{
 	
 	/**
 	 * Spawns the player at the highest possible Y value.
-	 * @param x X-position
-	 * @param z Z-position
 	 */
-	public void spawn(float x, float z){
-		setPosition(x, world.getHighestBlock(x, z).y + 2, z);
+	public void spawn(){
+		setPosition(world.spawn.x, world.spawn.y, world.spawn.z);
 	}
 
 	/**

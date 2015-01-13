@@ -1,5 +1,7 @@
 package com.charredsoftware.tsa.world;
 
+import java.util.ArrayList;
+
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -109,6 +111,50 @@ public class Position {
 		float dY = y - p.y;
 		float dZ = z - p.z;
 		return (float) Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2) + Math.pow(dZ, 2));
+	}
+	
+	public ArrayList<Position> getPositionsBetween(Position opposing){
+		ArrayList<Position> positions = new ArrayList<Position>();
+		float minX = Math.min(x, opposing.x);
+		float maxX = Math.max(x, opposing.x);
+		float minY = Math.min(y, opposing.y);
+		float maxY = Math.max(y, opposing.y);
+		float minZ = Math.min(z, opposing.z);
+		float maxZ = Math.max(z, opposing.z);
+		
+		for(float xa = minX; xa < maxX; xa ++){
+			for(float ya = minY; ya < maxY; ya ++){
+				for(float za = minZ; za < maxZ; za ++){
+					positions.add(new Position(xa, ya, za));
+				}
+			}
+		}
+		
+		if(minX == maxX){
+			for(float ya = minY; ya < maxY; ya ++){
+				for(float za = minZ; za < maxZ; za ++){
+					positions.add(new Position(minX, ya, za));
+				}
+			}
+		}
+		
+		if(minZ == maxZ){
+			for(float xa = minX; xa < maxX; xa ++){
+				for(float ya = minY; ya < maxY; ya ++){
+					positions.add(new Position(xa, ya, minZ));
+				}
+			}
+		}
+		
+		if(minY == maxY){
+			for(float xa = minX; xa < maxX; xa ++){
+				for(float za = minZ; za < maxZ; za ++){
+					positions.add(new Position(xa, minY, za));
+				}
+			}
+		}
+		
+		return positions;
 	}
 	
 }

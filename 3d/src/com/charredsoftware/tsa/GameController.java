@@ -36,7 +36,7 @@ public class GameController {
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
 	public String version = "1.0.2";
-	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false, showMainMenu = true;
+	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = false, showMainMenu = true, removeMobMode = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;
 	public float soundVolume = 0.5f, musicVolume = 0.5f;
@@ -94,8 +94,10 @@ public class GameController {
 		font.drawString(xStart, 50, "FPS: " + Main.getInstance().displayFPS);
 		font.drawString(xStart, 70, "Lighting: " + lighting);
 		font.drawString(xStart, 90, "Building: " + buildingMode);
-		font.drawString(xStart, 110, "Entities: " + Main.getInstance().player.world.existingEntities.size());
-		font.drawString(xStart, 130, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
+		font.drawString(xStart, 110, "RemoveMobMode: " + removeMobMode);
+		font.drawString(xStart, 130, "Entities: " + Main.getInstance().player.world.existingEntities.size());
+		font.drawString(xStart, 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
+		if(removeMobMode) font.drawString(xStart, 180, "Shooting mobs removes them!");
 		
 	}
 	

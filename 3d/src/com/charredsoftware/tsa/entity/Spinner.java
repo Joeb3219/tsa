@@ -70,6 +70,7 @@ public class Spinner extends Mob{
 	 * Updates the mob.
 	 */
 	public void update(){
+		if(Main.getInstance().controller.buildingMode) return;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.score += killBonus;
@@ -95,6 +96,7 @@ public class Spinner extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(a.calculateDamage(this));
+		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
 		return hit;
 	}
 	

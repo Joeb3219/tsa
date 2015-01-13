@@ -33,7 +33,7 @@ public class CrashReport {
 	 */
 	public CrashReport(Throwable t){
 		t.printStackTrace();
-		System.exit(0);
+		if(t instanceof IllegalStateException) System.exit(0);
 		this.t = t;
 		if(!Main.getInstance().controller.applet) file = new File(FileUtilities.crashesPath + System.currentTimeMillis() + ".txt");
 		try {

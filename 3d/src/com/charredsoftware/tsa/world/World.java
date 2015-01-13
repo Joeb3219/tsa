@@ -1,7 +1,6 @@
 package com.charredsoftware.tsa.world;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
-import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Mob;
@@ -32,6 +30,7 @@ public class World {
 	public int id;
 	public File dir;
 	public ArrayList<Entity> existingEntities = new ArrayList<Entity>();
+	public Position spawn = new Position(0, 0, 0);
 	
 	/**
 	 * Generates a new world with the next highest ID.
@@ -198,6 +197,13 @@ public class World {
 	}
 	
 	/**
+	 * @param pos Position to empty.
+	 */
+	public void removeBlock(Position pos){
+		findRegion(pos.x, pos.z).removeBlock(pos);
+	}
+	
+	/**
 	 * @param x X-position, not divided by Region._SIZE.
 	 * @param z Z-position, not divided by Region._SIZE.
 	 * @return Returns the region, or creates a new one, at indicated position.
@@ -213,7 +219,9 @@ public class World {
 			if(x == r.x && z == r.z) return r;
 		}
 		
-		if(!Main.getInstance().controller.buildingMode) return regions.get(0);
+		if(regions.size() >= 4){
+			if(!Main.getInstance().controller.buildingMode) return regions.get(0);
+		}
 		Region r = new Region(this, x, z);
 		regions.add(r);
 		r.generate();
@@ -426,6 +434,27 @@ public class World {
 	public void addMob(Mob m){
 		findRegion(m.x, m.z).entitiesToLoad.add(m);
 		existingEntities.add(m);
+	}
+	
+	/**
+	 * @param p Position at which to look
+	 * @return Returns the <code>Mob</code> at the specified location, or null if there isn't one.
+	 */
+	public Mob getMob(Position p){
+		for(Entity m : existingEntities){
+			if(!(m instanceof Mob)) continue;
+			if(m.getPosition().equals(p)) return (Mob) m;
+		}
+		return null;
+	}
+	
+	/**
+	 * Removes a mob completely from world... won't show up next time.
+	 * @param m Mob to remove
+	 */
+	public void removeMobFromWorld(Mob m){
+		findRegion(m.x, m.z).entitiesToLoad.remove(m);
+		existingEntities.remove(m);
 	}
 	
 }
