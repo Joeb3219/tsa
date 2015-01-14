@@ -79,7 +79,6 @@ public class Spinner extends Mob{
 			facing += 2;
 			if(!determineIfShouldShoot()) facing -= 4;
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 5){
-				System.out.println("FACING: " + facing);
 				
 				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;

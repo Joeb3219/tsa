@@ -32,8 +32,6 @@ public class Region {
 	public static final float _SIZE = 16;
 	/** _HEIGHT - {@value} Height of chunk*/
 	public static final float _HEIGHT = 64;
-	/** _FRUSTUM_CHECK_BLOCK_INTERVAL - {@value} Number of blocks between layers to be checked in region exclusion from culling. */
-	public static final float _FRUSTUM_CHECK_BLOCK_INTERVAL = 8;
 	public ArrayList<BlockInstance> blocks = new ArrayList<BlockInstance>();
 	public ArrayList<Entity> entitiesToLoad = new ArrayList<Entity>(); //Entities that should be loaded/saved into the world.
 	public float x, z;
@@ -147,14 +145,11 @@ public class Region {
 		ArrayList<BlockInstance> testBlocks = new ArrayList<BlockInstance>();
 		float baseX = x * _SIZE;
 		float baseZ = z * _SIZE;
-		for(float y = getLowestLayer(); y < _HEIGHT; y += _FRUSTUM_CHECK_BLOCK_INTERVAL){
-			for(float x = 0; x < _SIZE; x += 2){
-				for(float z = 0; z < _SIZE; z += 2){
-					float fX = baseX + x;
-					float fZ = baseZ + z;
-					BlockInstance b = getBlock(new Position(fX, y, fZ));
-					if(b.base != Block.air) testBlocks.add(b);
-				}
+		for(float x = 0; x < _SIZE; x += 2){
+			for(float z = 0; z < _SIZE; z += 2){
+				float fX = baseX + x;
+				float fZ = baseZ + z;
+				testBlocks.add(getBlock(new Position(fX, 0, fZ)));
 			}
 		}
 		return testBlocks;
@@ -345,7 +340,6 @@ public class Region {
 		
 		for(BlockInstance b : blocks){
 			if(!Main.getInstance().camera.frustum.BlockInFrustum(b)) continue;
-			if(!checkIfCovered(b)) continue;
 			renderableBlocks.add(b);
 		}
 		return renderableBlocks;

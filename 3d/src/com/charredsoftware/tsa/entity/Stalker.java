@@ -85,9 +85,11 @@ public class Stalker extends Mob{
 		}
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
-			Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, 90 - Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition()) , 0);
-			a.shouldBeLit = false;
-			Sound.BOW_SHOT.playSfx();
+			if(r.nextInt(100) <= 10){
+				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
+				a.shouldBeLit = false;
+				Sound.BOW_SHOT.playSfx();
+			}
 		}else{
 			boolean changedDirection = false;
 			if(r.nextInt(65) == 1 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){

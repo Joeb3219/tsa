@@ -88,7 +88,7 @@ public class Frustum {
 		 * Possibly even less total rendered blocks. CPU performance is low, GPU is high. Nada good.
 		 */
 		for(BlockInstance b : r.getFrustumTestBlocks()){
-			if(blockInFrustum(b, false)){
+			if(blockInFrustum(b, true)){
 				
 				return true;
 			}
@@ -110,7 +110,7 @@ public class Frustum {
 
 		float pcy = Vector3f.dot(p, y);
 		float aux = pcz * tFOV;
-	 	if ((pcy - 1 > aux || pcy + 1 < -aux)) return false;
+	 	if (considerY && (pcy - 1 > aux || pcy + 1 < -aux)) return false;
 
 	 	float pcx = Vector3f.dot(p, x);
 	 	aux *= ratio;

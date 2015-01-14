@@ -61,7 +61,6 @@ public class Arrow extends Entity{
 	 */
 	public Arrow(Entity shooter, World w, Position p, float drawBackTime, float rX, float rY){
 		super(p.x, p.y, p.z);
-		System.out.println(rX);
 		this.shooter = shooter;
 		this.world = w;
 			try {
