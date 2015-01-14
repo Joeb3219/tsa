@@ -1,9 +1,37 @@
 package com.charredsoftware.tsa.world;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL11.glPopAttrib;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushAttrib;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTexCoordPointer;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
+import org.lwjgl.BufferUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -36,6 +64,9 @@ public class Block {
 	public static Block end = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
 	public static Block chest = new Block(8, 0, "Chest", Block.loadTexture("chest.jpg"));
 	public static Block charredBlock = new Block(-2, 0, "charredblock", Block.loadTexture("charredsoftware.png"));
+	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
+	public static int vboHandler = -1, textHandler = -1;
+	public static FloatBuffer vertexData, texData;
 	
 	/**
 	 * Creates a textureless block.
@@ -85,6 +116,42 @@ public class Block {
 		blocks.add(this);
 	}
 	
+	/**
+	 * Generates Block VBOs.
+	 */
+	public void generateRenderBuffers(){
+		//if(vertexData != null && texData != null) return;
+		float leftBound = -0.5f;
+		float rightBound = 0.5f;
+		
+		vertexData = BufferUtils.createFloatBuffer(_VERTICES * _VERTEX_SIZE);
+		vertexData.put(new float[]{leftBound,leftBound,rightBound, leftBound,rightBound,rightBound, rightBound,rightBound,rightBound, rightBound,leftBound,rightBound,
+				leftBound,leftBound,leftBound, leftBound,rightBound,leftBound, rightBound,rightBound,leftBound, rightBound,leftBound,leftBound,
+				leftBound,leftBound,leftBound, leftBound,leftBound,rightBound, leftBound,rightBound,rightBound, leftBound,rightBound,leftBound,
+				rightBound,leftBound,leftBound, rightBound,leftBound,rightBound, rightBound,rightBound,rightBound, rightBound,rightBound,leftBound,
+				leftBound,leftBound,leftBound, rightBound,leftBound,leftBound, rightBound,leftBound,rightBound, leftBound,leftBound,rightBound,
+				leftBound,rightBound,leftBound, rightBound,rightBound,leftBound, rightBound,rightBound,rightBound, leftBound,rightBound,rightBound});
+		vertexData.flip();
+		
+		texData = BufferUtils.createFloatBuffer(_TEXTURE_SIZE * _VERTICES);
+		texData.put(new float[]{0, 2/4f, 0, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
+				2/4f, 2/4f, 2/4f, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
+				2/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 2/4f, 1/4f,
+				4/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 4/4f, 1/4f,
+				0/4f, 3/4f, 1/4f, 3/4f, 1/4f, 2/4f, 0/4f, 2/4f,
+				0/4f, 0/4f, 1/4f, 0/4f, 1/4f, 1/4f, 0/4f, 1/4f});
+		texData.flip();
+		
+		vboHandler = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
+		glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		textHandler = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
+		glBufferData(GL_ARRAY_BUFFER, texData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 	
 	/**
 	 * @param idString As id:meta
@@ -121,6 +188,7 @@ public class Block {
 	 * @param alpha Alpha value
 	 */
 	public void draw(float x, float y, float z, int alpha){
+		if(vboHandler == -1 || textHandler == -1) generateRenderBuffers();
 		glPushAttrib(GL_CURRENT_BIT);
 		glColor4f(.1f, .1f, .1f, alpha);
 		draw(x, y, z);
@@ -136,6 +204,15 @@ public class Block {
 		glEnable(GL_TEXTURE_2D);
 		if(this == Block.air || texture == null) return;
 		texture.bind();
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
+		glVertexPointer(_VERTEX_SIZE, GL_FLOAT, 0, 0L);
+			
+		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
+		glTexCoordPointer(_TEXTURE_SIZE, GL_FLOAT, 0, 0L);
+			
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		
 	}
 	
 	/**
@@ -143,7 +220,12 @@ public class Block {
 	 * @see #drawBlock(float, float, float)
 	 */
 	public void drawCleanup(){
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisable(GL_TEXTURE_2D);
+		System.out.println(glGetError());
 	}
 	
 	/**
@@ -159,48 +241,7 @@ public class Block {
 		glPushMatrix();
 		glTranslatef(x, y, z);
 		
-		glBegin(GL_QUADS);
-		
-		float leftBound = -0.5f;
-		float rightBound = 0.5f;
-		
-		//Front
-		glTexCoord2f(0, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(0, 1/4f); glVertex3f(leftBound,rightBound,rightBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound,rightBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-
-		//Right
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-
-		//Left
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound,rightBound,rightBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound,leftBound);
-
-		//Back
-		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound,rightBound,rightBound);
-		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound,rightBound,leftBound);
-
-		//Bottom
-		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-
-		//Top
-		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound,rightBound,leftBound);
-		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound,rightBound,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound,rightBound);
-		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound,rightBound);
-	
-		glEnd();
+		glDrawArrays(GL_QUADS, 0, _VERTICES);
 		
 		glPopMatrix();
 	
@@ -214,6 +255,7 @@ public class Block {
 	 */
 	public void draw(float x, float y, float z){
 		if(texture == null) return;
+		if(vboHandler == -1 || textHandler == -1) generateRenderBuffers();
 		drawSetup();
 		drawBlock(x, y, z);
 		drawCleanup();

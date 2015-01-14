@@ -1,13 +1,33 @@
 package com.charredsoftware.tsa.world;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glTexCoordPointer;
+import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+
 import java.io.File;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lwjgl.input.Mouse;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
@@ -31,6 +51,9 @@ public class World {
 	public File dir;
 	public ArrayList<Entity> existingEntities = new ArrayList<Entity>();
 	public Position spawn = new Position(0, 0, 0);
+	public boolean worldUpdated = true;
+	public ArrayList<Integer> bufferIds = new ArrayList<Integer>();
+	public ArrayList<Integer> textureIds = new ArrayList<Integer>();
 	
 	/**
 	 * Generates a new world with the next highest ID.
@@ -187,6 +210,7 @@ public class World {
 	 */
 	public void addBlock(BlockInstance block){
 		findRegion(block.x, block.z).addBlock(block);
+		worldUpdated = true;
 	}
 	
 	/**
@@ -194,6 +218,7 @@ public class World {
 	 */
 	public void removeBlock(BlockInstance block){
 		findRegion(block.x, block.z).removeBlock(block);
+		worldUpdated = true;
 	}
 	
 	/**
@@ -201,6 +226,7 @@ public class World {
 	 */
 	public void removeBlock(Position pos){
 		findRegion(pos.x, pos.z).removeBlock(pos);
+		worldUpdated = true;
 	}
 	
 	/**
@@ -222,6 +248,8 @@ public class World {
 		if(regions.size() >= 4){
 			if(!Main.getInstance().controller.buildingMode) return regions.get(0);
 		}
+		
+		worldUpdated = true;
 		Region r = new Region(this, x, z);
 		regions.add(r);
 		r.generate();
@@ -358,7 +386,6 @@ public class World {
 		
 		renderMap(blockList);
 		
-//		if(Main.getInstance().controller.buildingMode || Mouse.isButtonDown(0)) lookingAt = getBlockLookingAt();
 		lookingAt = getBlockLookingAt();
 	}
 	
@@ -370,8 +397,8 @@ public class World {
 	private void renderMap(Map<Texture, ArrayList<BlockInstance>> blockList){
 		//TODO: Make glass, water, etc. rendered last -> see through
 		//TODO: Implement VBOs for rendering (instead of glVertex calls (immediate mode))
+		
 		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
-			
 			ArrayList<BlockInstance> list = e.getValue();
 			list.get(0).base.drawSetup();
 			
@@ -382,6 +409,82 @@ public class World {
 			
 			list.get(0).base.drawCleanup();
 			
+		}
+		/*
+		if(worldUpdated) generateVBOs(blockList);
+		int currentHandlerIndex = 0;
+		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
+			
+			ArrayList<BlockInstance> list = e.getValue();
+			glEnable(GL_TEXTURE_2D);
+			if(list.get(0).base == Block.air || list.get(0).base.texture == null) continue;
+			
+			list.get(0).base.texture.bind();
+			glBindBuffer(GL_ARRAY_BUFFER, bufferIds.get(currentHandlerIndex));
+			glVertexPointer(Block._VERTEX_SIZE, GL_FLOAT, 0, 0L);
+				
+			glBindBuffer(GL_ARRAY_BUFFER, textureIds.get(currentHandlerIndex));
+			glTexCoordPointer(Block._TEXTURE_SIZE, GL_FLOAT, 0, 0L);
+				
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			
+			for(BlockInstance b : list){
+				glDrawArrays(GL_QUADS, list.indexOf(b), Block._VERTICES);
+			}
+			
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glDisable(GL_TEXTURE_2D);
+			
+			currentHandlerIndex++;
+		}*/
+		
+		worldUpdated = false;
+	}
+	
+	/**
+	 * Generates VBOs for the world.
+	 */
+	private void generateVBOs(Map<Texture, ArrayList<BlockInstance>> blockList){
+		for(Integer i : bufferIds) glDeleteBuffers(i);
+		for(Integer i : textureIds) glDeleteBuffers(i);
+		bufferIds = new ArrayList<Integer>();
+		textureIds = new ArrayList<Integer>();
+		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
+			ArrayList<BlockInstance> list = e.getValue();
+			list.get(0).base.generateRenderBuffers();
+			if(list.get(0).base == Block.air || list.get(0).base.texture == null) continue;
+			
+			int currentBuffer = glGenBuffers();
+			bufferIds.add(currentBuffer);
+			int currentTextureBuffer = glGenBuffers();
+			textureIds.add(currentTextureBuffer);
+			FloatBuffer masterBuffer = BufferUtils.createFloatBuffer(list.get(0).base.vertexData.limit() * list.size());
+			FloatBuffer masterTextureBuffer = BufferUtils.createFloatBuffer(list.get(0).base.texData.limit() * list.size());
+			
+			for(BlockInstance b : list){
+				int term = 0;
+				for(int index = 0; index < b.base.vertexData.limit(); index ++){
+					masterBuffer.put(b.base.vertexData.get(index) + ((term == 0) ? b.x : (term == 1) ? b.y : b.z));
+					term ++;
+					if(term > 2) term = 0;
+				}
+				for(int index = 0; index < b.base.texData.limit(); index ++){
+					masterTextureBuffer.put(b.base.texData.get(index) + ((term == 0) ? b.x : (term == 1) ? b.y : b.z));
+					term ++;
+					if(term > 2) term = 0;
+				}
+			}
+			
+			glBindBuffer(GL_ARRAY_BUFFER, currentBuffer);
+			glBufferData(GL_ARRAY_BUFFER, masterBuffer, GL_STATIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, currentTextureBuffer);
+			glBufferData(GL_ARRAY_BUFFER, masterTextureBuffer, GL_STATIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 	}
 	
