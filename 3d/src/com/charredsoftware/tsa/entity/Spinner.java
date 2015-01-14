@@ -64,6 +64,8 @@ public class Spinner extends Mob{
 	 */
 	public void update(){
 		if(Main.getInstance().controller.buildingMode) return;
+		if(facing <= 0) facing = 360;
+		if(facing > 360) facing = 0;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.score += killBonus;
@@ -77,14 +79,14 @@ public class Spinner extends Mob{
 			facing += 2;
 			if(!determineIfShouldShoot()) facing -= 4;
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 5){
-				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, 360 - Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition()) , 0);
+				System.out.println("FACING: " + facing);
+				
+				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();
 			}
 		}else{
 			facing -= 1;
-			if(facing <= 0) facing = 360;
-			if(facing > 360) facing = 0;
 		}
 		
 	}
@@ -105,7 +107,10 @@ public class Spinner extends Mob{
 	 * @return Returns the angle, relative to facing direction.
 	 */
 	public float getRelativeAngle(){
-		return Math.abs(facing - Math.abs(Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition())));
+		float f = Math.abs(facing - Math.abs(Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition())));
+		if(f > 180) f -= _FOV_TO_SHOOT / 2;
+		else f += _FOV_TO_SHOOT / 2;
+		return f;
 	}
 	
 	/**

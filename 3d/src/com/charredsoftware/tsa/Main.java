@@ -155,7 +155,7 @@ public class Main {
 	 */
 	public void tick(){
 		if(cooldown > 0 && gameState != GameState.MENU && gameState != GameState.SETTINGS) cooldown --;
-		if(!controller.buildingMode) controller.timeLeft -= 1;
+		if(!controller.buildingMode && gameState == GameState.GAME) controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && !controller.showMainMenu) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) main_menu.update();
