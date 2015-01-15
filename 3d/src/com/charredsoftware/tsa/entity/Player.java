@@ -37,7 +37,7 @@ public class Player extends Mob{
 		super();
 		this.world = world;
 		this.camera = camera;
-		health = 100;
+		health = 20;
 		movingSpeed = 0.15f;
 		mass = 75f;
 	}
