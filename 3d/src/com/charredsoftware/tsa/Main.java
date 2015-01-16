@@ -48,7 +48,6 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
-import com.charredsoftware.tsa.entity.Bow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
@@ -56,6 +55,7 @@ import com.charredsoftware.tsa.entity.Stalker;
 import com.charredsoftware.tsa.gui.Dialog;
 import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.DialogHUD;
+import com.charredsoftware.tsa.gui.GameOverMenu;
 import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
@@ -88,7 +88,7 @@ public class Main {
 	int displayFPS = 0;
 	public GameState gameState = GameState.MENU, previousState = GameState.MENU;
 	private float cooldown = 0f;
-	public Menu main_menu, options_menu, transactions_menu;
+	public Menu main_menu, options_menu, transactions_menu, gameOver_menu;
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 16);
 	public DialogHUD HUDDialog;
@@ -161,6 +161,10 @@ public class Main {
 	 * Tick/update method.
 	 */
 	public void tick(){
+		if(controller.timeLeft <= 0 || player.health <= 0){
+			Mouse.setGrabbed(false);
+			gameState = GameState.GAME_OVER;
+		}
 		if(cooldown > 0 && gameState != GameState.MENU && gameState != GameState.SETTINGS) cooldown --;
 		if(!controller.buildingMode && gameState == GameState.GAME) controller.timeLeft -= 1;
 		
@@ -173,6 +177,10 @@ public class Main {
 		if(gameState == GameState.TRANSACTIONS){
 			if(transactions_menu == null) transactions_menu = new StoreMenu();
 			transactions_menu.update();
+		}
+		if(gameState == GameState.GAME_OVER){
+			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
+			gameOver_menu.update();
 		}
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
@@ -368,6 +376,10 @@ public class Main {
 		}
 		if(gameState == GameState.TRANSACTIONS){
 			renderMenu("transactions");
+			return;
+		}
+		if(gameState == GameState.GAME_OVER){
+			renderMenu("game_over");
 			return;
 		}
 		
@@ -576,6 +588,11 @@ public class Main {
 		if(menu.equalsIgnoreCase("transactions")){
 			if(transactions_menu == null) transactions_menu = new StoreMenu();
 			transactions_menu.render();
+			return;
+		}
+		if(menu.equalsIgnoreCase("game_over")){
+			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
+			gameOver_menu.render();
 			return;
 		}
 	}

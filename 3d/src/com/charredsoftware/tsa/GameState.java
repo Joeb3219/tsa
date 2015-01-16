@@ -10,6 +10,6 @@ package com.charredsoftware.tsa;
 
 public enum GameState {
 
-	LOADING, MENU, GAME, SETTINGS, TRANSACTIONS;
+	LOADING, MENU, GAME, SETTINGS, TRANSACTIONS, GAME_OVER;
 	
 }

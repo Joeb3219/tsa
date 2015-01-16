@@ -175,4 +175,15 @@ public class Player extends Mob{
 		return hit;
 	}
 	
+	/**
+	 * Resets the player
+	 */
+	public void reset(){
+		this.health = 20;
+		this.bow.arrows = this.bow.maxArrows;
+		this.coins = 0;
+		this.score = 0;
+		spawn();
+	}
+	
 }

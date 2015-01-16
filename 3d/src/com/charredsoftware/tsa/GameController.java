@@ -210,17 +210,28 @@ public class GameController {
 		return _INSTANCE;
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the game is being run from a Jar.
+	 */
 	public boolean isJar(){
 		return GameController.class.getResource("GameController.class").getPath().contains("jar:");
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the game is in demo mode.
+	 */
 	public boolean isInDemoMode(){
 		if(isJar()) return false;
 		return true;
 	}
-	
-	public void requestSessionName(){
-		String path = JOptionPane.showInputDialog(null, "Enter a username");
+
+	/**
+	 * @return Returns the player's final score.
+	 */
+	public float calculateFinalScore(){
+		float score = Main.getInstance().player.score;
+		if(Main.getInstance().player.health > 0) score += (((Main.DESIRED_TPS * (60 * 15)) - timeLeft) / Main.DESIRED_TPS) / (2 * 5);
+		return score;
 	}
 	
 }
