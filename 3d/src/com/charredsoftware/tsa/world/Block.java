@@ -225,7 +225,6 @@ public class Block {
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisable(GL_TEXTURE_2D);
-		System.out.println(glGetError());
 	}
 	
 	/**

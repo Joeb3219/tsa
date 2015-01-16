@@ -42,6 +42,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.SoundStore;
@@ -517,6 +518,35 @@ public class Main {
 		glEnd();
 		
 		font.drawString(xPos + fullSize + 4, yPos + fullHeight / 2, "x" + player.coins);
+		
+		
+		xPos = 208;
+		fullSize = 192f;
+		fullHeight = 32;
+		
+		glDisable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+		glColor4f(207 / 255f, 207 / 255f, 207 / 255f, 255 / 255f);
+		glVertex2f(xPos, yPos);
+		glVertex2f(xPos + fullSize, yPos);
+		glVertex2f(xPos + fullSize, yPos + fullHeight);
+		glVertex2f(xPos, yPos + fullHeight);
+		glEnd();
+		
+		float colourWidth = (player.bow.drawBackTime / player.bow.maxDrawBackTime) * fullSize;
+		glBegin(GL_QUADS);
+		glColor4f(148 / 255f, 148 / 255f, 148 / 255f, 255 / 255f);
+		glVertex2f(xPos, yPos);
+		glVertex2f(xPos + colourWidth, yPos);
+		glVertex2f(xPos + colourWidth, yPos + fullHeight);
+		glVertex2f(xPos, yPos + fullHeight);
+		glEnd();
+		glEnable(GL_TEXTURE_2D);
+		
+		String text = "Bow Strength";
+		font.drawString(xPos + (fullSize - font.getWidth(text)) / 2, yPos, text, Color.black);
+		
+		
 		
 	}
 	
