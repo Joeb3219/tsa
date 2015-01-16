@@ -171,7 +171,7 @@ public class Player extends Mob{
 	 */
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
-		if(hit) damageMob(3);
+		if(hit) damageMob(1);
 		return hit;
 	}
 	

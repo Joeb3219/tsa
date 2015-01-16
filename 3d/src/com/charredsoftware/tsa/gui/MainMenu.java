@@ -14,6 +14,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -65,6 +66,7 @@ public class MainMenu extends Menu{
 		if(Mouse.isButtonDown(0)){
 			for(Button b : buttons){
 				if(!b.mouseInBounds()) continue;
+				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				if(b.identifier.equalsIgnoreCase("play")){
 					Main.getInstance().gameState = GameState.GAME;
 				}

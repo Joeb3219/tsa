@@ -34,6 +34,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -121,6 +122,7 @@ public class OptionsMenu extends Menu{
 		if(Mouse.isButtonDown(0) && cooldown == 0){
 			for(Widget w : widgets){
 				if(!w.mouseInBounds()) continue;
+				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				cooldown = 10f;
 				if(w.identifier.equalsIgnoreCase("developer_mode")){
 					((Button) w).checked = !((Button) w).checked;

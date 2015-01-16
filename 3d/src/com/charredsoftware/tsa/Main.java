@@ -1,6 +1,37 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glIsEnabled;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glVertex2d;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -61,7 +92,7 @@ public class Main {
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 110);
 	public DialogHUD HUDDialog;
-	private Texture leftHeart, rightHeart = null;
+	private Texture heart, arrowIdentifier = null;
 	
 	private static Main _INSTANCE = new Main();
 	
@@ -429,27 +460,40 @@ public class Main {
 	 */
 	private void renderHUD(){
 		//TODO: Make one heart texture? Why is that not a thing yet.
-		if(leftHeart == null || rightHeart == null){
+		if(heart == null || arrowIdentifier == null){
 			try{
-				leftHeart = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "heart_left.png"));
-				rightHeart = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "heart_right.png"));
+				heart = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "heart.png"));
+				arrowIdentifier = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "arrow_identifier.png"));
 			}catch(Exception e){new CrashReport(e);}
 		}
 		
-		float fullSize = 16;
-		float fullHeight = 16;
+		float fullSize = 32;
+		float fullHeight = 32;
 		float xPos = 128f;
 		float yPos = Display.getHeight() - 128f;
 		for(int i = -1; i < player.health - 1; i ++){
-			if(i % 2 != 0) leftHeart.bind();
-			else rightHeart.bind();
+			heart.bind();
 			glBegin(GL_QUADS);
-			glTexCoord2f(0, 0); glVertex2f(xPos, yPos);
-			glTexCoord2f(1, 0); glVertex2f(xPos + fullSize / 2, yPos);
-			glTexCoord2f(1, 1); glVertex2f(xPos + fullSize / 2, yPos + fullHeight);
-			glTexCoord2f(0, 1); glVertex2f(xPos, yPos + fullHeight);
+			glTexCoord2f((i % 2 == 0) ? 0.5f : 0f, 0); glVertex2f(xPos, yPos);
+			glTexCoord2f((i % 2 == 0) ? 1f : 0.5f, 0); glVertex2f(xPos + fullSize / 2, yPos);
+			glTexCoord2f((i % 2 == 0) ? 1f : 0.5f, 1); glVertex2f(xPos + fullSize / 2, yPos + fullHeight);
+			glTexCoord2f((i % 2 == 0) ? 0.5f : 0f, 1); glVertex2f(xPos, yPos + fullHeight);
 			glEnd();
-			if(i % 2 == 0) xPos += fullSize + 8;
+			if(i % 2 == 0) xPos += fullSize / 2 + 4;
+			else xPos += fullSize / 2;
+		}
+		
+		xPos = 128f;
+		yPos = Display.getHeight() - 92;
+		for(int i = -1; i < player.bow.arrows - 1; i ++){
+			arrowIdentifier.bind();
+			glBegin(GL_QUADS);
+			glTexCoord2f((i % 2 == 0) ? 0.5f : 0f, 0); glVertex2f(xPos, yPos);
+			glTexCoord2f((i % 2 == 0) ? 1f : 0.5f, 0); glVertex2f(xPos + fullSize / 2, yPos);
+			glTexCoord2f((i % 2 == 0) ? 1f : 0.5f, 1); glVertex2f(xPos + fullSize / 2, yPos + fullHeight);
+			glTexCoord2f((i % 2 == 0) ? 0.5f : 0f, 1); glVertex2f(xPos, yPos + fullHeight);
+			glEnd();
+			if(i % 2 == 0) xPos += fullSize / 2 + 4;
 			else xPos += fullSize / 2;
 		}
 		

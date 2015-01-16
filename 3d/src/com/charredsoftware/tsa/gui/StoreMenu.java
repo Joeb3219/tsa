@@ -35,6 +35,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -73,6 +74,7 @@ public class StoreMenu extends Menu{
 		if(Mouse.isButtonDown(0)){
 			for(Widget b : widgets){
 				if(!b.mouseInBounds()) continue;
+				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				if(b.identifier.equalsIgnoreCase("upgrade_radius")){
 					TransactionButton tb = (TransactionButton) b;
 					if(!tb.used && Main.getInstance().player.coins >= tb.cost){
