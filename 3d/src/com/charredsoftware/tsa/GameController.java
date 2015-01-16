@@ -89,15 +89,16 @@ public class GameController {
 	public void renderDeveloperText(){
 		Font font = Main.getInstance().font;
 		float xStart = Display.getWidth() - font.getWidth("DEVELOPER MODE: DEVELOPER MODE: ");
-		font.drawString(xStart, 10, "DEVELOPER MODE");
-		font.drawString(xStart, 30, Main.getInstance().player.getPosition().toStringWithIntegers());
-		font.drawString(xStart, 50, "FPS: " + Main.getInstance().displayFPS);
-		font.drawString(xStart, 70, "Lighting: " + lighting);
-		font.drawString(xStart, 90, "Building: " + buildingMode);
-		font.drawString(xStart, 110, "RemoveMobMode: " + removeMobMode);
-		font.drawString(xStart, 130, "Entities: " + Main.getInstance().player.world.existingEntities.size());
-		font.drawString(xStart, 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
-		if(removeMobMode) font.drawString(xStart, 180, "Shooting mobs removes them!");
+		float yStart = Display.getHeight() - 216;
+		font.drawString(xStart, yStart + 10, "DEVELOPER MODE");
+		font.drawString(xStart, yStart + 30, Main.getInstance().player.getPosition().toStringWithIntegers());
+		font.drawString(xStart, yStart + 50, "FPS: " + Main.getInstance().displayFPS);
+		font.drawString(xStart, yStart + 70, "Lighting: " + lighting);
+		font.drawString(xStart, yStart + 90, "Building: " + buildingMode);
+		font.drawString(xStart, yStart + 110, "RemoveMobMode: " + removeMobMode);
+		font.drawString(xStart, yStart + 130, "Entities: " + Main.getInstance().player.world.existingEntities.size());
+		font.drawString(xStart, yStart + 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
+		if(removeMobMode) font.drawString(xStart, yStart + 170, "Shooting mobs removes them!");
 		
 	}
 	

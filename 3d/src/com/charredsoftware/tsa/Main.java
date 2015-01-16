@@ -90,9 +90,9 @@ public class Main {
 	private float cooldown = 0f;
 	public Menu main_menu, options_menu, transactions_menu;
 	public GameController controller;
-	public HUDTextPopups HUDText = new HUDTextPopups(10, 110);
+	public HUDTextPopups HUDText = new HUDTextPopups(10, 16);
 	public DialogHUD HUDDialog;
-	private Texture heart, arrowIdentifier = null;
+	private Texture heart, arrowIdentifier, coin = null;
 	
 	private static Main _INSTANCE = new Main();
 	
@@ -421,12 +421,6 @@ public class Main {
 			
 			if(HUDDialog.hasDialogs()) HUDDialog.render();
 			
-			font.drawString(10, 10, "Arrows: " + player.bow.arrows + "/" + Bow.default_maxArrows);
-			font.drawString(10, 30, "Health: " + player.health + "/100");
-			font.drawString(10, 50, "Time Remaining: " + controller.getRemainingTimeAsString());
-			font.drawString(10, 70, "Coins: " + player.coins);
-			font.drawString(10, 90, "Score: " + player.score);
-			
 			HUDText.render();
 			
 			renderHUD();
@@ -459,11 +453,14 @@ public class Main {
 	 * Renders that HUD sweg.
 	 */
 	private void renderHUD(){
-		//TODO: Make one heart texture? Why is that not a thing yet.
-		if(heart == null || arrowIdentifier == null){
+		String remainingTime = controller.getRemainingTimeAsString();
+		titleFont.drawString(Display.getWidth() - 160, 16, remainingTime);
+		
+		if(heart == null || arrowIdentifier == null || coin == null){
 			try{
 				heart = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "heart.png"));
 				arrowIdentifier = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "arrow_identifier.png"));
+				coin = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "coin.png"));
 			}catch(Exception e){new CrashReport(e);}
 		}
 		
@@ -496,6 +493,18 @@ public class Main {
 			if(i % 2 == 0) xPos += fullSize / 2 + 4;
 			else xPos += fullSize / 2;
 		}
+		
+		xPos = 128;
+		yPos = Display.getHeight() - 56f;
+		coin.bind();
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0); glVertex2f(xPos, yPos);
+		glTexCoord2f(1, 0); glVertex2f(xPos + fullSize, yPos);
+		glTexCoord2f(1, 1); glVertex2f(xPos + fullSize, yPos + fullHeight);
+		glTexCoord2f(0, 1); glVertex2f(xPos, yPos + fullHeight);
+		glEnd();
+		
+		font.drawString(xPos + fullSize + 4, yPos + fullHeight / 2, "x" + player.coins);
 		
 	}
 	
