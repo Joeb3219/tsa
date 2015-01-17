@@ -45,7 +45,7 @@ public class Arrow extends Entity{
 
 	public static Texture texture = null;
 	public float beginningVerticalVelocity = 0f, verticalVelocity = 0f, horizontalVelocity = 0f;
-	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 8; //Number of steps to take in movement.
+	public static final float DRAWBACK_MULTIPLIER = 4.3f, _STEPS = 8; //Number of steps to take in movement.
 	public float drawBackTime, flyingTime = 0f;
 	public float rY, rX; //Used to calculate launch angles.
 	public boolean stuckInSolid = false;

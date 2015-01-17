@@ -544,7 +544,7 @@ public class Main {
 		glEnable(GL_TEXTURE_2D);
 		
 		String text = "Bow Strength";
-		font.drawString(xPos + (fullSize - font.getWidth(text)) / 2, yPos, text, Color.black);
+		font.drawString(xPos + (fullSize - font.getWidth(text)) / 2, yPos + (fullHeight - font.getHeight(text)) / 2, text, Color.black);
 		
 		
 		

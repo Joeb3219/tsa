@@ -16,7 +16,7 @@ import com.charredsoftware.tsa.world.Position;
 public class Bow {
 
 	public float drawBackTime = 0f;
-	public static final float maxDrawBackTime = 3f;
+	public static final float maxDrawBackTime = 2f;
 	public static final int default_maxArrows = 26;
 	public int maxArrows = 0;
 	public int arrows = 26;
