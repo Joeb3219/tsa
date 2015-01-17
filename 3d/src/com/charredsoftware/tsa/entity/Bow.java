@@ -69,7 +69,7 @@ public class Bow {
 		Sound.BOW_PULLBACK.audio.stop();
 		arrows --;
 		Position player = Main.getInstance().player.getPosition();
-		new Arrow(Main.getInstance().player, Main.getInstance().player.world, new Position(player.x, player.y + 1, player.z), drawBackTime, Main.getInstance().camera.rx, Main.getInstance().camera.ry);
+		new Arrow(Main.getInstance().player, Main.getInstance().player.world, new Position(player.x, player.y + ((Main.getInstance().player.isCrouching) ? 0 : 1), player.z), drawBackTime, Main.getInstance().camera.rx, Main.getInstance().camera.ry);
 		drawBackTime = 0f;
 		Sound.BOW_SHOT.playSfxIfNotPlaying();
 	}
