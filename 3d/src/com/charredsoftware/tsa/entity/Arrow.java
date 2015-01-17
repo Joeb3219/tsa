@@ -1,23 +1,38 @@
 package com.charredsoftware.tsa.entity;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LIGHT7;
 import static org.lwjgl.opengl.GL11.GL_POSITION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLight;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTexCoordPointer;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex3f;
+import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -51,6 +66,9 @@ public class Arrow extends Entity{
 	public boolean stuckInSolid = false;
 	public boolean shouldBeLit = true;
 	public Entity shooter;
+	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
+	public static int vboHandler = -1, textHandler = -1;
+	public static FloatBuffer vertexData, texData;
 	
 	/**
 	 * Creates a new Arrow.
@@ -138,11 +156,78 @@ public class Arrow extends Entity{
 	}
 	
 	/**
+	 * Creates the VBOs for the Arrows.
+	 */
+	private void createVBOs(){
+		if(vertexData != null && texData != null) return;
+
+		float leftBound = -0.25f;
+		float rightBound = 0.25f;
+		float sideDivisor = 8f;
+		float endDivisor = 4f;
+
+		vertexData = BufferUtils.createFloatBuffer(_VERTICES * _VERTEX_SIZE);
+		vertexData.put(new float[]{leftBound / sideDivisor,leftBound / sideDivisor,rightBound, leftBound / sideDivisor,rightBound / sideDivisor,rightBound, rightBound / sideDivisor,rightBound / sideDivisor,rightBound, rightBound / sideDivisor,leftBound / sideDivisor,rightBound,
+				leftBound / endDivisor,leftBound / endDivisor,leftBound, leftBound / endDivisor,rightBound / endDivisor,leftBound, rightBound / endDivisor,rightBound / endDivisor,leftBound, rightBound / endDivisor,leftBound / endDivisor,leftBound,
+				leftBound / sideDivisor,leftBound / sideDivisor,leftBound, leftBound / sideDivisor,leftBound / sideDivisor,rightBound, leftBound / sideDivisor,rightBound / sideDivisor,rightBound, leftBound / sideDivisor,rightBound / sideDivisor,leftBound,
+				rightBound / sideDivisor,leftBound / sideDivisor,leftBound, rightBound / sideDivisor,leftBound / sideDivisor,rightBound, rightBound / sideDivisor,rightBound / sideDivisor,rightBound, rightBound / sideDivisor,rightBound / sideDivisor,leftBound,
+				leftBound / sideDivisor,leftBound / sideDivisor,leftBound, rightBound / sideDivisor,leftBound / sideDivisor,leftBound, rightBound / sideDivisor,leftBound / sideDivisor,rightBound, leftBound / sideDivisor,leftBound / sideDivisor,rightBound,
+				leftBound / sideDivisor,rightBound / sideDivisor,leftBound, rightBound / sideDivisor,rightBound / sideDivisor,leftBound, rightBound / sideDivisor,rightBound / sideDivisor,rightBound, leftBound / sideDivisor,rightBound / sideDivisor,rightBound});
+		vertexData.flip();
+		
+		texData = BufferUtils.createFloatBuffer(_TEXTURE_SIZE * _VERTICES);
+		texData.put(new float[]{0, 2/4f, 0, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
+				2/4f, 2/4f, 2/4f, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
+				2/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 2/4f, 1/4f,
+				4/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 4/4f, 1/4f,
+				0/4f, 3/4f, 1/4f, 3/4f, 1/4f, 2/4f, 0/4f, 2/4f,
+				0/4f, 0/4f, 1/4f, 0/4f, 1/4f, 1/4f, 0/4f, 1/4f});
+		texData.flip();
+		
+		vboHandler = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
+		glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		textHandler = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
+		glBufferData(GL_ARRAY_BUFFER, texData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	
+	/**
+	 * Sets up the VBOs for the rendering process.
+	 */
+	public void preRender(){
+		if(vboHandler == -1 || textHandler == -1) createVBOs();
+		glEnable(GL_TEXTURE_2D);
+		texture.bind();
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
+		glVertexPointer(_VERTEX_SIZE, GL_FLOAT, 0, 0L);
+			
+		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
+		glTexCoordPointer(_TEXTURE_SIZE, GL_FLOAT, 0, 0L);
+			
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+	
+	/**
+	 * Cleans up the rendering process
+	 */
+	public void postRender(){
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDisable(GL_TEXTURE_2D);
+	}
+	
+	/**
 	 * Renders the arrow.
 	 * Enables lighting if possible.
 	 */
 	public void render(){
-	
 		if(shouldBeLit){
 			if(stuckInSolid && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
 			
@@ -152,9 +237,6 @@ public class Arrow extends Entity{
 			}
 		}
 		
-		glEnable(GL_TEXTURE_2D);
-		texture.bind();
-		
 		glPushMatrix();
 		glTranslatef(x, y, z);
 		glRotatef(-rY, 1, 0, 0);
@@ -162,50 +244,7 @@ public class Arrow extends Entity{
 		glRotatef((rX > 180) ? rX : -rX, 0, 1, 0);
 		if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
 		
-		glBegin(GL_QUADS);
-		
-		float leftBound = -0.25f;
-		float rightBound = 0.25f;
-		float sideDivisor = 8f;
-		float endDivisor = 4f;
-		
-		//Front
-		glTexCoord2f(0, 2/4f); glVertex3f(leftBound / sideDivisor,leftBound / sideDivisor,rightBound);
-		glTexCoord2f(0, 1/4f); glVertex3f(leftBound / sideDivisor,rightBound / sideDivisor,rightBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound / sideDivisor,rightBound / sideDivisor,rightBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound / sideDivisor,leftBound / sideDivisor,rightBound);
-
-		//Back
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound / endDivisor,leftBound / endDivisor,leftBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound / endDivisor,rightBound / endDivisor,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound / endDivisor,rightBound / endDivisor,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound / endDivisor,leftBound / endDivisor,leftBound);
-
-		//Left
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound / sideDivisor,leftBound / sideDivisor,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound / sideDivisor,leftBound / sideDivisor,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound / sideDivisor,rightBound / sideDivisor,rightBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound / sideDivisor,rightBound / sideDivisor,leftBound);
-
-		//Right
-		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound / sideDivisor,leftBound / sideDivisor,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound / sideDivisor,leftBound / sideDivisor,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound / sideDivisor,rightBound / sideDivisor,rightBound);
-		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound / sideDivisor,rightBound / sideDivisor,leftBound);
-
-		//Bottom
-		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound / sideDivisor,leftBound / sideDivisor,leftBound);
-		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound / sideDivisor,leftBound / sideDivisor,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound / sideDivisor,leftBound / sideDivisor,rightBound);
-		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound / sideDivisor,leftBound / sideDivisor,rightBound);
-
-		//Top
-		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound / sideDivisor,rightBound / sideDivisor,leftBound);
-		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound / sideDivisor,rightBound / sideDivisor,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound / sideDivisor,rightBound / sideDivisor,rightBound);
-		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound / sideDivisor,rightBound / sideDivisor,rightBound);
-	
-		glEnd();
+		glDrawArrays(GL_QUADS, 0, _VERTICES);
 		
 		glPopMatrix();
 	}

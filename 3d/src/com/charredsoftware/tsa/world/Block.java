@@ -120,7 +120,7 @@ public class Block {
 	 * Generates Block VBOs.
 	 */
 	public void generateRenderBuffers(){
-		//if(vertexData != null && texData != null) return;
+		if(vertexData != null && texData != null) return;
 		float leftBound = -0.5f;
 		float rightBound = 0.5f;
 		

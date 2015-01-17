@@ -49,6 +49,7 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import com.charredsoftware.tsa.entity.Arrow;
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
@@ -394,9 +395,23 @@ public class Main {
 			if(glIsEnabled(GL_LIGHTING)) glDisable(GL_LIGHTING);
 		}
 		
+		ArrayList<Arrow> arrows = new ArrayList<Arrow>();
 		for(int i = player.world.existingEntities.size() - 1; i >= 0; i --){
+			if(player.world.existingEntities.get(i) instanceof Arrow){
+				arrows.add((Arrow) player.world.existingEntities.get(i));
+				continue;
+			}
 			player.world.existingEntities.get(i).render();
 		}
+		
+		if(arrows.size() > 0){
+			arrows.get(0).preRender();
+			for(Arrow a : arrows){
+				a.render();
+			}
+			arrows.get(0).postRender();
+		}
+		
 		player.world.render();
 		controller.lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
 		
