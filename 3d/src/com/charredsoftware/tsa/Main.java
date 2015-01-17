@@ -415,7 +415,6 @@ public class Main {
 		player.world.render();
 		controller.lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
 		
-		//player.hotbar.draw();
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
 		glMatrixMode(GL_PROJECTION);

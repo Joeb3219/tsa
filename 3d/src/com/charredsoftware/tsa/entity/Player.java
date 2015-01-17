@@ -49,7 +49,7 @@ public class Player extends Mob{
 	public void update(){
 		bow.update();
 		
-		checkMovement((isCrouching) ? 4f : 1f);
+		checkMovement((isCrouching || bow.drawBackTime > 0) ? 4f : 1f);
 		
 		checkJumping();
 		
