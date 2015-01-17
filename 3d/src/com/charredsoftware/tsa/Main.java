@@ -468,6 +468,7 @@ public class Main {
 	private void renderHUD(){
 		String remainingTime = controller.getRemainingTimeAsString();
 		titleFont.drawString(Display.getWidth() - 160, 16, remainingTime);
+		font.drawString(Display.getWidth() - 160, 12 + titleFont.getHeight(remainingTime), "Level " + (player.world.id + 1) + "/4");
 		
 		if(heart == null || arrowIdentifier == null || coin == null){
 			try{
