@@ -1,0 +1,160 @@
+package com.charredsoftware.tsa.gui;
+
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+
+import java.util.Random;
+
+import org.lwjgl.opengl.Display;
+
+import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.world.Position;
+
+/**
+ * Puzzle Class.
+ * Creates a new Puzzle.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 17, 2015
+ */
+public class Puzzle extends Menu{
+
+	public static final float _PADDING = 16f;
+	public float length = 6f;
+	public int puzzle;
+	public Random r = new Random();
+	public static final int _TICKS_IN_DISPLAYING = Main.DESIRED_TPS * 3; 
+	public int displayTicks = 0;
+	
+	/**
+	 * Creates a new Puzzle menu.
+	 */
+	public Puzzle(){
+		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
+		for(int i = -1; i <= 9; i ++){
+			if(i < 0 || i > 9) continue;
+			widgets.add(new PuzzleButton(this, i));
+		}
+		
+		generatePuzzle();
+		displayTicks = _TICKS_IN_DISPLAYING;
+	}
+	
+	/**
+	 * @return Returns the y positional offset for buttons to be drawn (space for stuff above buttons).
+	 */
+	public float getButtonsYOffset(){
+		return getUsableHeight() / 5;
+	}
+	
+	public float getXStart(){
+		return (Display.getWidth() - getUsableWidth()) / 2;
+	}
+	
+	public float getYStart(){
+		return (Display.getHeight() - getUsableHeight()) / 2;
+	}
+	
+	public float getUsableWidth(){
+		return Display.getWidth() / 3;
+	}
+	
+	public float getUsableHeight(){
+		return Display.getHeight() * 2 / 3;
+	}
+	
+	/**
+	 * Generates a new puzzle.
+	 */
+	public void generatePuzzle(){
+		String puzzle = "";
+		for(int i = 0; i < length; i ++){
+			puzzle += r.nextInt(10);
+		}
+		this.puzzle = Integer.parseInt(puzzle);
+	}
+	
+	/**
+	 * Updates the puzzle.
+	 */
+	public void update(){
+		if(displayTicks > 0) displayTicks --;
+	}
+	
+	/**
+	 * Renders the puzzle
+	 */
+	public void render(){
+		this.height = Display.getHeight();
+		this.width = Display.getWidth();
+		
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0f, Display.getWidth(), Display.getHeight(), 0f, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST); 
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
+
+		glColor4f(0, 0, 0, 1f);
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(width, 0);
+		glVertex2f(width, height);
+		glVertex2f(0, height);
+		glEnd();
+		
+		glColor4f(110, 110, 110, 1f);
+		glBegin(GL_QUADS);
+		glVertex2f(getXStart() - _PADDING, getYStart() - _PADDING);
+		glVertex2f(getXStart() + getUsableWidth() + _PADDING, getYStart() - _PADDING);
+		glVertex2f(getXStart() + getUsableWidth() + _PADDING, getYStart() + getUsableHeight() + _PADDING);
+		glVertex2f(getXStart() - _PADDING, getYStart() + getUsableHeight() + _PADDING);
+		glEnd();
+		
+		Main.getInstance().controller.drawRemainingTime();
+		
+		if(displayTicks > 0){
+			float ticksPerNumber = _TICKS_IN_DISPLAYING / length;
+			int numberPlace = (int) (length - ((_TICKS_IN_DISPLAYING - displayTicks) / ticksPerNumber));
+			int selectedNumber = (int) ((int) (puzzle / Math.pow(10, numberPlace)) % 10);
+			
+			for(Widget w : widgets){
+				if(!(w instanceof PuzzleButton)) continue;
+				PuzzleButton b = (PuzzleButton) (w);
+				b.highlight = (displayTicks != 1 && b.value == selectedNumber);
+			}
+		}
+		
+		for(Widget w : widgets) w.render();
+		
+		glEnable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+	}
+	
+}

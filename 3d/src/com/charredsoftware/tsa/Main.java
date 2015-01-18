@@ -62,6 +62,7 @@ import com.charredsoftware.tsa.gui.HUDTextPopups;
 import com.charredsoftware.tsa.gui.MainMenu;
 import com.charredsoftware.tsa.gui.Menu;
 import com.charredsoftware.tsa.gui.OptionsMenu;
+import com.charredsoftware.tsa.gui.Puzzle;
 import com.charredsoftware.tsa.gui.StoreMenu;
 import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.util.FileUtilities;
@@ -90,7 +91,7 @@ public class Main {
 	int displayFPS = 0;
 	public GameState gameState = GameState.MENU, previousState = GameState.MENU;
 	private float cooldown = 0f;
-	public Menu main_menu, options_menu, transactions_menu, gameOver_menu;
+	public Menu main_menu, options_menu, transactions_menu, gameOver_menu, puzzleMenu;
 	public GameController controller;
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 16);
 	public DialogHUD HUDDialog;
@@ -168,7 +169,7 @@ public class Main {
 			gameState = GameState.GAME_OVER;
 		}
 		if(cooldown > 0 && gameState != GameState.MENU && gameState != GameState.SETTINGS) cooldown --;
-		if(!controller.buildingMode && gameState == GameState.GAME) controller.timeLeft -= 1;
+		if(!controller.buildingMode && (gameState == GameState.GAME || gameState == GameState.PUZZLE)) controller.timeLeft -= 1;
 		
 		if(gameState == GameState.MENU && !controller.showMainMenu) gameState = GameState.GAME;
 		else if(gameState == GameState.MENU) main_menu.update();
@@ -183,6 +184,11 @@ public class Main {
 		if(gameState == GameState.GAME_OVER){
 			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
 			gameOver_menu.update();
+		}
+		if(gameState == GameState.PUZZLE){
+			Mouse.setGrabbed(false);
+			if(puzzleMenu == null) puzzleMenu = new Puzzle();
+			puzzleMenu.update();
 		}
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
@@ -384,6 +390,10 @@ public class Main {
 			renderMenu("game_over");
 			return;
 		}
+		if(gameState == GameState.PUZZLE){
+			renderMenu("puzzle");
+			return;
+		}
 		
 		glLoadIdentity();
 		camera.useView();
@@ -480,9 +490,7 @@ public class Main {
 	 * Renders that HUD sweg.
 	 */
 	private void renderHUD(){
-		String remainingTime = controller.getRemainingTimeAsString();
-		titleFont.drawString(Display.getWidth() - 160, 16, remainingTime);
-		font.drawString(Display.getWidth() - 160, 12 + titleFont.getHeight(remainingTime), "Level " + (player.world.id + 1) + "/4");
+		controller.drawRemainingTime();
 		
 		if(heart == null || arrowIdentifier == null || coin == null){
 			try{
@@ -638,6 +646,11 @@ public class Main {
 		if(menu.equalsIgnoreCase("game_over")){
 			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
 			gameOver_menu.render();
+			return;
+		}
+		if(menu.equalsIgnoreCase("puzzle")){
+			if(puzzleMenu == null) puzzleMenu = new Puzzle();
+			puzzleMenu.render();
 			return;
 		}
 	}

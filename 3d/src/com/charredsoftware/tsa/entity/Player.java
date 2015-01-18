@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.tsa.Camera;
+import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.physics.Physics;
@@ -52,6 +53,8 @@ public class Player extends Mob{
 		checkMovement((isCrouching || bow.drawBackTime > 0) ? 4f : 1f);
 		
 		checkJumping();
+		
+		if(getBlockUnder().base == Block.end) Main.getInstance().gameState = GameState.PUZZLE;
 		
 		super.update();
 	}

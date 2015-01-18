@@ -53,6 +53,7 @@ public class Stalker extends Mob{
 		texture = getTexture();
 		height = 2f;
 		shielding = 0.5f;
+		killBonus = 10f;
 	}
 	
 	public Texture getTexture(){
@@ -141,8 +142,6 @@ public class Stalker extends Mob{
 	}
 	
 	public void render(){
-		if(health <= 0) return;
-		
 		texture.bind();
 		
 		glPushMatrix();

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.lwjgl.input.Keyboard;
@@ -100,6 +99,15 @@ public class GameController {
 		font.drawString(xStart, yStart + 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
 		if(removeMobMode) font.drawString(xStart, yStart + 170, "Shooting mobs removes them!");
 		
+	}
+	
+	/**
+	 * Draws the remaining time to the screen
+	 */
+	public void drawRemainingTime(){
+		String remainingTime = getRemainingTimeAsString();
+		Main.getInstance().titleFont.drawString(Display.getWidth() - 160, 16, remainingTime);
+		Main.getInstance().font.drawString(Display.getWidth() - 160, 12 + Main.getInstance().titleFont.getHeight(remainingTime), "Level " + (Main.getInstance().player.world.id + 1) + "/4");
 	}
 	
 	/**
