@@ -56,16 +56,11 @@ public class PuzzleButton extends Widget{
 	 * @return Returns <tt>true</tt> if the mouse is on top of the button.
 	 */
 	public boolean mouseInBounds(){
-		float x = pos.x;
-		float y = Display.getHeight() - pos.y;
+		float x = getXPos();
+		float y = Display.getHeight() - getYPos();
 		
-		float w = this.width;
-		float h = this.height;
-		if(width == -1 && height == -1){
-			w = getWidth();
-			h = getHeight();
-			x = (Display.getWidth() - w) / 2 - padding / 2;
-		}
+		float w = getWidth();
+		float h = getHeight();
 		
 		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
 			if(Mouse.getY() <= y && Mouse.getY() >= y - h){

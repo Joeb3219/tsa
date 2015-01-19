@@ -23,10 +23,14 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.util.Random;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * Puzzle Class.
@@ -43,6 +47,8 @@ public class Puzzle extends Menu{
 	public Random r = new Random();
 	public static final int _TICKS_IN_DISPLAYING = Main.DESIRED_TPS * 3; 
 	public int displayTicks = 0;
+	public int enteredValue;
+	private float cooldown = 10f;
 	
 	/**
 	 * Creates a new Puzzle menu.
@@ -87,7 +93,9 @@ public class Puzzle extends Menu{
 	public void generatePuzzle(){
 		String puzzle = "";
 		for(int i = 0; i < length; i ++){
-			puzzle += r.nextInt(10);
+			int a = r.nextInt(10);
+			if((i == 0 || i == length) && a == 0) a ++;
+			puzzle += a;
 		}
 		this.puzzle = Integer.parseInt(puzzle);
 	}
@@ -96,7 +104,41 @@ public class Puzzle extends Menu{
 	 * Updates the puzzle.
 	 */
 	public void update(){
+		if(cooldown > 0) cooldown --;
 		if(displayTicks > 0) displayTicks --;
+		else{
+			for(Widget w : widgets){
+				if(!(w instanceof PuzzleButton)) continue;
+				PuzzleButton button = (PuzzleButton) w;
+				button.highlight = false;
+				if(button.mouseInBounds()){
+					if(Mouse.isButtonDown(0) && cooldown == 0){
+						cooldown = 10f;
+						Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
+						addDigitToValue(button.value);
+						evaluatePuzzle();
+					}else button.highlight = true;
+				}
+			}
+		}
+	}
+	
+	private void addDigitToValue(int digit){
+		String val = enteredValue + "" + digit + "";
+		enteredValue = Integer.parseInt(val);
+	}
+	
+	private void evaluatePuzzle(){
+		if(String.valueOf(enteredValue).length() == length){
+			if(enteredValue == puzzle){
+				Sound.PUZZLE_SOLVED.playSfxIfNotPlaying();
+				Main.getInstance().gameState = GameState.GAME;
+				Main.getInstance().player.world = new World(Main.getInstance().player.world.id + 1);
+			}else{
+				enteredValue = 0;
+				displayTicks = _TICKS_IN_DISPLAYING;
+			}
+		}
 	}
 	
 	/**
