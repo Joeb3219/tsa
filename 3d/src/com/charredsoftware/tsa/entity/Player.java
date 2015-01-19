@@ -7,6 +7,7 @@ import com.charredsoftware.tsa.Camera;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
+import com.charredsoftware.tsa.gui.Puzzle;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.Position;
@@ -54,7 +55,10 @@ public class Player extends Mob{
 		
 		checkJumping();
 		
-		if(getBlockUnder().base == Block.end) Main.getInstance().gameState = GameState.PUZZLE;
+		if(getBlockUnder().base == Block.end){
+			Main.getInstance().puzzleMenu = new Puzzle();
+			Main.getInstance().gameState = GameState.PUZZLE;
+		}
 		
 		super.update();
 	}

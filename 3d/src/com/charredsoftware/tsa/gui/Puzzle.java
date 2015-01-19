@@ -47,7 +47,7 @@ public class Puzzle extends Menu{
 	public Random r = new Random();
 	public static final int _TICKS_IN_DISPLAYING = Main.DESIRED_TPS * 3; 
 	public int displayTicks = 0;
-	public int enteredValue;
+	public int enteredValue = -1;
 	private float cooldown = 10f;
 	
 	/**
@@ -124,7 +124,7 @@ public class Puzzle extends Menu{
 	}
 	
 	private void addDigitToValue(int digit){
-		String val = enteredValue + "" + digit + "";
+		String val = ((enteredValue == -1) ? "" : enteredValue) + "" + digit + "";
 		enteredValue = Integer.parseInt(val);
 	}
 	
@@ -134,8 +134,9 @@ public class Puzzle extends Menu{
 				Sound.PUZZLE_SOLVED.playSfxIfNotPlaying();
 				Main.getInstance().gameState = GameState.GAME;
 				Main.getInstance().player.world = new World(Main.getInstance().player.world.id + 1);
+				Main.getInstance().player.spawn();
 			}else{
-				enteredValue = 0;
+				enteredValue = -1;
 				displayTicks = _TICKS_IN_DISPLAYING;
 			}
 		}
@@ -169,13 +170,28 @@ public class Puzzle extends Menu{
 		glVertex2f(0, height);
 		glEnd();
 		
-		glColor4f(110, 110, 110, 1f);
+		glColor4f(110 / 255f, 110 / 255f, 110 / 255f, 1f);
 		glBegin(GL_QUADS);
 		glVertex2f(getXStart() - _PADDING, getYStart() - _PADDING);
 		glVertex2f(getXStart() + getUsableWidth() + _PADDING, getYStart() - _PADDING);
 		glVertex2f(getXStart() + getUsableWidth() + _PADDING, getYStart() + getUsableHeight() + _PADDING);
 		glVertex2f(getXStart() - _PADDING, getYStart() + getUsableHeight() + _PADDING);
 		glEnd();
+		
+		float barHeight = getButtonsYOffset() - _PADDING;
+		
+		glColor4f(200 / 255f, 200 / 255f, 200 / 255f, 1f);
+		glBegin(GL_QUADS);
+		glVertex2f(getXStart(), getYStart());
+		glVertex2f(getXStart() + getUsableWidth(), getYStart());
+		glVertex2f(getXStart() + getUsableWidth(), getYStart() + barHeight);
+		glVertex2f(getXStart(), getYStart() +  barHeight);
+		glEnd();
+		
+		glEnable(GL_TEXTURE_2D);
+		
+		String val = ((enteredValue == -1) ? "" : enteredValue + "");
+		Main.getInstance().font.drawString(getXStart() + (getUsableWidth() - Main.getInstance().font.getWidth(val)) / 2, getYStart() + (barHeight - Main.getInstance().font.getHeight(val)) / 2, val);
 		
 		Main.getInstance().controller.drawRemainingTime();
 		
