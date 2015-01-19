@@ -88,7 +88,7 @@ public class Mob extends Entity{
 			else if(canMove(0, 0, 1)) move(0, 0, 1);
 			else if(canMove(-1, 0, 0)) move(-1, 0, 0);
 			else if(canMove(0, 0, -1)) move(0, 0, -1);*/
-			if(startingPosition.equals(getPosition())) health -= 1f; //Didn't move -> start suffocating!
+			if(startingPosition.equals(getPosition()) && (this instanceof Player && !Main.getInstance().controller.buildingMode)) health -= 1f; //Didn't move -> start suffocating!
 		}
 	}
 	

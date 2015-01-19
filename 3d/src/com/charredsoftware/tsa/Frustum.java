@@ -87,6 +87,7 @@ public class Frustum {
 		 * Then iterate over them. You might end up checking more than if you only did bottom layer, but more accuracy.
 		 * Possibly even less total rendered blocks. CPU performance is low, GPU is high. Nada good.
 		 */
+		if(1 == 1) return true;
 		for(BlockInstance b : r.getFrustumTestBlocks()){
 			if(blockInFrustum(b, true)){
 				

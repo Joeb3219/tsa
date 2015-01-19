@@ -81,7 +81,7 @@ public class Player extends Mob{
 			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
 				Sound.HIT_GROUND.playSfx();
 				if(potentialDamage > 0) Sound.DAMAGE_GROUND.playSfx();
-				health -= potentialDamage;
+				if(!Main.getInstance().controller.buildingMode) health -= potentialDamage;
 				y = (float) ((int) y);
 				isJumping = false;
 			}
