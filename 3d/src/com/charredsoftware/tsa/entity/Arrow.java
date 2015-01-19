@@ -65,6 +65,8 @@ public class Arrow extends Entity{
 	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
 	public static int vboHandler = -1, textHandler = -1;
 	public static FloatBuffer vertexData, texData;
+	public static int _LIFESPAN_AFTER_STUCK = Main.DESIRED_TPS * 3;
+	public int ticksSinceStuck = 0;
 	
 	/**
 	 * Creates a new Arrow.
@@ -97,7 +99,11 @@ public class Arrow extends Entity{
 	 */
 	public void update(){
 		if(y <= 0) markedForDeletion = true;
-		if(stuckInSolid || markedForDeletion) return;
+		if(stuckInSolid || markedForDeletion){
+			if(!(shooter instanceof Player) && stuckInSolid) ticksSinceStuck ++;
+			if(ticksSinceStuck >= _LIFESPAN_AFTER_STUCK) markedForDeletion = true;
+			return;
+		}
 		flyingTime += 0.5f / Main.DESIRED_TPS;
 		double ryCos = Math.cos(Math.toRadians(rY));
 		float hVelocity = horizontalVelocity / _STEPS;
