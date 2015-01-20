@@ -35,6 +35,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -96,6 +97,7 @@ public class Main {
 	public HUDTextPopups HUDText = new HUDTextPopups(10, 16);
 	public DialogHUD HUDDialog;
 	private Texture heart, arrowIdentifier, coin = null;
+	private Random r = new Random();
 	
 	private static Main _INSTANCE = new Main();
 	
@@ -108,7 +110,7 @@ public class Main {
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 20f);
 		player = new Player(new World(0), camera);
 		HUDDialog = new DialogHUD();
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Well there, welcome! At last you have made it... You are humanity's last hope!@Dr.Sputnik has turned off the sun, and you must fix it!@Use your bow by holding right click and releasing. You can walk around with the WASD keys..."));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Finally, you've made it! You're humanities last hope!@With his Enigma Machine, Dr. Sputnik managed to turn off the sun! You must traverse through his factory and stop him!@Use the WASD keys to move around, and hold right click to shoot at enemies.@Be careful, the journey won't be easy!"));
 		controller.loadSettings();
 	}
 	
@@ -185,6 +187,11 @@ public class Main {
 			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
 			gameOver_menu.update();
 		}
+		if(gameState == GameState.PUZZLE_INTRO){
+			controller.timeLeft --;
+			if(HUDDialog.hasDialogs()) HUDDialog.update();
+			else gameState = GameState.PUZZLE;
+		}
 		if(gameState == GameState.PUZZLE){
 			Mouse.setGrabbed(false);
 			if(puzzleMenu == null) puzzleMenu = new Puzzle();
@@ -236,11 +243,6 @@ public class Main {
 		}
 		controller.keyboardTick();
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn();
-		/*if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_N)){
-			player.world = new World();
-			player.world.generate();
-			player.spawn(1, 1);
-		}*/
 		if(gameState == GameState.GAME && controller.buildingMode && controller.developerMode && cooldown == 0 && Keyboard.isKeyDown(Keyboard.KEY_I)){
 			ArrayList<Position> fillPositions = player.leftWand.getPositionsBetween(player.rightWand);
 			for(Position p : fillPositions){
@@ -354,6 +356,10 @@ public class Main {
 		player.world.removeBlock(c);
 		HUDText.popups.add(new TextPopup("You found " + c.arrows + " arrows!"));
 		HUDText.popups.add(new TextPopup("You found " + c.coins + " coins!"));
+		if(r.nextInt(2) == 0){
+			HUDText.popups.add(new TextPopup("You found a heart of health!"));
+			player.heal(2);
+		}
 		player.bow.arrows += c.arrows;
 		player.score += c.coins * 2;
 		player.coins += c.coins;
@@ -390,8 +396,13 @@ public class Main {
 			renderMenu("game_over");
 			return;
 		}
-		if(gameState == GameState.PUZZLE){
+		if(gameState == GameState.PUZZLE || gameState == GameState.PUZZLE_INTRO){
 			renderMenu("puzzle");
+			if(gameState == GameState.PUZZLE_INTRO){
+				glLoadIdentity();
+				glDisable(GL_TEXTURE_2D);
+				if(HUDDialog.hasDialogs()) HUDDialog.render();
+			}
 			return;
 		}
 		
@@ -456,13 +467,12 @@ public class Main {
 	
 			glLoadIdentity();
 			
-			if(HUDDialog.hasDialogs()) HUDDialog.render();
-			
 			HUDText.render();
-			
 			renderHUD();
 			
 			if(controller.developerMode) controller.renderDeveloperText();
+
+			if(HUDDialog.hasDialogs()) HUDDialog.render();
 		}
 		
 
@@ -481,6 +491,7 @@ public class Main {
 			player.selectedBlock.draw(0f,0f,0f);
 			glPopMatrix();
 		}
+		
 		glEnable(GL_LIGHTING);
 		glMatrixMode(GL_MODELVIEW);
 
@@ -491,6 +502,7 @@ public class Main {
 	 */
 	private void renderHUD(){
 		controller.drawRemainingTime();
+		if(HUDDialog.hasDialogs()) return;
 		
 		if(heart == null || arrowIdentifier == null || coin == null){
 			try{

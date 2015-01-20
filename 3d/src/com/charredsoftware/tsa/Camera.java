@@ -142,6 +142,7 @@ public class Camera {
 			}
 			Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED = true;
 		}
+		glDepthRange(0,1);
 		
 		glRotatef(ry, 1, 0, 0);
 		glRotatef(rx, 0, 1, 0);
@@ -149,8 +150,6 @@ public class Camera {
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);
 		
-
-		glDepthRange(0,1);
 	}
 	
 	/**

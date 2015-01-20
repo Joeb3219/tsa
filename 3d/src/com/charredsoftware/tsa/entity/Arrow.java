@@ -65,7 +65,7 @@ public class Arrow extends Entity{
 	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
 	public static int vboHandler = -1, textHandler = -1;
 	public static FloatBuffer vertexData, texData;
-	public static int _LIFESPAN_AFTER_STUCK = Main.DESIRED_TPS * 3;
+	public static int _LIFESPAN_AFTER_STUCK = Main.DESIRED_TPS * 2;
 	public int ticksSinceStuck = 0;
 	
 	/**

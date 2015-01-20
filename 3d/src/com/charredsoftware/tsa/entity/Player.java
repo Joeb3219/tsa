@@ -7,6 +7,8 @@ import com.charredsoftware.tsa.Camera;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
+import com.charredsoftware.tsa.gui.Dialog;
+import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.Puzzle;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.world.Block;
@@ -57,12 +59,22 @@ public class Player extends Mob{
 		
 		if(getBlockUnder().base == Block.end){
 			Main.getInstance().puzzleMenu = new Puzzle();
-			Main.getInstance().gameState = GameState.PUZZLE;
+			Main.getInstance().gameState = GameState.PUZZLE_INTRO;
+			if(world.id == 0) Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "You've made it to the first keypad!@A sequence of digits will flash. When it stops, you must enter that combination!@If you enter the wrong code, it will flash again.@Don't waste time!"));
 		}
 		
 		super.update();
 	}
 
+	/**
+	 * Heals the player.
+	 * @param amt Amount to heal by
+	 */
+	public void heal(int amt){
+		health += amt;
+		if(health > 20) health = 20;
+	}
+	
 	/**
 	 * Handles all jumping code.
 	 */

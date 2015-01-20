@@ -1,6 +1,24 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.util.ArrayList;
 
@@ -47,23 +65,40 @@ public class DialogHUD {
 		cooldown = Math.max(cooldown - 1, 0);
 		if(!hasDialogs()) return;
 		if(cooldown == 0 && Keyboard.isKeyDown(Keyboard.KEY_RETURN)){
-			cooldown += 5f;
+			cooldown += 15f;
 			dialogs.get(0).lineRead();
 			if(dialogs.get(0).outOfLines()) dialogs.remove(0);
 		}
 	}
 	
 	/**
+	 * @return Returns the width of the dialog text.
+	 */
+	public float getDialogWidth(){
+		return Display.getWidth();
+	}
+	
+	/**
 	 * Renders the current dialog.
 	 */
 	public void render(){
-		
 		float width = Display.getWidth() - x;
 		float height = 100;
 		y = Display.getHeight();
 		float y = this.y - height;
 		
+		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
+		
 		glBegin(GL_QUADS);
 		
 		glVertex2f(x, y);
@@ -74,9 +109,16 @@ public class DialogHUD {
 		glEnd();
 		glPopMatrix();
 		
+		glEnable(GL_TEXTURE_2D);
+		
 		dialogs.get(0).render(x + 10, y + 10);
 		Main.getInstance().font.drawString(x + 10, y + 100 - Main.getInstance().font.getHeight("ABCDEF") - 5, "Press Enter to continue...", Color.black);
 		
+		glEnable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glEnable(GL_LIGHTING);
+		glMatrixMode(GL_MODELVIEW);
 	}
 	
 }
