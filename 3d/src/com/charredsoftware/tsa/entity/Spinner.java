@@ -68,6 +68,7 @@ public class Spinner extends Mob{
 		if(facing > 360) facing = 0;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
+				Main.getInstance().player.mobsKilled ++;
 				Main.getInstance().player.score += killBonus;
 				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));
 			}

@@ -363,6 +363,7 @@ public class Main {
 		player.bow.arrows += c.arrows;
 		player.score += c.coins * 2;
 		player.coins += c.coins;
+		player.chestsFound ++;
 	}
 		
 	/**

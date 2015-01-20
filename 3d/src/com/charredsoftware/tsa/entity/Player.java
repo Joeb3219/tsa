@@ -29,6 +29,7 @@ public class Player extends Mob{
 	public Position leftWand = new Position(0, 0, 0), rightWand = new Position(0, 0, 0);
 	public boolean walking = false;
 	public float score = 0f;
+	public int mobsKilled = 0, chestsFound = 0;
 	public int coins = 0;
 	public Bow bow = new Bow();
 	

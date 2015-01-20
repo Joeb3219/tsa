@@ -77,6 +77,7 @@ public class Stalker extends Mob{
 		if(Main.getInstance().controller.buildingMode) return;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
+				Main.getInstance().player.mobsKilled ++;
 				Main.getInstance().player.score += killBonus;
 				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Stalker and received " + killBonus + " points!"));
 			}

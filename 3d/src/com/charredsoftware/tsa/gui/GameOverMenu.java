@@ -45,7 +45,21 @@ public class GameOverMenu extends Menu{
 	public GameOverMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		Button b = new Button(this, 180, "Play Again");
+
+		Button b = new Button(this, 100, "The game is over! Here's how you did:");
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Score: " + Main.getInstance().player.score);
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Mobs killed: " + Main.getInstance().player.mobsKilled + "/" + Main.getInstance().player.world.getTotalMobs());
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Chests looted:" + Main.getInstance().player.chestsFound + "/" + Main.getInstance().player.world.getTotalChests(Main.getInstance().player.chestsFound));
+		b.checkable = false;
+		widgets.add(b);
+		
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  40, "Play Again");
 		b.identifier = "play";
 		b.checkable = false;
 		widgets.add(b);
@@ -113,10 +127,6 @@ public class GameOverMenu extends Menu{
 		
 		String title = "Game Over!";
 		Main.getInstance().titleFont.drawString((Display.getWidth() - Main.getInstance().titleFont.getWidth(title)) / 2, 64, title);
-		String line = "The game is over! Here's how you did:";
-		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(line)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4, line);
-		line = "Score: " + Main.getInstance().controller.calculateFinalScore();
-		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(line)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4 + Main.getInstance().font.getHeight(line) + 4, line);
 		
 		for(Widget b : widgets) b.render();
 		
