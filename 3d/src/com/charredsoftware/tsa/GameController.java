@@ -160,7 +160,7 @@ public class GameController {
 							fullscreen = Boolean.parseBoolean(value);
 							if(fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 						}
-						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value) / 100f; 
+						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value); 
 						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value); 
 						if(identifier.contains("fov_slider")){
 							//Main.getInstance().camera.fov = Float.parseFloat(value); 

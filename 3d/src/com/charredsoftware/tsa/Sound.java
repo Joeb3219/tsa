@@ -46,6 +46,11 @@ public class Sound {
 		audio.playAsSoundEffect(1f, Main.getInstance().controller.soundVolume, false);
 	}
 	
+	public void playSfx(float pitch){
+		audio.playAsSoundEffect(pitch, Main.getInstance().controller.soundVolume, false);
+	}
+	
+	
 	public void playSfx(float x, float y, float z){
 		audio.playAsSoundEffect(1f, 1f, false, -x, -y, -z);
 	}

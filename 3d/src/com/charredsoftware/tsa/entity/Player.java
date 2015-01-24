@@ -126,7 +126,7 @@ public class Player extends Mob{
 		}
 
 		if(isJumping) walking = false;
-		if(walking && !Sound.WALKING.audio.isPlaying() && !isCrouching) Sound.WALKING.playSfx();
+		if(walking && !Sound.WALKING.audio.isPlaying()) Sound.WALKING.playSfx((isCrouching || bow.drawBackTime > 0) ? 0.75f : 1f);
 		if(!walking && Sound.WALKING.audio.isPlaying()) Sound.WALKING.audio.stop();
 		
 		if(Keyboard.isKeyDown(Main.getInstance().controller.control_crouch)) isCrouching = true;

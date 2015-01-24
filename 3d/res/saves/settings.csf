@@ -13,11 +13,11 @@
 </setting>
 <setting>
 <id>sound_volume_slider</id>
-<value>96.75926</value>
+<value>48.058254</value>
 </setting>
 <setting>
 <id>sound_music_slider</id>
-<value>51.38889</value>
+<value>54.62963</value>
 </setting>
 <setting>
 <id>sound_back</id>
@@ -25,7 +25,7 @@
 </setting>
 <setting>
 <id>graphics_fullscreen</id>
-<value>true</value>
+<value>false</value>
 </setting>
 <setting>
 <id>graphics_fov_slider</id>
