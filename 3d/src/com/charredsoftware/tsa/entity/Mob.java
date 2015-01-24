@@ -131,7 +131,7 @@ public class Mob extends Entity{
 	 * @return Returns <tt>true</tt> if an arrow has hit the mob.
 	 */
 	public boolean arrowHit(Arrow a){
-		if(a.markedForDeletion || a.stuckInSolid) return false;
+		if(a.markedForDeletion || a.stuck()) return false;
 		if(a.shooter == this) return false;
 		if(Math.abs(a.x - x) > 1) return false;
 		if(Math.abs(a.z - z) > 1) return false;

@@ -49,66 +49,99 @@ public class OptionsMenu extends Menu{
 
 	private Texture logo;
 	public float cooldown = 10f;
+	public String tabName = "main"; //Four values: main, sound, graphics, controls
 	
 	public OptionsMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
+
+		float startingButtonHeight = 160f;
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		Button b = new Button(this, 160, "Developer Mode");
-		b.identifier = "developer_mode";
+		Button b = new Button(this, startingButtonHeight, "Developer Mode");
+		b.identifier = "main_developer_mode";
 		b.checked = Main.getInstance().controller.developerMode;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Fullscreen");
-		b.identifier = "fullscreen";
-		b.checked = Main.getInstance().controller.fullscreen;
-		widgets.add(b);
-		Slider s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sound Volume", 0, 100, Main.getInstance().controller.soundVolume);
-		s.identifier = "volume_slider";
-		widgets.add(s);
-		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, Main.getInstance().controller.musicVolume);
-		s.identifier = "music_slider";
-		widgets.add(s);
-		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, Main.getInstance().camera.fov);
-		s.identifier = "fov_slider";
-		widgets.add(s);
-		ControlSwitcher cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move forward", Main.getInstance().controller.control_forward);
-		cs.identifier = "control_forward";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move Backward", Main.getInstance().controller.control_backward);
-		cs.identifier = "control_backward";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Left", Main.getInstance().controller.control_strafe_left);
-		cs.identifier = "control_strafe_left";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Right", Main.getInstance().controller.control_strafe_right);
-		cs.identifier = "control_strafe_right";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Crouch", Main.getInstance().controller.control_crouch);
-		cs.identifier = "control_crouch";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Main.getInstance().controller.control_jump);
-		cs.identifier = "control_jump";
-		widgets.add(cs);
-		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Buy/Sell", Main.getInstance().controller.control_buy);
-		cs.identifier = "control_buy";
-		widgets.add(cs);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To shoot a bow, hold down right click and then release.");
-		b.identifier = "null";
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sounds");
+		b.identifier = "main_sound_tab";
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "The longer you hold the right click button, the further the shot will go.");
-		b.identifier = "null";
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Graphics");
+		b.identifier = "main_graphics_tab";
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To open chests, press left click.");
-		b.identifier = "null";
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Controls");
+		b.identifier = "main_controls_tab";
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
-		b.identifier = "back";
+		b.identifier = "main_back";
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Quit");
-		b.identifier = "quit";
+		b.identifier = "main_quit";
+		b.checkable = false;
+		widgets.add(b);
+		
+		//Sounds settings
+		Slider s = new Slider(this, startingButtonHeight, "Sound Volume", 0, 100, Main.getInstance().controller.soundVolume);
+		s.identifier = "sound_volume_slider";
+		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, Main.getInstance().controller.musicVolume);
+		s.identifier = "sound_music_slider";
+		widgets.add(s);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
+		b.identifier = "sound_back";
+		b.checkable = false;
+		widgets.add(b);
+		
+		//Graphics settings
+		b = new Button(this, startingButtonHeight, "Fullscreen");
+		b.identifier = "graphics_fullscreen";
+		b.checked = Main.getInstance().controller.fullscreen;
+		widgets.add(b);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, Main.getInstance().camera.fov);
+		s.identifier = "graphics_fov_slider";
+		widgets.add(s);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
+		b.identifier = "graphics_back";
+		b.checkable = false;
+		widgets.add(b);
+		
+		//Controls settings
+		ControlSwitcher cs = new ControlSwitcher(this, startingButtonHeight, "Move forward", Main.getInstance().controller.control_forward);
+		cs.identifier = "controls_control_forward";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Move Backward", Main.getInstance().controller.control_backward);
+		cs.identifier = "controls_control_backward";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Left", Main.getInstance().controller.control_strafe_left);
+		cs.identifier = "controls_control_strafe_left";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Strafe Right", Main.getInstance().controller.control_strafe_right);
+		cs.identifier = "controls_control_strafe_right";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Crouch", Main.getInstance().controller.control_crouch);
+		cs.identifier = "controls_control_crouch";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Jump", Main.getInstance().controller.control_jump);
+		cs.identifier = "controls_control_jump";
+		widgets.add(cs);
+		cs = new ControlSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Buy/Sell", Main.getInstance().controller.control_buy);
+		cs.identifier = "controls_control_buy";
+		widgets.add(cs);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To shoot a bow, hold down right click and then release.");
+		b.identifier = "controls_null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "The longer you hold the right click button, the further the shot will go.");
+		b.identifier = "controls_null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "To open chests, press left click.");
+		b.identifier = "controls_null";
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
+		b.identifier = "controls_back";
 		b.checkable = false;
 		widgets.add(b);
 		try {
@@ -118,17 +151,24 @@ public class OptionsMenu extends Menu{
 	
 	public void update(){
 		if(cooldown > 0) cooldown -= 1;
-		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0) Main.getInstance().gameState = Main.getInstance().previousState;
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0){
+			tabName = "main";
+			Main.getInstance().gameState = Main.getInstance().previousState;
+		}
 		if(Mouse.isButtonDown(0) && cooldown == 0){
 			for(Widget w : widgets){
 				if(!w.mouseInBounds()) continue;
+				if(!w.identifier.startsWith(tabName)) continue;
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				cooldown = 10f;
-				if(w.identifier.equalsIgnoreCase("developer_mode")){
+				if(w.identifier.contains("sound_tab")) tabName = "sound";					
+				if(w.identifier.contains("graphics_tab")) tabName = "graphics";					
+				if(w.identifier.contains("controls_tab")) tabName = "controls";					
+				if(w.identifier.contains("developer_mode")){
 					((Button) w).checked = !((Button) w).checked;
 					Main.getInstance().controller.developerMode = ((Button) w).checked;
 				}
-				if(w.identifier.equalsIgnoreCase("fullscreen")){
+				if(w.identifier.contains("fullscreen")){
 					((Button) w).checked = !((Button) w).checked;
 					Main.getInstance().controller.fullscreen = ((Button) w).checked;
 					try {
@@ -136,20 +176,20 @@ public class OptionsMenu extends Menu{
 						else Display.setFullscreen(false);
 					} catch (LWJGLException e) {new CrashReport(e);}
 				}
-				if(w.identifier.equalsIgnoreCase("settings")){
+				if(w.identifier.contains("settings")){
 					
 				}
-				if(w.identifier.equalsIgnoreCase("volume_slider")){
+				if(w.identifier.contains("volume_slider")){
 					Slider s = (Slider) w;
 					s.update();
 					Main.getInstance().controller.soundVolume = s.value / 100f;
 				}
-				if(w.identifier.equalsIgnoreCase("music_slider")){
+				if(w.identifier.contains("music_slider")){
 					Slider s = (Slider) w;
 					s.update();
 					Main.getInstance().controller.musicVolume = s.value / 100f;
 				}
-				if(w.identifier.equalsIgnoreCase("fov_slider")){
+				if(w.identifier.contains("fov_slider")){
 					Slider s = (Slider) w;
 					s.update();
 					Main.getInstance().camera.fov = s.value;
@@ -160,23 +200,24 @@ public class OptionsMenu extends Menu{
 					for(Widget wp : widgets){
 						if(wp instanceof ControlSwitcher){
 							ControlSwitcher cs = (ControlSwitcher) wp;
-							if(cs.identifier.equalsIgnoreCase("control_forward")) Main.getInstance().controller.control_forward = cs.value;
-							if(cs.identifier.equalsIgnoreCase("control_backward")) Main.getInstance().controller.control_backward = cs.value;
-							if(cs.identifier.equalsIgnoreCase("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.value;
-							if(cs.identifier.equalsIgnoreCase("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.value;
-							if(cs.identifier.equalsIgnoreCase("control_jump")) Main.getInstance().controller.control_jump = cs.value;
-							if(cs.identifier.equalsIgnoreCase("control_crouch")) Main.getInstance().controller.control_crouch = cs.value;
+							if(cs.identifier.contains("control_forward")) Main.getInstance().controller.control_forward = cs.value;
+							if(cs.identifier.contains("control_backward")) Main.getInstance().controller.control_backward = cs.value;
+							if(cs.identifier.contains("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.value;
+							if(cs.identifier.contains("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.value;
+							if(cs.identifier.contains("control_jump")) Main.getInstance().controller.control_jump = cs.value;
+							if(cs.identifier.contains("control_crouch")) Main.getInstance().controller.control_crouch = cs.value;
 						}
 					}
 				}
-				if(w.identifier.equalsIgnoreCase("quit")){
+				if(w.identifier.contains("quit")){
 					Main.getInstance().controller.saveSettings();
 					AL.destroy();
 					Display.destroy();
 					System.exit(0);
 				}
-				if(w.identifier.equalsIgnoreCase("back")){
-					Main.getInstance().gameState = Main.getInstance().previousState;
+				if(w.identifier.contains("back")){
+					if(w.identifier.split("_")[0].equals(("main"))) Main.getInstance().gameState = Main.getInstance().previousState;
+					else tabName = "main";
 				}
 			}
 		}
@@ -215,7 +256,9 @@ public class OptionsMenu extends Menu{
 		String escapeMessage = "Press Escape to return to the previous screen.";
 		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(escapeMessage)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4, escapeMessage);
 		
-		for(Widget w : widgets) w.render();
+		for(Widget w : widgets){
+			if(w.identifier.startsWith(tabName)) w.render();
+		}
 		
 		
 		glEnable(GL_LIGHTING);

@@ -1,30 +1,13 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_LIGHT7;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glDisableClientState;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnableClientState;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoordPointer;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
@@ -36,8 +19,12 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
+import com.charredsoftware.tsa.obj.Loader;
+import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
+import com.charredsoftware.tsa.world.Block;
+import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
@@ -59,7 +46,7 @@ public class Arrow extends Entity{
 	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 8; //Number of steps to take in movement.
 	public float drawBackTime, flyingTime = 0f;
 	public float rY, rX; //Used to calculate launch angles.
-	public boolean stuckInSolid = false;
+	public BlockInstance blockStuckIn = null;
 	public boolean shouldBeLit = true;
 	public Entity shooter;
 	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
@@ -67,6 +54,7 @@ public class Arrow extends Entity{
 	public static FloatBuffer vertexData, texData;
 	public static int _LIFESPAN_AFTER_STUCK = Main.DESIRED_TPS * 2;
 	public int ticksSinceStuck = 0;
+	public Model model;
 	
 	/**
 	 * Creates a new Arrow.
@@ -77,6 +65,7 @@ public class Arrow extends Entity{
 	 */
 	public Arrow(Entity shooter, World w, Position p, float drawBackTime, float rX, float rY){
 		super(p.x, p.y, p.z);
+		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "arrow.obj"));
 		this.shooter = shooter;
 		this.world = w;
 			try {
@@ -99,8 +88,8 @@ public class Arrow extends Entity{
 	 */
 	public void update(){
 		if(y <= 0) markedForDeletion = true;
-		if(stuckInSolid || markedForDeletion){
-			if(!(shooter instanceof Player) && stuckInSolid) ticksSinceStuck ++;
+		if(stuck() || markedForDeletion){
+			if(!(shooter instanceof Player) && stuck()) ticksSinceStuck ++;
 			if(ticksSinceStuck >= _LIFESPAN_AFTER_STUCK) markedForDeletion = true;
 			return;
 		}
@@ -121,6 +110,11 @@ public class Arrow extends Entity{
 		
 	}
 	
+	public boolean stuck(){
+		if(blockStuckIn == null) return false;
+		return true;
+	}
+	
 	/**
 	 * Checks if the arrow has hit a mob.
 	 */
@@ -130,14 +124,14 @@ public class Arrow extends Entity{
 			Mob m = (Mob) e;
 			if(m.health <= 0) continue;
 			if(m.arrowHit(this)){
-				stuckInSolid = true;
+				blockStuckIn = new BlockInstance(Block.air, 0, -100, 0);
 				Sound.ARROW_HIT.playSfx();
 				markedForDeletion = true;
 				return;
 			}
 		}
 		if(Main.getInstance().player.arrowHit(this)){
-			stuckInSolid = true;
+			blockStuckIn = new BlockInstance(Block.air, 0, -100, 0);
 			Sound.DAMAGE_GROUND.playSfx();
 			markedForDeletion = true;
 		}
@@ -153,7 +147,7 @@ public class Arrow extends Entity{
 			y += dy;
 		}else{
 			Sound.ARROW_HIT.playSfx();
-			stuckInSolid = true;
+			blockStuckIn = world.getBlock(new Position(dx + x, dy + y, dz + z));
 		}
 	}
 	
@@ -201,6 +195,7 @@ public class Arrow extends Entity{
 	 * Sets up the VBOs for the rendering process.
 	 */
 	public void preRender(){
+		if(1 == 1) return;
 		if(vboHandler == -1 || textHandler == -1) createVBOs();
 		glEnable(GL_TEXTURE_2D);
 		texture.bind();
@@ -218,6 +213,7 @@ public class Arrow extends Entity{
 	 * Cleans up the rendering process
 	 */
 	public void postRender(){
+		if(1 == 1) return;
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		
@@ -231,7 +227,7 @@ public class Arrow extends Entity{
 	 */
 	public void render(){
 		if(shouldBeLit){
-			if(stuckInSolid && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
+			if(stuck() && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
 			
 			if(!markedForDeletion){
 				glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
@@ -240,13 +236,24 @@ public class Arrow extends Entity{
 		}
 		
 		glPushMatrix();
+
 		glTranslatef(x, y, z);
-		glRotatef(-rY, 1, 0, 0);
-		glRotatef(180, 1, 0, 0);
-		glRotatef((rX > 180) ? rX : -rX, 0, 1, 0);
-		if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
+		if(false && stuck()){
+			if(blockStuckIn.x > x) glRotatef(-90, 1, 0, 0);
+			if(blockStuckIn.x < x) glRotatef(90, 1, 0, 0);
+			if(blockStuckIn.y < y) glRotatef(-90, 0, 1, 0);
+			if(blockStuckIn.y > y) glRotatef(90, 0, 1, 0);
+			if(blockStuckIn.z > z) glRotatef(-90, 0, 0, 1);
+			if(blockStuckIn.z < z) glRotatef(90, 0, 0, 1);
+		}else{
+			glRotatef(-rY, 1, 0, 0);
+			glRotatef(180, 1, 0, 0);
+			glRotatef((rX > 180) ? rX : -rX, 0, 1, 0);
+			if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
+		}
 		
-		glDrawArrays(GL_QUADS, 0, _VERTICES);
+		glScalef(1f, 1/4f, 1f);
+		model.render();
 		
 		glPopMatrix();
 	}

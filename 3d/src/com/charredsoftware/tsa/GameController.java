@@ -154,24 +154,25 @@ public class GameController {
 					if(c.getNodeName().equals("id")){
 						identifier = value;
 					}else if(c.getNodeName().equals("value")){
-						if(identifier.equalsIgnoreCase("developer_mode")) developerMode = Boolean.parseBoolean(value);
-						if(identifier.equalsIgnoreCase("fullscreen")){
+						if(identifier.contains("_tab")) continue;
+						if(identifier.contains("developer_mode")) developerMode = Boolean.parseBoolean(value);
+						if(identifier.contains("fullscreen")){
 							fullscreen = Boolean.parseBoolean(value);
 							if(fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 						}
-						if(identifier.equalsIgnoreCase("volume_slider")) soundVolume = Float.parseFloat(value); 
-						if(identifier.equalsIgnoreCase("music_slider")) musicVolume = Float.parseFloat(value); 
-						if(identifier.equalsIgnoreCase("fov_slider")){
+						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value) / 100f; 
+						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value); 
+						if(identifier.contains("fov_slider")){
 							//Main.getInstance().camera.fov = Float.parseFloat(value); 
 							//Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
 						}
-						if(identifier.equalsIgnoreCase("control_forward")) control_forward = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_backward")) control_backward = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_strafe_left")) control_strafe_left = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_strafe_right")) control_strafe_right = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_jump")) control_jump = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_crouch")) control_crouch = Integer.parseInt(value);
-						if(identifier.equalsIgnoreCase("control_buy")) control_buy = Integer.parseInt(value);
+						if(identifier.contains("control_forward")) control_forward = Integer.parseInt(value);
+						if(identifier.contains("control_backward")) control_backward = Integer.parseInt(value);
+						if(identifier.contains("control_strafe_left")) control_strafe_left = Integer.parseInt(value);
+						if(identifier.contains("control_strafe_right")) control_strafe_right = Integer.parseInt(value);
+						if(identifier.contains("control_jump")) control_jump = Integer.parseInt(value);
+						if(identifier.contains("control_crouch")) control_crouch = Integer.parseInt(value);
+						if(identifier.contains("control_buy")) control_buy = Integer.parseInt(value);
 					}
 				}
 			}
@@ -190,6 +191,7 @@ public class GameController {
 		
 		if(Main.getInstance().options_menu == null) Main.getInstance().options_menu = new OptionsMenu();
 		for(Widget w : Main.getInstance().options_menu.widgets){
+			if(w.identifier.contains("_tab")) continue;
 			writer.println("<setting>");
 			writer.println("<id>" + w.identifier + "</id>");
 			if(w instanceof Button){

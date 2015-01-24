@@ -203,6 +203,7 @@ public class Player extends Mob{
 		this.bow.arrows = this.bow.maxArrows;
 		this.coins = 0;
 		this.score = 0;
+		Main.getInstance().controller.timeLeft = Main.DESIRED_TPS * (60 * 15);
 		spawn();
 	}
 	
