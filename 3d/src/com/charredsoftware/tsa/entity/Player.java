@@ -1,6 +1,10 @@
 package com.charredsoftware.tsa.entity;
 
+import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glPopAttrib;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushAttrib;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glScalef;
@@ -220,6 +224,8 @@ public class Player extends Mob{
 		double ry = Math.cos(Math.toRadians(Main.getInstance().camera.ry));
  		float zOffset = (float) (Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * 0.25f);
 		glPushMatrix();
+		glPushAttrib(GL_CURRENT_BIT);
+ 		glColor3f(150 / 255f, 113 / 255f, 27 / 255f);
 		glTranslatef((float) (x - Math.sin(Math.toRadians(360 - Main.getInstance().camera.rx)) * ry), y + (0.85f / ((isCrouching) ? 2 : 1)) - (float) Math.sin(Math.toRadians(Main.getInstance().camera.ry)), z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.rx)) * ry) + zOffset);
 		glPushMatrix();
 		glRotatef(90f, 1f, 0f, 0f);
@@ -227,6 +233,7 @@ public class Player extends Mob{
 		glRotatef(360 - camera.ry - 25f, 1f, 0f, 0f);
 		bowModel.render();
 		glPopMatrix();
+		glPopAttrib();
 		glPopMatrix();
 	}
 	

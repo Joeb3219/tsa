@@ -195,7 +195,8 @@ public class Stalker extends Mob{
 		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
 	
 		glEnd();
-
+		
+		renderBow();
 		
 		glPopMatrix();
 	}

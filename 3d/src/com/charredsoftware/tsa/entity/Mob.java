@@ -158,18 +158,20 @@ public class Mob extends Entity{
 	}
 	
 	/**
-	 * Rneders a bow on the mob
+	 * Renders a bow on the mob
 	 */
 	public void renderBow(){
-		glLoadIdentity();
-		glPushMatrix();
-		glTranslatef(x, y - height, z + 1f);
-		glRotatef(facing, 0f, 1f, 0f);
-		
+		float facing = this.facing + 90f;
+ 		glPushMatrix();
+ 		glPushAttrib(GL_CURRENT_BIT);
+ 		glColor3f(150 / 255f, 113 / 255f, 27 / 255f);
+ 		glTranslatef(.75f - (0.05f * (float) (Math.sin(Math.toRadians(facing)))), height / 6, 0.75f - (0.05f * (float) (Math.cos(Math.toRadians(facing)))));
 		glPushMatrix();
 		glRotatef(90f, 1f, 0f, 0f);
+		glRotatef(180, 1f, 0f, 0f);
 		bowModel.render();
 		glPopMatrix();
+		glPopAttrib();
 		glPopMatrix();
 	}
 	

@@ -195,6 +195,8 @@ public class Arrow extends Entity{
 	 * Sets up the VBOs for the rendering process.
 	 */
 	public void preRender(){
+		glPushAttrib(GL_CURRENT_BIT);
+		glColor3f(196 / 255f, 162 / 255f, 81 / 255f);
 		if(1 == 1) return;
 		if(vboHandler == -1 || textHandler == -1) createVBOs();
 		glEnable(GL_TEXTURE_2D);
@@ -213,6 +215,7 @@ public class Arrow extends Entity{
 	 * Cleans up the rendering process
 	 */
 	public void postRender(){
+		glPopAttrib();
 		if(1 == 1) return;
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
