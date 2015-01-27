@@ -221,6 +221,7 @@ public class Arrow extends Entity{
 		glDisable(GL_TEXTURE_2D);
 	}
 	
+	float facing = 0;
 	/**
 	 * Renders the arrow.
 	 * Enables lighting if possible.
@@ -236,23 +237,23 @@ public class Arrow extends Entity{
 		}
 		
 		glPushMatrix();
-
 		glTranslatef(x, y, z);
+		
 		if(false && stuck()){
-			if(blockStuckIn.x > x) glRotatef(-90, 1, 0, 0);
-			if(blockStuckIn.x < x) glRotatef(90, 1, 0, 0);
-			if(blockStuckIn.y < y) glRotatef(-90, 0, 1, 0);
-			if(blockStuckIn.y > y) glRotatef(90, 0, 1, 0);
-			if(blockStuckIn.z > z) glRotatef(-90, 0, 0, 1);
-			if(blockStuckIn.z < z) glRotatef(90, 0, 0, 1);
+			if(x > blockStuckIn.x && z == blockStuckIn.z) glRotatef(270, 1f, 0f, 0f);
+			if(x < blockStuckIn.x && z == blockStuckIn.z) glRotatef(270 + 180, 1f, 0f, 0f);
+			if(x == blockStuckIn.x && z > blockStuckIn.z) glRotatef(0, 1f, 0f, 0f);
+			if(x == blockStuckIn.x && z < blockStuckIn.z) glRotatef(180, 1f, 0f, 0f);
+			if(y < blockStuckIn.y) glRotatef(90, 0f, 0f, 1f);
+			if(y > blockStuckIn.y) glRotatef(180, 0f, 0f, 1f);
 		}else{
 			glRotatef(-rY, 1, 0, 0);
 			glRotatef(180, 1, 0, 0);
 			glRotatef((rX > 180) ? rX : -rX, 0, 1, 0);
 			if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
 		}
+		glScalef(1f, 1f, 1f);
 		
-		glScalef(1f, 1/4f, 1f);
 		model.render();
 		
 		glPopMatrix();

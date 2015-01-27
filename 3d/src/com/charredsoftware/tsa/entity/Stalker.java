@@ -36,7 +36,6 @@ import com.charredsoftware.tsa.world.Position;
 
 public class Stalker extends Mob{
 	
-	public float facing = 0; //In degrees.
 	public static Texture texture = null;
 	public static final float _DISTANCE_TO_STALK = 5f, _FOV_TO_STALK = 60f, _CHAIN_TO_STARTING_POINT = 5f;
 	private Random r = new Random();

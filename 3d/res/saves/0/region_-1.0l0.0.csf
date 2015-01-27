@@ -9,7 +9,7 @@
 </mob>
 <mob>
 <id>1</id>
-<position>-2.0:3.0:5.0</position>
+<position>1.0:3.0:10.0</position>
 <json></json>
 </mob>
 </mobs>

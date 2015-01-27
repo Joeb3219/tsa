@@ -2,6 +2,11 @@
 <settings>
 </settings>
 <mobs>
+<mob>
+<id>0</id>
+<position>31.0:3.0:31.0</position>
+<json></json>
+</mob>
 </mobs>
 <blocks>
 <block>

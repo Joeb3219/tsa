@@ -26,7 +26,6 @@ import com.charredsoftware.tsa.world.Position;
 
 public class Spinner extends Mob{
 
-	public float facing = 0; //In degrees.
 	public static Texture texture = null;
 	private Random r = new Random();
 	public static final float _FOV_TO_SHOOT = 30, _DISTANCE_TO_SHOOT = 5f;
@@ -180,6 +179,7 @@ public class Spinner extends Mob{
 	
 		glEnd();
 
+		renderBow();
 		
 		glPopMatrix();
 	}

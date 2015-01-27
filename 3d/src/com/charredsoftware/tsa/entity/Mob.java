@@ -1,9 +1,16 @@
 package com.charredsoftware.tsa.entity;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
+import com.charredsoftware.tsa.obj.Loader;
+import com.charredsoftware.tsa.obj.Model;
+import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
@@ -26,12 +33,15 @@ public class Mob extends Entity{
 	public float shielding = 0f; //1f is total shielding.
 	public float ticksSinceDeath = 0f;
 	public static final float _TICKS_AFTER_DEATH_TILL_DELETION = Main.DESIRED_TPS * 3;
+	public static Model bowModel;
+	public float facing = 0f;
 	
 	/**
 	 * Creates a new Mob.
 	 */
 	public Mob(){
 		super();
+		if(bowModel == null) bowModel = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "bow.obj"));
 	}
 	
 	/**
@@ -145,6 +155,22 @@ public class Mob extends Entity{
 	 */
 	public void damageMob(int damage){
 		health -= damage;
+	}
+	
+	/**
+	 * Rneders a bow on the mob
+	 */
+	public void renderBow(){
+		glLoadIdentity();
+		glPushMatrix();
+		glTranslatef(x, y - height, z + 1f);
+		glRotatef(facing, 0f, 1f, 0f);
+		
+		glPushMatrix();
+		glRotatef(90f, 1f, 0f, 0f);
+		bowModel.render();
+		glPopMatrix();
+		glPopMatrix();
 	}
 	
 }

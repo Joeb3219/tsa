@@ -1,5 +1,11 @@
 package com.charredsoftware.tsa.entity;
 
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -205,6 +211,23 @@ public class Player extends Mob{
 		this.score = 0;
 		Main.getInstance().controller.timeLeft = Main.DESIRED_TPS * (60 * 15);
 		spawn();
+	}
+	
+	/**
+	 * Renders the player's bow for the camera
+	 */
+	public void renderBow(){
+		double ry = Math.cos(Math.toRadians(Main.getInstance().camera.ry));
+ 		float zOffset = (float) (Math.sin(Math.toRadians(Main.getInstance().camera.rx)) * 0.25f);
+		glPushMatrix();
+		glTranslatef((float) (x - Math.sin(Math.toRadians(360 - Main.getInstance().camera.rx)) * ry), y + (0.85f / ((isCrouching) ? 2 : 1)) - (float) Math.sin(Math.toRadians(Main.getInstance().camera.ry)), z - (float) (Math.cos(Math.toRadians(360 - Main.getInstance().camera.rx)) * ry) + zOffset);
+		glPushMatrix();
+		glRotatef(90f, 1f, 0f, 0f);
+		glRotatef(camera.rx - 25f, 0f, 0f, 1f);
+		glRotatef(360 - camera.ry - 25f, 1f, 0f, 0f);
+		bowModel.render();
+		glPopMatrix();
+		glPopMatrix();
 	}
 	
 }
