@@ -4,6 +4,10 @@
 <value>true</value>
 </setting>
 <setting>
+<id>main_difficulty</id>
+<value>1</value>
+</setting>
+<setting>
 <id>main_back</id>
 <value>false</value>
 </setting>

@@ -23,6 +23,8 @@ import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -60,6 +62,9 @@ public class OptionsMenu extends Menu{
 		b.identifier = "main_developer_mode";
 		b.checked = Main.getInstance().controller.developerMode;
 		widgets.add(b);
+		ToggleSwitcher t = new ToggleSwitcher(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Difficulty", new ArrayList<String>(Arrays.asList("Easy", "Normal", "Hard")), Main.getInstance().controller.difficulty - 1);
+		t.identifier = "main_difficulty";
+		widgets.add(t);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Sounds");
 		b.identifier = "main_sound_tab";
 		b.checkable = false;
@@ -167,6 +172,11 @@ public class OptionsMenu extends Menu{
 				if(w.identifier.contains("developer_mode")){
 					((Button) w).checked = !((Button) w).checked;
 					Main.getInstance().controller.developerMode = ((Button) w).checked;
+				}
+				if(w.identifier.contains("difficulty")){
+					ToggleSwitcher t = (ToggleSwitcher) w;
+					t.update();
+					Main.getInstance().controller.difficulty = t.value + 1;
 				}
 				if(w.identifier.contains("fullscreen")){
 					((Button) w).checked = !((Button) w).checked;

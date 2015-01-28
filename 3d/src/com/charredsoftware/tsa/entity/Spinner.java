@@ -78,8 +78,7 @@ public class Spinner extends Mob{
 		if(determineIfShouldShoot()){
 			facing += 2;
 			if(!determineIfShouldShoot()) facing -= 4;
-			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 5){
-				
+			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
 				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();

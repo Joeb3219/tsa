@@ -21,6 +21,7 @@ import com.charredsoftware.tsa.gui.Button;
 import com.charredsoftware.tsa.gui.ControlSwitcher;
 import com.charredsoftware.tsa.gui.OptionsMenu;
 import com.charredsoftware.tsa.gui.Slider;
+import com.charredsoftware.tsa.gui.ToggleSwitcher;
 import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
 
@@ -40,6 +41,7 @@ public class GameController {
 	public boolean applet = false;
 	public float soundVolume = 0.5f, musicVolume = 0.5f;
 	public int control_forward = Keyboard.KEY_W, control_backward = Keyboard.KEY_S, control_strafe_left = Keyboard.KEY_A, control_strafe_right = Keyboard.KEY_D, control_jump = Keyboard.KEY_SPACE, control_crouch = Keyboard.KEY_LCONTROL, control_buy = Keyboard.KEY_Z;
+	public int difficulty = 2; //1 = easy, 2 = normal, 3 = hard
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
@@ -156,6 +158,7 @@ public class GameController {
 					}else if(c.getNodeName().equals("value")){
 						if(identifier.contains("_tab")) continue;
 						if(identifier.contains("developer_mode")) developerMode = Boolean.parseBoolean(value);
+						if(identifier.contains("difficulty")) difficulty = (int) Float.parseFloat(value) + 1;
 						if(identifier.contains("fullscreen")){
 							fullscreen = Boolean.parseBoolean(value);
 							if(fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
@@ -202,6 +205,9 @@ public class GameController {
 			}
 			if(w instanceof ControlSwitcher){
 				writer.println("<value>" + ((ControlSwitcher)w).value + "</value>");
+			}
+			if(w instanceof ToggleSwitcher){
+				writer.println("<value>" + ((ToggleSwitcher)w).value + "</value>");
 			}
 			writer.println("</setting>");
 		}

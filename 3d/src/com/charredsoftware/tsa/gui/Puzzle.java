@@ -42,12 +42,12 @@ import com.charredsoftware.tsa.world.World;
 public class Puzzle extends Menu{
 
 	public static final float _PADDING = 16f;
-	public float length = 6f;
-	public int puzzle;
+	public float length = 5f;
+	public long puzzle;
 	public Random r = new Random();
-	public static final int _TICKS_IN_DISPLAYING = Main.DESIRED_TPS * 3; 
+	public static final int _TICKS_IN_DISPLAYING = (int) (Main.DESIRED_TPS * 3.5); 
 	public int displayTicks = 0;
-	public int enteredValue = -1;
+	public long enteredValue = -1;
 	private float cooldown = 10f;
 	
 	/**
@@ -60,6 +60,7 @@ public class Puzzle extends Menu{
 			widgets.add(new PuzzleButton(this, i));
 		}
 		
+		length += Main.getInstance().controller.difficulty * 2 - 1;
 		generatePuzzle();
 		displayTicks = _TICKS_IN_DISPLAYING;
 	}
@@ -97,7 +98,7 @@ public class Puzzle extends Menu{
 			if((i == 0 || i == length) && a == 0) a ++;
 			puzzle += a;
 		}
-		this.puzzle = Integer.parseInt(puzzle);
+		this.puzzle = Long.parseLong(puzzle);
 	}
 	
 	/**
@@ -125,7 +126,7 @@ public class Puzzle extends Menu{
 	
 	private void addDigitToValue(int digit){
 		String val = ((enteredValue == -1) ? "" : enteredValue) + "" + digit + "";
-		enteredValue = Integer.parseInt(val);
+		enteredValue = Long.parseLong(val);
 	}
 	
 	private void evaluatePuzzle(){

@@ -242,7 +242,10 @@ public class Main {
 			cooldown = 10f;
 		}
 		controller.keyboardTick();
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)) player.spawn();
+		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)){
+			player.world = new World(player.world.id);
+			player.spawn();
+		}
 		if(gameState == GameState.GAME && controller.buildingMode && controller.developerMode && cooldown == 0 && Keyboard.isKeyDown(Keyboard.KEY_I)){
 			ArrayList<Position> fillPositions = player.leftWand.getPositionsBetween(player.rightWand);
 			for(Position p : fillPositions){

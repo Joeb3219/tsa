@@ -86,7 +86,7 @@ public class Stalker extends Mob{
 		}
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
-			if(r.nextInt(100) <= 10){
+			if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
 				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();
