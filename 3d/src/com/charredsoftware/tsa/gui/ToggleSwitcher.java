@@ -47,6 +47,9 @@ public class ToggleSwitcher extends Widget{
 		this.value = current;
 	}
 	
+	/**
+	 * Updates the toggle
+	 */
 	public void update(){
 		float xPos = (Display.getWidth() - getWidth()) / 2 - padding / 2;
 		float relativeX = (Mouse.getX() - xPos);
@@ -56,6 +59,9 @@ public class ToggleSwitcher extends Widget{
 		}
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the mouse is in the bounding box.
+	 */
 	public boolean mouseInBounds(){
 		float x = pos.x;
 		float y = Display.getHeight() - pos.y;
@@ -76,6 +82,9 @@ public class ToggleSwitcher extends Widget{
 		return false;
 	}
 	
+	/**
+	 * Renders the toggle
+	 */
 	public void render(){
 		glDisable(GL_TEXTURE_2D);
 		float width = getWidth();
@@ -104,18 +113,30 @@ public class ToggleSwitcher extends Widget{
 		Main.getInstance().font.drawString(xPos + identifierWidth + padding / 2, pos.y, values.get(value));
 	}
 	
+	/**
+	 * @return Returns the total width
+	 */
 	private float getWidth(){
 		return Main.getInstance().font.getWidth(getDisplayText()) + padding;
 	}
 	
+	/**
+	 * @return Returns the width of the identifier
+	 */
 	private float getIdentifierWidth(){
 		return Main.getInstance().font.getWidth(text + ": ");
 	}
 	
+	/**
+	 * @return Returns the total height
+	 */
 	private float getHeight(){
 		return Main.getInstance().font.getHeight(getDisplayText());
 	}
 	
+	/**
+	 * @return Returns the text that will be displayed on the button.
+	 */
 	private String getDisplayText(){
 		return text + ": " + values.get(value);
 	}

@@ -36,7 +36,7 @@ public class GameController {
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
 	public String version = "1.1.1";
-	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false;
+	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false, vsync = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;
 	public float soundVolume = 0.5f, musicVolume = 0.5f;
@@ -162,6 +162,10 @@ public class GameController {
 						if(identifier.contains("fullscreen")){
 							fullscreen = Boolean.parseBoolean(value);
 							if(fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+						}
+						if(identifier.contains("vsync")){
+							vsync = Boolean.parseBoolean(value);
+							Display.setVSyncEnabled(vsync);
 						}
 						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value); 
 						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value); 

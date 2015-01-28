@@ -103,6 +103,10 @@ public class OptionsMenu extends Menu{
 		b.identifier = "graphics_fullscreen";
 		b.checked = Main.getInstance().controller.fullscreen;
 		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Enable V-Sync");
+		b.identifier = "graphics_vsync";
+		b.checked = Main.getInstance().controller.vsync;
+		widgets.add(b);
 		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, Main.getInstance().camera.fov);
 		s.identifier = "graphics_fov_slider";
 		widgets.add(s);
@@ -185,6 +189,11 @@ public class OptionsMenu extends Menu{
 						if(Main.getInstance().controller.fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 						else Display.setFullscreen(false);
 					} catch (LWJGLException e) {new CrashReport(e);}
+				}
+				if(w.identifier.contains("vsync")){
+					((Button) w).checked = !((Button) w).checked;
+					Main.getInstance().controller.vsync = ((Button) w).checked;
+					Display.setVSyncEnabled(Main.getInstance().controller.vsync);
 				}
 				if(w.identifier.contains("settings")){
 					

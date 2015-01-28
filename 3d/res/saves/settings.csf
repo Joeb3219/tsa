@@ -32,6 +32,10 @@
 <value>false</value>
 </setting>
 <setting>
+<id>graphics_vsync</id>
+<value>false</value>
+</setting>
+<setting>
 <id>graphics_fov_slider</id>
 <value>65.0</value>
 </setting>
