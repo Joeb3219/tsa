@@ -170,8 +170,6 @@ public class GameController {
 						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value); 
 						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value); 
 						if(identifier.contains("fov_slider")){
-							//Main.getInstance().camera.fov = Float.parseFloat(value); 
-							//Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
 						}
 						if(identifier.contains("control_forward")) control_forward = Integer.parseInt(value);
 						if(identifier.contains("control_backward")) control_backward = Integer.parseInt(value);
