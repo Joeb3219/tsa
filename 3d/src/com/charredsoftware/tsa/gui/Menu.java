@@ -71,16 +71,7 @@ public class Menu {
 	 * Generic render method.
 	 */
 	public void render(){
-		glLoadIdentity();
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0f, Display.getWidth(), Display.getHeight(), 0f, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST); 
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
+		preRender();
 
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
@@ -92,11 +83,33 @@ public class Menu {
 		
 		for(Widget w : widgets) w.render();
 		
+		postRender();
+	}
+
+	/**
+	 * All of the stuff that has to happen after rendering.
+	 */
+	protected void postRender(){
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
-		
+	}
+	
+	/**
+	 * All of the stuff that has to happen before rendering.
+	 */
+	protected void preRender(){
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0f, Display.getWidth(), Display.getHeight(), 0f, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST); 
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
 	}
 	
 }

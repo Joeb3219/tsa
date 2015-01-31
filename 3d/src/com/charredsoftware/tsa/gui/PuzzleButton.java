@@ -1,6 +1,13 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -31,7 +38,7 @@ public class PuzzleButton extends Widget{
 	 * @param value Value of the button (0-9)
 	 */
 	public PuzzleButton(Puzzle m, int value){
-		super(new Position(0, 0, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
+		super(new Position(0, 0, -1), 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.value = value;
 		float row = 0;
 		float col = 0;

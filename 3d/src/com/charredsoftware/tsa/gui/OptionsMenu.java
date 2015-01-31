@@ -1,24 +1,12 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
@@ -34,7 +22,6 @@ import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
-import com.charredsoftware.tsa.Camera;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
@@ -79,7 +66,7 @@ public class OptionsMenu extends Menu{
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
-		b.identifier = "main_back";
+		b.identifier = "main_goback";
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Quit");
@@ -95,7 +82,7 @@ public class OptionsMenu extends Menu{
 		s.identifier = "sound_music_slider";
 		widgets.add(s);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
-		b.identifier = "sound_back";
+		b.identifier = "sound_goback";
 		b.checkable = false;
 		widgets.add(b);
 		
@@ -112,7 +99,7 @@ public class OptionsMenu extends Menu{
 		s.identifier = "graphics_fov_slider";
 		widgets.add(s);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
-		b.identifier = "graphics_back";
+		b.identifier = "graphics_goback";
 		b.checkable = false;
 		widgets.add(b);
 		
@@ -151,7 +138,7 @@ public class OptionsMenu extends Menu{
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
-		b.identifier = "controls_back";
+		b.identifier = "controls_goback";
 		b.checkable = false;
 		widgets.add(b);
 		try {
@@ -167,7 +154,7 @@ public class OptionsMenu extends Menu{
 		}
 		if(Mouse.isButtonDown(0) && cooldown == 0){
 			for(Widget w : widgets){
-				if(!w.mouseInBounds()) continue;
+				if(cooldown != 0 || !w.mouseInBounds()) continue;
 				if(!w.identifier.startsWith(tabName)) continue;
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				cooldown = 10f;
@@ -215,18 +202,17 @@ public class OptionsMenu extends Menu{
 					Main.getInstance().camera.fov = s.value;
 					Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
 				}
-				if(w.identifier.contains("control_")){
-					((ControlSwitcher) w).update();
-					for(Widget wp : widgets){
-						if(wp instanceof ControlSwitcher){
-							ControlSwitcher cs = (ControlSwitcher) wp;
-							if(cs.identifier.contains("control_forward")) Main.getInstance().controller.control_forward = cs.value;
-							if(cs.identifier.contains("control_backward")) Main.getInstance().controller.control_backward = cs.value;
-							if(cs.identifier.contains("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.value;
-							if(cs.identifier.contains("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.value;
-							if(cs.identifier.contains("control_jump")) Main.getInstance().controller.control_jump = cs.value;
-							if(cs.identifier.contains("control_crouch")) Main.getInstance().controller.control_crouch = cs.value;
-						}
+				if(w.identifier.contains("control_") && !w.identifier.contains("tab")){
+					if(w instanceof ControlSwitcher){
+						ControlSwitcher cs = (ControlSwitcher) w;
+						cs.update();
+						if(cs.identifier.contains("control_forward")) Main.getInstance().controller.control_forward = cs.value;
+						if(cs.identifier.contains("control_backward")) Main.getInstance().controller.control_backward = cs.value;
+						if(cs.identifier.contains("control_strafe_left")) Main.getInstance().controller.control_strafe_left = cs.value;
+						if(cs.identifier.contains("control_strafe_right")) Main.getInstance().controller.control_strafe_right = cs.value;
+						if(cs.identifier.contains("control_jump")) Main.getInstance().controller.control_jump = cs.value;
+						if(cs.identifier.contains("control_crouch")) Main.getInstance().controller.control_crouch = cs.value;
+						if(cs.identifier.contains("control_buy")) Main.getInstance().controller.control_buy = cs.value;
 					}
 				}
 				if(w.identifier.contains("quit")){
@@ -235,7 +221,7 @@ public class OptionsMenu extends Menu{
 					Display.destroy();
 					System.exit(0);
 				}
-				if(w.identifier.contains("back")){
+				if(w.identifier.contains("goback")){
 					if(w.identifier.split("_")[0].equals(("main"))) Main.getInstance().gameState = Main.getInstance().previousState;
 					else tabName = "main";
 				}
@@ -250,18 +236,7 @@ public class OptionsMenu extends Menu{
 		this.height = Display.getHeight();
 		this.width = Display.getWidth();
 		
-		glLoadIdentity();
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0f, Display.getWidth(), Display.getHeight(), 0f, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST); 
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
+		preRender();
 
 		glColor4f(red, green, blue, alpha);
 		glBegin(GL_QUADS);
@@ -292,10 +267,7 @@ public class OptionsMenu extends Menu{
 		glTexCoord2f(0f, 1f); glVertex2f(Display.getWidth() - 16 - 512, Display.getHeight() - 16);
 		glEnd();
 		
-		glEnable(GL_DEPTH_TEST);
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
+		postRender();
 	}
 
 	

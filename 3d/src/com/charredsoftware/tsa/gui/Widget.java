@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
 
@@ -14,14 +15,12 @@ public class Widget {
 
 	public Position pos;
 	public float red, green, blue, alpha;
-	public float height, width;
 	public int value;
 	public String identifier = "null";
+	public float padding = 16f;
 
-	public Widget(Position p, float width, float height, float red, float green, float blue, float alpha){
+	public Widget(Position p, float red, float green, float blue, float alpha){
 		this.pos = p;
-		this.width = width;
-		this.height = height;
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
@@ -29,11 +28,14 @@ public class Widget {
 	}
 	
 	public boolean mouseInBounds(){
-		float x = pos.x;
-		float y = pos.y;
+		float x = getXPos();
+		float y = getYPos();
 		
-		if(Mouse.getX() >= x && Mouse.getX() <= x + width){
-			if(Mouse.getY() >= y && Mouse.getY() <= y + height){
+		float w = getWidth();
+		float h = getHeight();
+		
+		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
+			if(Mouse.getY() <= y && Mouse.getY() >= y - h){
 				return true;
 			}
 		}
@@ -44,10 +46,26 @@ public class Widget {
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
 		glVertex2f(pos.x, pos.y);
-		glVertex2f(pos.x + width, pos.y);
-		glVertex2f(pos.x + width, pos.y + height);
-		glVertex2f(pos.x, pos.y + height);
+		glVertex2f(pos.x + getWidth(), pos.y);
+		glVertex2f(pos.x + getWidth(), pos.y + getHeight());
+		glVertex2f(pos.x, pos.y + getHeight());
 		glEnd();
+	}
+	
+	public float getWidth(){
+		return 1f;
+	}
+	
+	public float getHeight(){
+		return 1f;
+	}
+	
+	public float getXPos(){
+		return (Display.getWidth() - getWidth()) / 2 - padding / 2;
+	}
+	
+	public float getYPos(){
+		return Display.getHeight() - pos.y;
 	}
 	
 }

@@ -11,7 +11,6 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
@@ -32,7 +31,7 @@ public class TransactionButton extends Widget{
 	public static final int _MAX_PER_ROW = 3;
 	
 	public TransactionButton(float xPosition, float yPosition, String icon, String itemName, String description, int cost){
-		super(new Position(xPosition, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
+		super(new Position(xPosition, yPosition, -1), 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.item = itemName;
 		this.description = description;
 		this.cost = cost;
@@ -44,16 +43,16 @@ public class TransactionButton extends Widget{
 	public void render(){
 		float textHeight = Main.getInstance().font.getHeight(item);
 		float individualPadding = 8f;
-		float xPos = getXPosition();
+		float xPos = getXPos();
 		
 		float alpha = (used) ? 0.25f : 1f;
 		
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
 		glVertex2f(xPos, pos.y);
-		glVertex2f(xPos + width, pos.y);
-		glVertex2f(xPos + width, pos.y + height);
-		glVertex2f(xPos, pos.y + height);
+		glVertex2f(xPos + getWidth(), pos.y);
+		glVertex2f(xPos + getWidth(), pos.y + getHeight());
+		glVertex2f(xPos, pos.y + getHeight());
 		glEnd();
 		
 		glDisable(GL_LIGHTING);
@@ -89,22 +88,8 @@ public class TransactionButton extends Widget{
 		
 	}
 	
-	/**
-	 * @return Returns <tt>true</tt> if the mouse is on top of the button.
-	 */
-	public boolean mouseInBounds(){
-		float x = getXPosition();
-		float y = Display.getHeight() - pos.y;
-		
-		float w = getWidth();
-		float h = iconSize + Main.getInstance().font.getHeight(item) + Main.getInstance().font.getHeight(cost + " coins");
-		
-		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
-			if(Mouse.getY() <= y && Mouse.getY() >= y - h){
-				return true;
-			}
-		}
-		return false;
+	public float getHeight(){
+		return iconSize + Main.getInstance().font.getHeight(item) + Main.getInstance().font.getHeight(cost + " coins");
 	}
 	
 	private float getPadding(){
@@ -114,14 +99,14 @@ public class TransactionButton extends Widget{
 	private float getDrawWidth(){
 		return Display.getWidth() - (getPadding() * 2);
 	}
-	
-	private float getXPosition(){
+
+	public float getXPos(){
 		float drawWidth = getDrawWidth();
 		float chunkSize = drawWidth / _MAX_PER_ROW;
 		return chunkSize * (pos.x - 1) + getPadding() + (0.5f * getPadding());
 	}
 	
-	private float getWidth(){
+	public float getWidth(){
 		float w = Main.getInstance().font.getWidth(item);
 		return (w > iconSize + 8) ? w : iconSize + 8;
 	}

@@ -1,24 +1,13 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import org.lwjgl.input.Mouse;
@@ -63,10 +52,6 @@ public class GameOverMenu extends Menu{
 		b.identifier = "play";
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Submit Bug/Feature Request");
-		b.identifier = "bug_feature";
-		b.checkable = false;
-		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Quit");
 		b.identifier = "quit";
 		b.checkable = false;
@@ -104,19 +89,8 @@ public class GameOverMenu extends Menu{
 		this.height = Display.getHeight();
 		this.width = Display.getWidth();
 		
-		glLoadIdentity();
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0f, Display.getWidth(), Display.getHeight(), 0f, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST); 
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
-
+		preRender();
+		
 		glColor4f(red, green, blue, alpha);
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
@@ -133,10 +107,7 @@ public class GameOverMenu extends Menu{
 		glEnable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		
-		glEnable(GL_DEPTH_TEST);
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
+		postRender();
 	}
 	
 }

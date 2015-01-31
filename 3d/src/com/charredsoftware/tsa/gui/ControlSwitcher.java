@@ -23,7 +23,7 @@ public class ControlSwitcher extends Widget{
 	public float selectRed = 122 / 255f, selectGreen = 180 / 255f, selectBlue = 250 / 255f;
 	
 	public ControlSwitcher(Menu m, float yPosition, String controlName, int defaultKey){
-		super(new Position(-1, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 1 / 255f);
+		super(new Position(-1, yPosition, -1), 0 / 255f, 0 / 255f, 0 / 255f, 1 / 255f);
 		this.controlName = controlName;
 		this.value = defaultKey;
 	}
@@ -42,26 +42,6 @@ public class ControlSwitcher extends Widget{
 				}
 			}while(!keyFound);
 		}
-	}
-	
-	public boolean mouseInBounds(){
-		float x = pos.x;
-		float y = Display.getHeight() - pos.y;
-		
-		float w = this.width;
-		float h = this.height;
-		if(width == -1 && height == -1){
-			w = getWidth();
-			h = getHeight();
-			x = (Display.getWidth() - w) / 2 - padding / 2;
-		}
-		
-		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
-			if(Mouse.getY() <= y && Mouse.getY() >= y - h){
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public void render(){
@@ -92,19 +72,19 @@ public class ControlSwitcher extends Widget{
 		Main.getInstance().font.drawString(xPos + identifierWidth + padding / 2, pos.y, Keyboard.getKeyName(value));
 	}
 	
-	private float getWidth(){
+	public float getWidth(){
 		return Main.getInstance().font.getWidth(getDisplayText()) + padding;
 	}
 	
-	private float getIdentifierWidth(){
+	public float getIdentifierWidth(){
 		return Main.getInstance().font.getWidth(controlName + ": ");
 	}
 	
-	private float getHeight(){
+	public float getHeight(){
 		return Main.getInstance().font.getHeight(getDisplayText());
 	}
 	
-	private String getDisplayText(){
+	public String getDisplayText(){
 		return controlName + ": " + Keyboard.getKeyName(value);
 	}
 	

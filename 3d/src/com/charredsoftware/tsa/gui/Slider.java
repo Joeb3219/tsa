@@ -1,6 +1,13 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -25,7 +32,7 @@ public class Slider extends Widget{
 	 * @param defaultValue Default value of the slider
 	 */
 	public Slider(Menu m, float yPosition, String text, float min, float max, float defaultValue){
-		super(new Position(-1, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 1 / 255f);
+		super(new Position(-1, yPosition, -1), 0 / 255f, 0 / 255f, 0 / 255f, 1 / 255f);
 		this.text = text;
 		this.max = max;
 		this.min = min;
@@ -33,35 +40,15 @@ public class Slider extends Widget{
 		
 	}
 	
-	public boolean mouseInBounds(){
-		float x = pos.x;
-		float y = Display.getHeight() - pos.y;
-		
-		float w = this.width;
-		float h = this.height;
-		if(width == -1 && height == -1){
-			w = getWidth();
-			h = getHeight();
-			x = (Display.getWidth() - w) / 2 - padding / 2;
-		}
-		
-		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
-			if(Mouse.getY() <= y && Mouse.getY() >= y - h){
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	private String getDisplayText(){
 		return text + ": " + ((int) value) + "/" + ((int) max);
 	}
 	
-	private float getWidth(){
+	public float getWidth(){
 		return Main.getInstance().font.getWidth(getDisplayText()) + padding;
 	}
 	
-	private float getHeight(){
+	public float getHeight(){
 		return Main.getInstance().font.getHeight(getDisplayText());
 	}
 	
@@ -76,7 +63,7 @@ public class Slider extends Widget{
 		String displayText = getDisplayText();
 		float width = getWidth();
 		float height = getHeight();
-		float xPos = (Display.getWidth() - width) / 2 - padding / 2;
+		float xPos = getXPos();
 		float valueWidth = convertValueToWidth(value);
 		glColor4f(red, green, blue, alpha);
 		glBegin(GL_QUADS);

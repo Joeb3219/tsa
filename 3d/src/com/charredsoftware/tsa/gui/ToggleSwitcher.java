@@ -11,7 +11,6 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.util.ArrayList;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -41,7 +40,7 @@ public class ToggleSwitcher extends Widget{
 	 * @param current Integer representing the index of the current value.
 	 */
 	public ToggleSwitcher(Menu m, float yPosition, String text, ArrayList<String> options, int current){
-		super(new Position(-1, yPosition, -1), -1, -1, 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
+		super(new Position(-1, yPosition, -1), 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.text = text;
 		this.values = options;
 		this.value = current;
@@ -60,36 +59,13 @@ public class ToggleSwitcher extends Widget{
 	}
 	
 	/**
-	 * @return Returns <tt>true</tt> if the mouse is in the bounding box.
-	 */
-	public boolean mouseInBounds(){
-		float x = pos.x;
-		float y = Display.getHeight() - pos.y;
-		
-		float w = this.width;
-		float h = this.height;
-		if(width == -1 && height == -1){
-			w = getWidth();
-			h = getHeight();
-			x = (Display.getWidth() - w) / 2 - padding / 2;
-		}
-		
-		if(Mouse.getX() >= x && Mouse.getX() <= x + w){
-			if(Mouse.getY() <= y && Mouse.getY() >= y - h){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * Renders the toggle
 	 */
 	public void render(){
 		glDisable(GL_TEXTURE_2D);
 		float width = getWidth();
 		float height = getHeight();
-		float xPos = (Display.getWidth() - width) / 2 - padding / 2;
+		float xPos = getXPos();
 		float identifierWidth = getIdentifierWidth();
 		//Colour the identifier text
 		glColor4f(red, green, blue, alpha);
@@ -116,28 +92,28 @@ public class ToggleSwitcher extends Widget{
 	/**
 	 * @return Returns the total width
 	 */
-	private float getWidth(){
+	public float getWidth(){
 		return Main.getInstance().font.getWidth(getDisplayText()) + padding;
 	}
 	
 	/**
 	 * @return Returns the width of the identifier
 	 */
-	private float getIdentifierWidth(){
+	public float getIdentifierWidth(){
 		return Main.getInstance().font.getWidth(text + ": ");
 	}
 	
 	/**
 	 * @return Returns the total height
 	 */
-	private float getHeight(){
+	public float getHeight(){
 		return Main.getInstance().font.getHeight(getDisplayText());
 	}
 	
 	/**
 	 * @return Returns the text that will be displayed on the button.
 	 */
-	private String getDisplayText(){
+	public String getDisplayText(){
 		return text + ": " + values.get(value);
 	}
 	

@@ -8,7 +8,7 @@
 <value>0</value>
 </setting>
 <setting>
-<id>main_back</id>
+<id>main_goback</id>
 <value>false</value>
 </setting>
 <setting>
@@ -24,7 +24,7 @@
 <value>43.055553</value>
 </setting>
 <setting>
-<id>sound_back</id>
+<id>sound_goback</id>
 <value>false</value>
 </setting>
 <setting>
@@ -40,7 +40,7 @@
 <value>65.0</value>
 </setting>
 <setting>
-<id>graphics_back</id>
+<id>graphics_goback</id>
 <value>false</value>
 </setting>
 <setting>
@@ -61,7 +61,7 @@
 </setting>
 <setting>
 <id>controls_control_crouch</id>
-<value>29</value>
+<value>42</value>
 </setting>
 <setting>
 <id>controls_control_jump</id>
@@ -84,7 +84,7 @@
 <value>false</value>
 </setting>
 <setting>
-<id>controls_back</id>
+<id>controls_goback</id>
 <value>false</value>
 </setting>
 </Settings>
