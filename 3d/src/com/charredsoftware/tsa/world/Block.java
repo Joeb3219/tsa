@@ -54,14 +54,15 @@ public class Block {
 	
 	
 	public static Block air = new Block(0, 0, "Air", false);
-	public static Block bricks = new Block(1, 0, "Bricks", Block.loadTexture("brick.jpg"));
+	public static Block bricks = new Block(1, 0, "Bricks", Block.loadTexture("brick2.jpg"));
 	public static Block grass = new Block(2, 0, "Grass", Block.loadTexture("grass.jpg"));
 	public static Block ceiling = new Block(3, 0, "Ceiling", Block.loadTexture("ceiling.jpg"));
 	public static Block wood = new Block(4, 0, "Wood", Block.loadTexture("wood.jpg"));
-	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.jpg"), false);
+	public static Block water = new Block(5, 0, "Water", Block.loadTexture("water.png"), false);
 	public static Block boost = new Block(6, 0, "Boost Block", Block.loadTexture("boost.jpg"));
 	public static Block end = new Block(7, 0, "Wall", Block.loadTexture("wall.jpg"));
 	public static Block chest = new Block(8, 0, "Chest", Block.loadTexture("chest.jpg"));
+	public static Block glass = new Block(9, 0, "Glass", Block.loadTexture("glass.png"));
 	public static Block charredBlock = new Block(-2, 0, "charredblock", Block.loadTexture("charredsoftware.png"));
 	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
 	public static int vboHandler = -1, textHandler = -1;

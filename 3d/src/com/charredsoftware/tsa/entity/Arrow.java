@@ -41,7 +41,6 @@ public class Arrow extends Entity{
 	 * TODO: FIGURE OUT WHY ARROWS SHOOT SO SLOW NOW!!!
 	 */
 
-	public static Texture texture = null;
 	public float beginningVerticalVelocity = 0f, verticalVelocity = 0f, horizontalVelocity = 0f;
 	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 8; //Number of steps to take in movement.
 	public float drawBackTime, flyingTime = 0f;
@@ -68,10 +67,6 @@ public class Arrow extends Entity{
 		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "arrow.obj"));
 		this.shooter = shooter;
 		this.world = w;
-			try {
-				if(texture == null) texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "arrow.png"));
-			} catch (IOException e) {new CrashReport(e);}
-		
 		this.rY = rY;
 		this.rX = rX;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
@@ -200,7 +195,6 @@ public class Arrow extends Entity{
 		if(1 == 1) return;
 		if(vboHandler == -1 || textHandler == -1) createVBOs();
 		glEnable(GL_TEXTURE_2D);
-		texture.bind();
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
 		glVertexPointer(_VERTEX_SIZE, GL_FLOAT, 0, 0L);
 			

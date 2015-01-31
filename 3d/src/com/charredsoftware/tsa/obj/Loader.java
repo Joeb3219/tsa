@@ -32,6 +32,7 @@ public class Loader {
 					m.faces.add(new Face(vInd, nInd));
 				}
 			}
+			reader.close();
 		}catch(Exception e){new CrashReport(e);}
 		return m;
 	}

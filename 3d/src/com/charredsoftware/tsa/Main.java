@@ -261,6 +261,7 @@ public class Main {
 		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
 			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
+			cooldown += 10f;
 		}
 		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
 			Sys.alert("Placing mobs", "Press 1 to place a Spinner, 2 to place a Stalker, 3 to place a Worker, 4 to place Dr.Sputnik");
@@ -327,7 +328,7 @@ public class Main {
 		}
 		
 		if(gameState == GameState.GAME && Mouse.isButtonDown(0) && cooldown == 0){
-			if(player.world.lookingAt.base == Block.chest) openChest(player.world.lookingAt);
+			if(player.world.lookingAt.base == Block.chest && player.world.lookingAt instanceof Chest) openChest(player.world.lookingAt);
 			else if(controller.buildingMode){
 				if(player.selectedBlock == Block.charredBlock) player.leftWand = player.world.lookingAt.getPosition();
 				else player.world.removeBlock(player.world.getBlock(player.world.lookingAt.x, player.world.lookingAt.y, player.world.lookingAt.z));

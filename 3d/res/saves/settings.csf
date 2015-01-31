@@ -5,7 +5,7 @@
 </setting>
 <setting>
 <id>main_difficulty</id>
-<value>1</value>
+<value>0</value>
 </setting>
 <setting>
 <id>main_back</id>
@@ -17,7 +17,7 @@
 </setting>
 <setting>
 <id>sound_volume_slider</id>
-<value>94.90741</value>
+<value>42.592594</value>
 </setting>
 <setting>
 <id>sound_music_slider</id>

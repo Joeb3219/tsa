@@ -408,51 +408,31 @@ public class World {
 		//TODO: Make glass, water, etc. rendered last -> see through
 		//TODO: Implement VBOs for rendering (instead of glVertex calls (immediate mode))
 		
+		
 		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
-			ArrayList<BlockInstance> list = e.getValue();
-			list.get(0).base.drawSetup();
-			
-			for(BlockInstance b : list){
-				if(Main.getInstance().controller.buildingMode && b == lookingAt) b.draw(100);
-				else b.draw();
-			}
-			
-			list.get(0).base.drawCleanup();
-			
+			if(e.getKey() == Block.glass.texture || e.getKey() == Block.water.texture) continue;
+			renderBlocks(e.getValue());
 		}
-		/*
-		if(worldUpdated) generateVBOs(blockList);
-		int currentHandlerIndex = 0;
-		for(Entry<Texture, ArrayList<BlockInstance>> e : blockList.entrySet()){
-			
-			ArrayList<BlockInstance> list = e.getValue();
-			glEnable(GL_TEXTURE_2D);
-			if(list.get(0).base == Block.air || list.get(0).base.texture == null) continue;
-			
-			list.get(0).base.texture.bind();
-			glBindBuffer(GL_ARRAY_BUFFER, bufferIds.get(currentHandlerIndex));
-			glVertexPointer(Block._VERTEX_SIZE, GL_FLOAT, 0, 0L);
-				
-			glBindBuffer(GL_ARRAY_BUFFER, textureIds.get(currentHandlerIndex));
-			glTexCoordPointer(Block._TEXTURE_SIZE, GL_FLOAT, 0, 0L);
-				
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			
-			for(BlockInstance b : list){
-				glDrawArrays(GL_QUADS, list.indexOf(b), Block._VERTICES);
-			}
-			
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glDisable(GL_TEXTURE_2D);
-			
-			currentHandlerIndex++;
-		}*/
+		
+		if(blockList.containsKey(Block.glass.texture)) renderBlocks(blockList.get(Block.glass.texture));
+		if(blockList.containsKey(Block.water.texture)) renderBlocks(blockList.get(Block.water.texture));
 		
 		worldUpdated = false;
+	}
+
+	/**
+	 * Renders a list of blocks
+	 * @param list ArrayList of BlockInstance
+	 */
+	private void renderBlocks(ArrayList<BlockInstance> list){
+		list.get(0).base.drawSetup();
+		
+		for(BlockInstance b : list){
+			if(Main.getInstance().controller.buildingMode && b == lookingAt) b.draw(100);
+			else b.draw();
+		}
+		
+		list.get(0).base.drawCleanup();
 	}
 	
 	/**
@@ -506,7 +486,10 @@ public class World {
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
-			if(b.base != Block.air) return b;
+			if(b.base != Block.air){
+				if(b.base == Block.water && !Main.getInstance().controller.buildingMode) continue;
+				return b;
+			}
 		}
 		
 		Vector3f looking = Main.getInstance().player.getLookingAt(6);
