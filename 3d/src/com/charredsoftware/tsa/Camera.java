@@ -136,8 +136,8 @@ public class Camera {
 		
 		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS && !Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED){
 			for(int i = GL_LIGHT0 + 1; i < GL_LIGHT7; i ++){
-				glLightf(i, GL_CONSTANT_ATTENUATION, .75f / 2f);
-				glLightf(i, GL_LINEAR_ATTENUATION, .25f / 2f);
+				glLightf(i, GL_CONSTANT_ATTENUATION, .75f / 1f);
+				glLightf(i, GL_LINEAR_ATTENUATION, .25f / 1f);
 				glLightf(i, GL_QUADRATIC_ATTENUATION, .5f / 2f);
 			}
 			Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED = true;

@@ -50,13 +50,13 @@ public class StoreMenu extends Menu{
 	public StoreMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
 		float textHeight = Main.getInstance().font.getHeight("sample text");
-		TransactionButton tb = new TransactionButton(1, 160, FileUtilities.texturesPath + "upgrade_radius.png", "Light radius upgrade", "Increases radius of arrow light!", 45);
+		TransactionButton tb = new TransactionButton(1, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Light radius upgrade", "Increases radius of arrow light!", 45);
 		tb.identifier = "upgrade_radius";
 		widgets.add(tb);
-		tb = new TransactionButton(2, 160, FileUtilities.texturesPath + "upgrade_radius.png", "More Damage", "Arrows cause more damage!", 45);
+		tb = new TransactionButton(2, 180, FileUtilities.texturesPath + "upgrade_radius.png", "More Damage", "Arrows cause more damage!", 45);
 		tb.identifier = "upgrade_damage";
 		widgets.add(tb);
-		tb = new TransactionButton(3, 160, FileUtilities.texturesPath + "upgrade_radius.png", "Range upgrade", "Increases range of arrow", 45);
+		tb = new TransactionButton(3, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Range upgrade", "Increases range of arrow", 45);
 		tb.identifier = "upgrade_range";
 		widgets.add(tb);
 		try {
@@ -70,27 +70,39 @@ public class StoreMenu extends Menu{
 	 */
 	public void update(){
 		if(cooldown > 0) cooldown -= 1;
-		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0) Main.getInstance().gameState = Main.getInstance().previousState;
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0){
+			GameState s = Main.getInstance().previousState;
+			Main.getInstance().previousState = Main.getInstance().gameState;
+			Main.getInstance().gameState = s;
+		}
 		if(Mouse.isButtonDown(0)){
 			for(Widget b : widgets){
-				if(!b.mouseInBounds()) continue;
+				if(cooldown != 0 || !b.mouseInBounds()) continue;
+				cooldown = 15f;
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				if(b.identifier.equalsIgnoreCase("upgrade_radius")){
 					TransactionButton tb = (TransactionButton) b;
 					if(!tb.used && Main.getInstance().player.coins >= tb.cost){
 						tb.used = true;
-						Sys.alert("Upgrade purchased", "You just purchased the " + tb.item + " item for " + tb.cost + " coins!");
 						Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS = true;
+						Main.getInstance().player.coins -= tb.cost;
 					}
 				}
 				if(b.identifier.equalsIgnoreCase("upgrade_damage")){
-									
-								}
-				if(b.identifier.equalsIgnoreCase("upgrade_range")){
-					Main.getInstance().previousState = Main.getInstance().gameState;
-					Main.getInstance().gameState = GameState.SETTINGS;
-				}
-				if(b.identifier.equalsIgnoreCase("quit")){
+					TransactionButton tb = (TransactionButton) b;
+					if(!tb.used && Main.getInstance().player.coins >= tb.cost){
+						tb.used = true;
+						Main.getInstance().player.bow.UPGRADE_MORE_DAMAGE = true;
+						Main.getInstance().player.coins -= tb.cost;
+					}
+				}else if(b.identifier.equalsIgnoreCase("upgrade_range")){
+					TransactionButton tb = (TransactionButton) b;
+					if(!tb.used && Main.getInstance().player.coins >= tb.cost){
+						tb.used = true;
+						Main.getInstance().player.bow.UPGRADE_FURTHER_SHOTS = true;
+						Main.getInstance().player.coins -= tb.cost;
+					}
+				}else if(b.identifier.equalsIgnoreCase("quit")){
 					Main.getInstance().controller.saveSettings();
 					AL.destroy();
 					Display.destroy();
@@ -133,6 +145,8 @@ public class StoreMenu extends Menu{
 		Main.getInstance().titleFont.drawString((Display.getWidth() - Main.getInstance().titleFont.getWidth(title)) / 2, 64, title);
 		String escapeMessage = "Press Escape to return to the previous screen.";
 		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(escapeMessage)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4, escapeMessage);
+		String coins = "Total coins: " + Main.getInstance().player.coins;
+		Main.getInstance().font.drawString((Display.getWidth() - Main.getInstance().font.getWidth(coins)) / 2, 64 + Main.getInstance().titleFont.getHeight(title) + 4 + Main.getInstance().font.getHeight(escapeMessage) + 16, coins);
 		
 		for(Widget w : widgets) w.render();
 		

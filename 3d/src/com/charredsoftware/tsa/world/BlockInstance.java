@@ -72,4 +72,16 @@ public class BlockInstance {
 		return true;
 	}
 	
+	/**
+	 * Sets the position of a blockinstance
+	 * @param x X-position
+	 * @param y Y-position
+	 * @param z Z-position
+	 */
+	public void setPosition(float x, float y, float z){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 }

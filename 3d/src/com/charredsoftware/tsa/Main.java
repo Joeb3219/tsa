@@ -432,8 +432,12 @@ public class Main {
 		
 		if(arrows.size() > 0){
 			arrows.get(0).preRender();
+			BlockInstance testInstance = new BlockInstance(Block.air, 0f, 0f, 0f);
 			for(Arrow a : arrows){
-				a.render();
+				testInstance.setPosition(a.x, a.y, a.z);
+				
+				if(camera.frustum.blockInFrustum(testInstance, true)) a.render();
+				else a.lightArrow(false);
 			}
 			arrows.get(0).postRender();
 		}

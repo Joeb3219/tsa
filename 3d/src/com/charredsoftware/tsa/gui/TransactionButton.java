@@ -13,6 +13,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -45,6 +46,8 @@ public class TransactionButton extends Widget{
 		float individualPadding = 8f;
 		float xPos = getXPosition();
 		
+		float alpha = (used) ? 0.25f : 1f;
+		
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
 		glVertex2f(xPos, pos.y);
@@ -56,7 +59,7 @@ public class TransactionButton extends Widget{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		
-		glColor4f(1f, 1f, 1f, 1f);
+		glColor4f(1f, 1f, 1f, alpha);
 		glBegin(GL_QUADS);
 		glVertex2f(xPos + (getWidth() - iconSize) / 2, pos.y + textHeight + individualPadding);
 		glVertex2f(xPos + (getWidth() - iconSize) / 2 + iconSize, pos.y + textHeight + individualPadding);
@@ -79,8 +82,10 @@ public class TransactionButton extends Widget{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		
-		Main.getInstance().font.drawString(xPos, pos.y, item);
-		Main.getInstance().font.drawString(xPos + (getWidth() - Main.getInstance().font.getWidth(cost + " coins")) / 2, pos.y + iconSize + textHeight + individualPadding + individualPadding, cost + " coins");
+		Color c = new Color(1f, 1f, 1f, alpha);
+		Main.getInstance().font.drawString(xPos, pos.y, item, c);
+		String coinsText = (!used) ? (cost + " coins") : ("Purchased!");
+		Main.getInstance().font.drawString(xPos + (getWidth() - Main.getInstance().font.getWidth(coinsText)) / 2, pos.y + iconSize + textHeight + individualPadding + individualPadding, coinsText, c);
 		
 	}
 	

@@ -42,7 +42,7 @@ public class Arrow extends Entity{
 	 */
 
 	public float beginningVerticalVelocity = 0f, verticalVelocity = 0f, horizontalVelocity = 0f;
-	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 8; //Number of steps to take in movement.
+	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 10; //Number of steps to take in movement.
 	public float drawBackTime, flyingTime = 0f;
 	public float rY, rX; //Used to calculate launch angles.
 	public BlockInstance blockStuckIn = null;
@@ -70,7 +70,7 @@ public class Arrow extends Entity{
 		this.rY = rY;
 		this.rX = rX;
 		float velocityMagnitude = drawBackTime * DRAWBACK_MULTIPLIER;
-		if((shooter instanceof Player) && ((Player)shooter).bow.UPGRADE_FURTHER_SHOTS) velocityMagnitude /= 2;
+		if((shooter instanceof Player) && ((Player)shooter).bow.UPGRADE_FURTHER_SHOTS) velocityMagnitude *= 1.25f;
 		this.drawBackTime = drawBackTime;
 		horizontalVelocity = (float) (Math.abs(Math.cos(Math.toRadians(rY))) * velocityMagnitude);
 		verticalVelocity = (float) (Math.abs(Math.sin(Math.toRadians(rY))) * velocityMagnitude) * ((rY < 0) ? 1 : -1);
@@ -224,14 +224,7 @@ public class Arrow extends Entity{
 	 * Enables lighting if possible.
 	 */
 	public void render(){
-		if(shouldBeLit){
-			if(stuck() && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
-			
-			if(!markedForDeletion){
-				glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
-				Main.getInstance().controller.lightInUse ++;
-			}
-		}
+		lightArrow(shouldBeLit);
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
@@ -260,6 +253,20 @@ public class Arrow extends Entity{
 		damage = (int) (maxDamage * 2 * (1f - m.shielding) * ((bow.UPGRADE_MORE_DAMAGE) ? 2 : 1));
 		
 		return damage;
+	}
+	
+	/**
+	 * Lights an arrow. If visible, sets location to real location. If not, sets it to under world.
+	 * @param isVisible Whether or not the arrow is visible.
+	 */
+	public void lightArrow(boolean isVisible){
+		if(stuck() && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
+		
+		if(!markedForDeletion){
+			if(isVisible) glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
+			else glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, -1000f, z, 1f }))).flip());
+			Main.getInstance().controller.lightInUse ++;
+		}
 	}
 	
 }
