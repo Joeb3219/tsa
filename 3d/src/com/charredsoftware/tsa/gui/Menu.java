@@ -1,23 +1,6 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 
@@ -33,7 +16,7 @@ import com.charredsoftware.tsa.world.Position;
  */
 public class Menu {
 
-	public float red, green, blue, alpha = 0f;
+	public float red = 0f, green = 0f, blue = 0f, alpha = 1f;
 	public Position pos;
 	public float width, height;
 	public ArrayList<Widget> widgets = new ArrayList<Widget>();
@@ -108,8 +91,12 @@ public class Menu {
 		glMatrixMode(GL_MODELVIEW);
 		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST); 
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
+		
+		glColor4f(1f, 1f, 1f, 1f);
 	}
 	
 }

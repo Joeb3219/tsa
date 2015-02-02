@@ -2,7 +2,7 @@ package com.charredsoftware.tsa.entity;
 
 public enum MobType {
 
-	GENERIC(-1), SPINNER(0), STALKER(1), HENCHMAN(2),
+	GENERIC(-1), SPINNER(0), STALKER(1), HENCHMAN(2), WORKER(3), SPUTNIK(4),
 	
 	
 	;

@@ -6,8 +6,7 @@ import org.newdawn.slick.opengl.Texture;
 
 /**
  * A Henchman mob!
- * This mob is a worker of the factory.
- * It just randomly paces around a defined area.
+ * This mob is called upon by a Worker, and follows the player around.
  * All authors are as below specified (joeb3219) unless otherwise specified above method.
  * @author joeb3219
  * @since December 12th, 2014

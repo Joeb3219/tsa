@@ -37,7 +37,6 @@ public class StoreMenu extends Menu{
 	 */
 	public StoreMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
-		float textHeight = Main.getInstance().font.getHeight("sample text");
 		TransactionButton tb = new TransactionButton(1, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Light radius upgrade", "Increases radius of arrow light!", 45);
 		tb.identifier = "upgrade_radius";
 		widgets.add(tb);

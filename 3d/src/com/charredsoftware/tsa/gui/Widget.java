@@ -14,7 +14,7 @@ import com.charredsoftware.tsa.world.Position;
 public class Widget {
 
 	public Position pos;
-	public float red, green, blue, alpha;
+	public float red = 1f, green = 1f, blue = 1f, alpha = 1f;
 	public int value;
 	public String identifier = "null";
 	public float padding = 16f;
