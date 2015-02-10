@@ -1,0 +1,6 @@
+varying vec3 varyingColour;
+
+void main() {
+	varyingColour.rgb = diffuseLightIntensity * gl_FrontMaterial.diffuse.rgb;
+	varyingColour += gl_LightModel.ambient.rgb;
+}

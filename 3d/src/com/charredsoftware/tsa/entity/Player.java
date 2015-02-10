@@ -63,7 +63,7 @@ public class Player extends Mob{
 	 */
 	public void update(){
 		coins = 100;
-		bow.update();
+		if(!Main.getInstance().controller.buildingMode || Main.getInstance().controller.removeMobMode) bow.update();
 		
 		checkMovement((isCrouching || bow.drawBackTime > 0) ? 4f : 1f);
 		

@@ -4,11 +4,9 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
 import static org.lwjgl.opengl.GL11.GL_LIGHT1;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_POSITION;
@@ -27,7 +25,6 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
@@ -55,9 +52,11 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.entity.Arrow;
 import com.charredsoftware.tsa.entity.Entity;
+import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
 import com.charredsoftware.tsa.entity.Stalker;
+import com.charredsoftware.tsa.entity.Worker;
 import com.charredsoftware.tsa.gui.Dialog;
 import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.DialogHUD;
@@ -69,6 +68,7 @@ import com.charredsoftware.tsa.gui.OptionsMenu;
 import com.charredsoftware.tsa.gui.Puzzle;
 import com.charredsoftware.tsa.gui.StoreMenu;
 import com.charredsoftware.tsa.gui.TextPopup;
+import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
@@ -289,7 +289,7 @@ public class Main {
 			value = Integer.parseInt(Keyboard.getKeyName(value));
 			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 3) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 3) player.world.addMob(new Worker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 		}
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_K) && cooldown == 0){
@@ -388,6 +388,7 @@ public class Main {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
+		
 		if(gameState == GameState.MENU){
 			renderMenu("main");
 			return;
@@ -413,6 +414,8 @@ public class Main {
 			}
 			return;
 		}
+
+		camera.shader.renderShader();
 		
 		glLoadIdentity();
 		camera.useView();
@@ -425,24 +428,28 @@ public class Main {
 		}
 		
 		ArrayList<Arrow> arrows = new ArrayList<Arrow>();
+		ArrayList<Mob> mobs = new ArrayList<Mob>();
 		for(int i = player.world.existingEntities.size() - 1; i >= 0; i --){
 			if(player.world.existingEntities.get(i) instanceof Arrow){
 				arrows.add((Arrow) player.world.existingEntities.get(i));
 				continue;
 			}
-			player.world.existingEntities.get(i).render();
+			mobs.add((Mob) player.world.existingEntities.get(i));
 		}
 		
 		if(arrows.size() > 0){
 			arrows.get(0).preRender();
-			BlockInstance testInstance = new BlockInstance(Block.air, 0f, 0f, 0f);
 			for(Arrow a : arrows){
-				testInstance.setPosition(a.x, a.y, a.z);
-				
-				if(camera.frustum.blockInFrustum(testInstance, true)) a.render();
+				glDisable(GL_TEXTURE_2D);
+				if(Physics.getDistance(new Position(a.x, a.y, a.z), player.getPosition()) <= camera.farClip - 2) a.render();
 				else a.lightArrow(false);
 			}
 			arrows.get(0).postRender();
+		}
+		
+		for(Mob m : mobs){
+			glDisable(GL_TEXTURE_2D);
+			m.render();
 		}
 		
 		player.world.render();
@@ -506,6 +513,8 @@ public class Main {
 			player.selectedBlock.draw(0f,0f,0f);
 			glPopMatrix();
 		}
+		
+		camera.shader.closeShader();
 		
 		glEnable(GL_LIGHTING);
 		glMatrixMode(GL_MODELVIEW);
@@ -646,6 +655,7 @@ public class Main {
 		
 		controller.saveSettings();
 		
+		camera.shader.cleanUp();
 		Display.destroy();
 		AL.destroy();
 	}

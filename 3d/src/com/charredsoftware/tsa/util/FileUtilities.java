@@ -23,6 +23,7 @@ public class FileUtilities {
 
 	public static String dataPath = "data/"; //Relative to saves
 	public static String texturesPath = "textures/";
+	public static String shadersPath = "shaders/";
 	public static String soundsPath = "res/sounds/";
 	public static String savesPath = "res/saves/";
 	public static String crashesPath = "res/crashes/";

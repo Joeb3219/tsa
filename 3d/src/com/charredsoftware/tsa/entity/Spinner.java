@@ -8,8 +8,18 @@ package com.charredsoftware.tsa.entity;
  * @since December 12th, 2014
  */
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertex3f;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
@@ -20,6 +30,8 @@ import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
+import com.charredsoftware.tsa.obj.Loader;
+import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
@@ -29,6 +41,7 @@ public class Spinner extends Mob{
 	public static Texture texture = null;
 	private Random r = new Random();
 	public static final float _FOV_TO_SHOOT = 30, _DISTANCE_TO_SHOOT = 5f;
+	public Model model;
 	
 	/**
 	 * Creates a new Spinner Mob
@@ -38,6 +51,7 @@ public class Spinner extends Mob{
 	 */
 	public Spinner(float x, float y, float z){
 		super();
+		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "testing_model.obj"));
 		identifier = MobType.SPINNER;
 		killBonus = 5f;
 		texture = getTexture();
@@ -124,6 +138,25 @@ public class Spinner extends Mob{
 	 * Renders the mob.
 	 */
 	public void render(){
+		
+		glPushMatrix();
+
+		glTranslatef(x, y, z);
+		glRotatef(90 - facing, 0, 1, 0);
+		glRotatef(270, 1, 0, 0);
+		if(ticksSinceDeath > 0){
+			glRotatef(90, 1, 0, 0);
+			glRotatef(facing, 0, 0, 1);
+		}
+		
+		model.render();
+		
+		glPopMatrix();
+		
+		renderBow();
+		
+		
+		if(1 == 1) return;
 		texture.bind();
 		
 		glPushMatrix();

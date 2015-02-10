@@ -1,9 +1,9 @@
 package com.charredsoftware.tsa;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.gluOrtho2D;
-import static org.lwjgl.util.glu.GLU.gluPerspective;
+import static org.lwjgl.util.glu.GLU.*;
 
+import java.awt.peer.LightweightPeer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -30,6 +30,7 @@ public class Camera {
 	public Frustum frustum = Frustum.getInstance();
 	public float yOffset = 0f;
 	public FloatBuffer buffer;
+	public Shader shader;
 	
 	/**
 	 * 
@@ -43,6 +44,7 @@ public class Camera {
 		this.farClip = farClip;
 
 		this.nearClip = 0.0001f;
+		this.shader = new Shader();
 		
 		initializeProjection();
 	}
@@ -149,7 +151,6 @@ public class Camera {
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);
-		
 	}
 	
 	/**
