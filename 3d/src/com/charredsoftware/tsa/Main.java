@@ -448,7 +448,7 @@ public class Main {
 		}
 		
 		for(Mob m : mobs){
-			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_TEXTURE_2D);
 			m.render();
 		}
 		

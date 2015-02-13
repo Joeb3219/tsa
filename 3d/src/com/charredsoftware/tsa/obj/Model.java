@@ -1,7 +1,9 @@
 package com.charredsoftware.tsa.obj;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
@@ -17,6 +19,7 @@ public class Model {
 	public ArrayList<Face> faces = new ArrayList<Face>();
 	
 	public void render(){
+		glDisable(GL_TEXTURE_2D);
 		glBegin(GL_TRIANGLES);
 		for(Face f : faces){
 			Vector3f n1 = normals.get((int) f.normals.y - 1);
