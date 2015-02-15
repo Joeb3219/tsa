@@ -85,7 +85,7 @@ import com.charredsoftware.tsa.world.World;
 
 public class Main {
 
-	public Font font, titleFont;
+	public static Font font, titleFont;
 	public Player player;
 	/** DESIRED_TPS - {@value} The amount of ticks to occur per second. */
 	public static final int DESIRED_TPS = 30;
@@ -112,8 +112,14 @@ public class Main {
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 20f);
 		player = new Player(new World(0), camera);
+		
+		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
+		font = new TrueTypeFont(awtFont, false);
+		awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 26);
+		titleFont = new TrueTypeFont(awtFont, false);
+		
 		HUDDialog = new DialogHUD();
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "Finally, you've made it! You're humanities last hope!@With his Enigma Machine, Dr. Sputnik managed to turn off the sun! You must traverse through his factory and stop him!@Use the WASD keys to move around, and hold right click to shoot at enemies.@Be careful, the journey won't be easy!"));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Finally, you've made it! You're humanities last hope! With his Enigma Machine, Dr. Sputnik managed to turn off the sun! You must traverse through his factory and stop him!@Use the WASD keys to move around, and hold right click to shoot at enemies. Be careful, the journey won't be easy!"));
 		controller.loadSettings();
 	}
 	
@@ -613,11 +619,6 @@ public class Main {
 	 * The game loop. Handles the render/tick methods.
 	 */
 	private void loop(){
-		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
-		font = new TrueTypeFont(awtFont, false);
-		awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 26);
-		titleFont = new TrueTypeFont(awtFont, false);
-		
 		player.spawn();
 		
 		

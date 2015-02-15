@@ -72,7 +72,7 @@ public class Player extends Mob{
 		if(getBlockUnder().base == Block.end){
 			Main.getInstance().puzzleMenu = new Puzzle();
 			Main.getInstance().gameState = GameState.PUZZLE_INTRO;
-			if(world.id == 0) Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PERSON, "You've made it to the first keypad!@A sequence of digits will flash. When it stops, you must enter that combination!@If you enter the wrong code, it will flash again.@Don't waste time!"));
+			if(world.id == 0) Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "You've made it to the first keypad!@A sequence of digits will flash. When it stops, you must enter that combination!@If you enter the wrong code, it will flash again.@Don't waste time!"));
 		}
 		
 		super.update();

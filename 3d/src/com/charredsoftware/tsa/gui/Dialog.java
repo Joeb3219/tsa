@@ -9,6 +9,7 @@ package com.charredsoftware.tsa.gui;
 
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 
@@ -18,8 +19,8 @@ public class Dialog {
 
 	public DialogAuthor author;
 	public String text;
-	public ArrayList<String> lines = new ArrayList<String>();
-	public int displayLine = 0;
+	public ArrayList<ArrayList<String>> slides = new ArrayList<ArrayList<String>>();
+	public int displaySlide = 0, sidePadding = 16;
 	
 	/**
 	 * Creates a new Dialog object
@@ -29,16 +30,35 @@ public class Dialog {
 	public Dialog(DialogAuthor author, String text){
 		this.author = author;
 		this.text = text;
-		splitIntoLines();
+		splitIntoSlides();
 	}
 	
 	/**
-	 * Splits a message into several chunks.
+	 * Splits a slide into several lines.
 	 */
-	private void splitIntoLines(){
-		if(!text.contains("@")) lines.add(text);
+	private void splitIntoLines(String slide){
+		int usableWidth = getUsableWidth();
+		ArrayList<String> slideLines = new ArrayList<String>();
+		String currentLine = author.name + ":";
+		for(String word : slide.split(" ")){
+			if(Main.font.getWidth(currentLine + " " + word) > usableWidth){
+				slideLines.add(currentLine);
+				currentLine = word;
+			}else currentLine += ((currentLine.length() == 0) ? "" :" ") + word;
+		}
+		slideLines.add(currentLine);
+		
+		slides.add(slideLines);
+	}
+	
+	/**
+	 * Splits a message into several slides.
+	 */
+	private void splitIntoSlides(){
+		slides = new ArrayList<ArrayList<String>>();
+		if(!text.contains("@")) splitIntoLines(text);
 		else{
-			for(String s : text.split("@")) lines.add(s);
+			for(String s : text.split("@")) splitIntoLines(s);
 		}
 	}
 	
@@ -46,14 +66,14 @@ public class Dialog {
 	 * Increments the line currently being read.
 	 */
 	public void lineRead(){
-		displayLine ++;
+		displaySlide ++;
 	}
 
 	/**
 	 * @return Returns <tt>true</tt> if all of the lines have been viewed.
 	 */
 	public boolean outOfLines(){
-		if(displayLine >= lines.size()) return true;
+		if(displaySlide >= slides.size()) return true;
 		return false;
 	}
 	
@@ -64,7 +84,27 @@ public class Dialog {
 	 */
 	public void render(float x, float y){
 		Font font = Main.getInstance().font;
-		font.drawString(x, y, lines.get(displayLine), Color.black);
+		float yPosition = y;
+		float previousLineHeight = 0;
+		for(String line : slides.get(displaySlide)){
+			yPosition += previousLineHeight;
+			font.drawString(getTextStartX(), yPosition, line, Color.black);
+			previousLineHeight = font.getHeight(line) + 4;
+		}
+	}
+	
+	/**
+	 * @return Returns the starting X-position of the text.
+	 */
+	public int getTextStartX(){
+		return sidePadding + 64 + sidePadding;
+	}
+	
+	/**
+	 * @return Returns the non-padding, non-author depictor, width of the dialog.
+	 */
+	public int getUsableWidth(){
+		return (Display.getWidth() - sidePadding * 2) - getTextStartX();
 	}
 	
 }
