@@ -48,6 +48,9 @@ public class Stalker extends Mob{
 		this.x = startingX;
 		this.y = startingY;
 		this.z = startingZ;
+		this.startingX = x;
+		this.startingY = y;
+		this.startingZ = z;
 		identifier = MobType.STALKER;
 		texture = getTexture();
 		height = 2f;

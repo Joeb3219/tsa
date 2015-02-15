@@ -550,7 +550,7 @@ public class World {
 	 * @param m Mob to remove
 	 */
 	public void removeMobFromWorld(Mob m){
-		findRegion(m.x, m.z).entitiesToLoad.remove(m);
+		findRegion(m.startingX, m.startingZ).entitiesToLoad.remove(m);
 		existingEntities.remove(m);
 	}
 	

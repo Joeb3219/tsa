@@ -58,6 +58,9 @@ public class Spinner extends Mob{
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.startingX = x;
+		this.startingY = y;
+		this.startingZ = z;
 		this.height = 2f;
 		this.shielding = 0.25f;
 		this.mass = 50f;

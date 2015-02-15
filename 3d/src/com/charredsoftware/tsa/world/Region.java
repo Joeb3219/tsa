@@ -79,7 +79,7 @@ public class Region {
 				Mob m = (Mob) e;
 				writer.println("<mob>");
 				writer.println("<id>" + m.identifier.id + "</id>");
-				writer.println("<position>" + m.x + ":" + m.y + ":" + m.z + "</position>");
+				writer.println("<position>" + m.startingX + ":" + m.startingY + ":" + m.startingZ + "</position>");
 				writer.println("<json></json>");
 				writer.println("</mob>");
 			}
@@ -231,7 +231,6 @@ public class Region {
 					by = Float.parseFloat(value.split(":")[1]);
 					bz = Float.parseFloat(value.split(":")[2]);
 				}else if(c.getNodeName().equals("id")){
-					System.out.println(value);
 					type = MobType.fromString(value);
 				}else if(c.getNodeName().equals("json")){
 					json = value;

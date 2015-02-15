@@ -14,6 +14,7 @@ import com.charredsoftware.tsa.world.World;
 public class Entity {
 	
 	public float x = 2f, y = 1f, z = 2f, mass = 0f; //Mass in kg
+	public float startingX, startingY, startingZ = 0f;
 	public float currentVelocity = 0f, movingSpeed = 0.7f, beginningJumpingVelocity = 0f, currentJumpingVelocity = 0f;
 	public final float defaultStartJumpingVelocity = 1.4f;
 	public World world;
@@ -38,6 +39,9 @@ public class Entity {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.startingX = x;
+		this.startingY = y;
+		this.startingZ = z;
 	}
 	
 	/**
