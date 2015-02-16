@@ -1,6 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -35,7 +35,7 @@ public class GameController {
 
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
-	public String version = "1.1.4";
+	public String version = "1.1.5";
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false, vsync = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;
@@ -100,6 +100,7 @@ public class GameController {
 		font.drawString(xStart, yStart + 130, "Entities: " + Main.getInstance().player.world.existingEntities.size());
 		font.drawString(xStart, yStart + 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
 		if(removeMobMode) font.drawString(xStart, yStart + 170, "Shooting mobs removes them!");
+		glDisable(GL_TEXTURE_2D);
 		
 	}
 	
@@ -109,7 +110,7 @@ public class GameController {
 	public void drawRemainingTime(){
 		String remainingTime = getRemainingTimeAsString();
 		Main.getInstance().titleFont.drawString(Display.getWidth() - 160, 16, remainingTime);
-		Main.getInstance().font.drawString(Display.getWidth() - 160, 12 + Main.getInstance().titleFont.getHeight(remainingTime), "Level " + (Main.getInstance().player.world.id + 1) + "/4");
+		Main.getInstance().font.drawString(Display.getWidth() - 160, 12 + Main.getInstance().titleFont.getHeight(remainingTime), "Room " + (Main.getInstance().player.world.id + 1) + "/4");
 	}
 	
 	/**

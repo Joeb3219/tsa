@@ -72,7 +72,11 @@ public class Player extends Mob{
 		if(getBlockUnder().base == Block.end){
 			Main.getInstance().puzzleMenu = new Puzzle();
 			Main.getInstance().gameState = GameState.PUZZLE_INTRO;
-			if(world.id == 0) Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "You've made it to the first keypad!@A sequence of digits will flash. When it stops, you must enter that combination!@If you enter the wrong code, it will flash again.@Don't waste time!"));
+			if(world.id == 0){
+				Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "It appears that each room has a passcode puzzle lock! Our top hackers have broken into the system, and we have the code."));
+				Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "What is it?"));
+				Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "It wouldn't be a challenge if I just told you! Instead, I'll flash the code one digit at a time, and you must key it in afterwards. If you input it incorrectly, I'll flash the code again. Act quickly, the time is ticking!"));
+			}
 		}
 		
 		super.update();

@@ -61,11 +61,18 @@ public class DialogHUD {
 	}
 	
 	/**
+	 * Resets the lines of a dialog, pending a width change (makes them adjust to size change).
+	 */
+	public void resetDialogLines(){
+		for(Dialog d : dialogs) d.splitIntoSlides();
+	}
+	
+	/**
 	 * Renders the current dialog.
 	 */
 	public void render(){
 		float width = Display.getWidth() - x;
-		float height = 100;
+		float height = 112;
 		y = Display.getHeight();
 		float y = this.y - height;
 		
@@ -90,7 +97,7 @@ public class DialogHUD {
 		
 		glPopMatrix();
 		
-		float imageTopPadding = 8;
+		float imageTopPadding = (height - 64) / 2;
 		glPushMatrix();
 		glColor3f(0f, 0f, 0f);
 		glBegin(GL_QUADS);
@@ -104,7 +111,8 @@ public class DialogHUD {
 		glEnable(GL_TEXTURE_2D);
 		
 		dialogs.get(0).render(x + 10, y + 10);
-		Main.getInstance().font.drawString(x + 10, y + 100 - Main.getInstance().font.getHeight("ABCDEF") - 4, "Press Enter to continue...", Color.black);
+		String continueText = "Press Enter to continue...";
+		Main.getInstance().font.drawString(Display.getWidth() - 16 - Main.getInstance().font.getWidth(continueText), y + height - Main.getInstance().font.getHeight("ABCDEF") - 2, continueText, Color.darkGray);
 		
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);

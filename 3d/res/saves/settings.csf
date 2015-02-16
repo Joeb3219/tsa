@@ -1,7 +1,7 @@
 <Settings>
 <setting>
 <id>main_developer_mode</id>
-<value>true</value>
+<value>false</value>
 </setting>
 <setting>
 <id>main_difficulty</id>

@@ -54,7 +54,7 @@ public class Dialog {
 	/**
 	 * Splits a message into several slides.
 	 */
-	private void splitIntoSlides(){
+	public void splitIntoSlides(){
 		slides = new ArrayList<ArrayList<String>>();
 		if(!text.contains("@")) splitIntoLines(text);
 		else{

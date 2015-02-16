@@ -1,37 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHT1;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glIsEnabled;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glVertex2f;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -119,7 +88,10 @@ public class Main {
 		titleFont = new TrueTypeFont(awtFont, false);
 		
 		HUDDialog = new DialogHUD();
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Finally, you've made it! You're humanities last hope! With his Enigma Machine, Dr. Sputnik managed to turn off the sun! You must traverse through his factory and stop him!@Use the WASD keys to move around, and hold right click to shoot at enemies. Be careful, the journey won't be easy!"));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "You! Yes, you! You've stumbled into the Enigma Machine!"));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "The Enigma what?"));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The Enigma Machine! It's an evil machine that Dr. Sputnik made! It turned off the SUN! Listen, kid, you must go through the factory and turn off the machine. Our Intel says that Sputnik is on the 4th floor."));
+		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The factory is full of his minions, and we have just 15 minutes until the Earth freezes. Listen, kid, hold the right mouse button to use your flame bow to neutralize his minions."));
 		controller.loadSettings();
 	}
 	
@@ -499,6 +471,8 @@ public class Main {
 			renderHUD();
 			
 			if(controller.developerMode) controller.renderDeveloperText();
+			else font.drawString(0, -100, "");
+			glEnable(GL_TEXTURE_2D);
 
 			if(HUDDialog.hasDialogs()) HUDDialog.render();
 		}
@@ -632,6 +606,7 @@ public class Main {
 			if(Display.wasResized()){
 				glViewport(0, 0, Display.getWidth(), Display.getHeight());
 				camera.resetAspectRatio(Display.getWidth() * 1.0f / Display.getHeight());
+				HUDDialog.resetDialogLines();
 			}
 			long now = System.nanoTime();
 			delta+= (now - lastTime) / nanoSeconds;
