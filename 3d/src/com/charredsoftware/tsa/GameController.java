@@ -1,6 +1,8 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glDisable;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -19,11 +21,15 @@ import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.gui.Button;
 import com.charredsoftware.tsa.gui.ControlSwitcher;
+import com.charredsoftware.tsa.gui.Dialog;
+import com.charredsoftware.tsa.gui.DialogAuthor;
+import com.charredsoftware.tsa.gui.DialogHUD;
 import com.charredsoftware.tsa.gui.OptionsMenu;
 import com.charredsoftware.tsa.gui.Slider;
 import com.charredsoftware.tsa.gui.ToggleSwitcher;
 import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
+import com.charredsoftware.tsa.world.Block;
 
 /**
  * GameController class. Used to have a single place to store info about the current game session.
@@ -45,7 +51,7 @@ public class GameController {
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
-	public String sessionName;
+	private int dialogToAdd = 0;
 	
 	/**
 	 * Things to check on keyboard updates.
@@ -82,6 +88,41 @@ public class GameController {
 		}
 		
 		while(Keyboard.next()){}
+	}
+	
+	/**
+	 * Adds a new dialog to the hud if the time is appropriate (when events happen).
+	 */
+	public void addDialogs(){
+		DialogHUD HUDDialog = Main.getInstance().HUDDialog;
+		if(dialogToAdd == 0){
+			HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "You! Yes, you! You've stumbled into the Enigma Machine!"));
+			HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "The Enigma what?"));
+			HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The Enigma Machine! It's an evil machine that Dr. Sputnik made! It turned off the SUN! Listen, kid, you must go through the factory and turn off the machine. Our Intel says that Sputnik is on the 4th floor."));
+			HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The factory is full of his minions, and we have just 15 minutes until the Earth freezes. Listen, kid, hold the right mouse button to use your flame bow to neutralize his minions."));
+			dialogToAdd ++;
+		}else if(dialogToAdd == 1 && Main.getInstance().player.world.id == 0 && Main.getInstance().gameState == GameState.PUZZLE){
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "It appears that each room has a passcode puzzle lock! Our top hackers have broken into the system, and we have the code."));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "What is it?"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "It wouldn't be a challenge if I just told you! Instead, I'll flash the code one digit at a time, and you must key it in afterwards. If you input it incorrectly, I'll flash the code again. Act quickly, the time is ticking!"));
+			dialogToAdd ++;
+		}else if(dialogToAdd == 2 && Main.getInstance().player.world.id == 1){
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Woah, you've made it to the first machine room! You can finally see the inner-workings of the Enigma Machine."));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Be careful of his workers - if they spot you, they'll call their henchmen to attack you!"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "By the way, did you know that we can send you upgrades for you bow if you have enough coin? Just press " + Keyboard.getKeyName(control_buy) + "!"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "You're charging me when I'm saving the world?"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Listen, kid, capitalism won't take a hit just because of bad circumstance. I won't bug you until you reach the fourth floor."));
+			dialogToAdd ++;
+		}else if(dialogToAdd == 3 && Main.getInstance().player.world.id == 3){
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Listen, kid, you're in the very bottom of the Enigma Machine. All you need to do now is destroy Dr. Sputnik!"));
+			dialogToAdd ++; 
+		}else if(dialogToAdd == 4 && Main.getInstance().player.world.id == 3 && (true)){
+			//TODO: Implement code to detect how far from Dr. Sputnik
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Who... Whaa... Ho... WHO ARE YOU?!"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "I'm here to foil your evil plans! Direct order of the President!"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Haha! YOU? Stop me? That's laughable!"));
+			dialogToAdd ++; 
+		}
 	}
 	
 	/**

@@ -88,10 +88,7 @@ public class Main {
 		titleFont = new TrueTypeFont(awtFont, false);
 		
 		HUDDialog = new DialogHUD();
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "You! Yes, you! You've stumbled into the Enigma Machine!"));
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "The Enigma what?"));
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The Enigma Machine! It's an evil machine that Dr. Sputnik made! It turned off the SUN! Listen, kid, you must go through the factory and turn off the machine. Our Intel says that Sputnik is on the 4th floor."));
-		HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "The factory is full of his minions, and we have just 15 minutes until the Earth freezes. Listen, kid, hold the right mouse button to use your flame bow to neutralize his minions."));
+		
 		controller.loadSettings();
 	}
 	
@@ -168,16 +165,13 @@ public class Main {
 			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
 			gameOver_menu.update();
 		}
-		if(gameState == GameState.PUZZLE_INTRO){
-			controller.timeLeft --;
-			if(HUDDialog.hasDialogs()) HUDDialog.update();
-			else gameState = GameState.PUZZLE;
-		}
 		if(gameState == GameState.PUZZLE){
 			Mouse.setGrabbed(false);
 			if(puzzleMenu == null) puzzleMenu = new Puzzle();
-			puzzleMenu.update();
+			if(!HUDDialog.hasDialogs()) puzzleMenu.update();
 		}
+		
+		controller.addDialogs();
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
 			player.update();
@@ -383,13 +377,11 @@ public class Main {
 			renderMenu("game_over");
 			return;
 		}
-		if(gameState == GameState.PUZZLE || gameState == GameState.PUZZLE_INTRO){
+		if(gameState == GameState.PUZZLE){
 			renderMenu("puzzle");
-			if(gameState == GameState.PUZZLE_INTRO){
-				glLoadIdentity();
-				glDisable(GL_TEXTURE_2D);
-				if(HUDDialog.hasDialogs()) HUDDialog.render();
-			}
+			glLoadIdentity();
+			glDisable(GL_TEXTURE_2D);
+			if(HUDDialog.hasDialogs()) HUDDialog.render();
 			return;
 		}
 

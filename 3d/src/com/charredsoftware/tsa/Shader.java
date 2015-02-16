@@ -47,8 +47,6 @@ public class Shader {
 			fragmentReader.close();
 		} catch (Exception e) {new CrashReport(e);}
 		
-		System.out.println(vsSource + " " + fsSource);
-		
 		glShaderSource(vertexShaderId, vsSource);
 		glCompileShader(vertexShaderId);
 
