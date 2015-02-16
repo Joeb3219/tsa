@@ -127,28 +127,6 @@ public class World {
 	}
 	
 	/**
-	 * @return Returns the number of chests in the world (that would have loaded)
-	 */
-	public int getTotalChests(int found){
-		int chests = found;
-		for(Region r : regions){
-			for(BlockInstance b : r.blocks){
-				if(b instanceof Chest) chests ++;
-			}
-		}
-		return chests;
-	}
-	
-	/**
-	 * @return Returns the number of mobs in the world (that would have loaded)
-	 */
-	public int getTotalMobs(){
-		int mobs = 0;
-		for(Region r : regions) mobs += r.entitiesToLoad.size();
-		return mobs;
-	}
-
-	/**
 	 * Does exactly what getBlock does, but won't create a new region if one doesn't exist.
 	 * Useful for when doing occulsion culling.
 	 * @param p Position to check.

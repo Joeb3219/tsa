@@ -7,6 +7,8 @@ import static org.lwjgl.opengl.GL11.glDisable;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -29,7 +31,7 @@ import com.charredsoftware.tsa.gui.Slider;
 import com.charredsoftware.tsa.gui.ToggleSwitcher;
 import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
-import com.charredsoftware.tsa.world.Block;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * GameController class. Used to have a single place to store info about the current game session.
@@ -52,6 +54,9 @@ public class GameController {
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
 	private int dialogToAdd = 0;
+	public int totalChests = 10;
+	public int totalMobs = 20;
+	
 	
 	/**
 	 * Things to check on keyboard updates.
