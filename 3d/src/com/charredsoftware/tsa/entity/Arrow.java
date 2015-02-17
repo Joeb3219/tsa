@@ -120,7 +120,7 @@ public class Arrow extends Entity{
 			if(m.health <= 0) continue;
 			if(m.arrowHit(this)){
 				blockStuckIn = new BlockInstance(Block.air, 0, -100, 0);
-				Sound.ARROW_HIT.playSfx();
+				Sound.ARROW_HIT_MOB.playSfx();
 				markedForDeletion = true;
 				return;
 			}

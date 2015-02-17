@@ -23,6 +23,7 @@ public class Sound {
 	public static Sound WALKING = new Sound("walking.wav");
 	public static Sound BOW_SHOT = new Sound("bow_shot.wav");
 	public static Sound ARROW_HIT = new Sound("arrow_hit.wav");
+	public static Sound ARROW_HIT_MOB = new Sound("arrow_hit_mob.wav");
 	public static Sound BUTTON_CLICKED = new Sound("arrow_hit.wav");
 	public static Sound BOW_PULLBACK = new Sound("bow_pullback.wav");
 	public static Sound OUT_OF_ARROWS = new Sound("out_of_arrows.wav");
