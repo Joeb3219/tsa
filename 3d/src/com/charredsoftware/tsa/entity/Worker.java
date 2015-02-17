@@ -1,5 +1,15 @@
 package com.charredsoftware.tsa.entity;
 
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertex3f;
+
 import java.io.IOException;
 import java.util.Random;
 
@@ -119,6 +129,66 @@ public class Worker extends Mob{
 		if(getRelativeAngle() <= _FOV_TO_CALL) return true;
 		
 		return false;
+	}
+	
+	public void render(){
+		texture.bind();
+		
+		glPushMatrix();
+		glTranslatef(x, y, z);
+		glRotatef(90 - facing, 0, 1, 0);
+		if(ticksSinceDeath > 0){
+			glRotatef(90, 1, 0, 0);
+			glRotatef(facing, 0, 0, 1);
+		}
+		
+		glBegin(GL_QUADS);
+		
+		float leftBound = -0.5f;
+		float rightBound = 0.5f;
+		float heightMultiplier = height;
+		
+		//Front
+		glTexCoord2f(0, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
+		glTexCoord2f(0, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
+		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
+		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
+
+		//Right
+		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
+		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
+		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
+
+		//Left
+		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
+		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
+		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
+
+		//Back
+		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
+		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
+		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
+		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
+
+		//Bottom
+		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound,leftBound,leftBound);
+		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound,leftBound,leftBound);
+		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
+		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
+
+		//Top
+		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
+		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
+		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
+		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
+	
+		glEnd();
+		
+		renderBow();
+		
+		glPopMatrix();
 	}
 	
 }

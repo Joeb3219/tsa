@@ -41,10 +41,10 @@ public class GameOverMenu extends Menu{
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Score: " + Main.getInstance().player.score);
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Mobs killed: " + Main.getInstance().player.mobsKilled + "/" + Main.getInstance().controller.totalMobs + " (" + ((int) (Main.getInstance().player.mobsKilled / Main.getInstance().controller.totalMobs * 100) + "%)"));
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Mobs killed: " + Main.getInstance().player.mobsKilled + "/" + Main.getInstance().controller.totalMobs + " (" + (((int) (100 * Main.getInstance().player.mobsKilled / Main.getInstance().controller.totalMobs)) + "%)"));
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Chests looted: " + Main.getInstance().player.chestsFound + "/" + Main.getInstance().controller.totalChests + " (" + ((int) (Main.getInstance().player.chestsFound / Main.getInstance().controller.totalChests * 100) + "%)"));
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Chests looted: " + Main.getInstance().player.chestsFound + "/" + Main.getInstance().controller.totalChests + " (" + ((int) (100 * Main.getInstance().player.chestsFound / Main.getInstance().controller.totalChests) + "%)"));
 		b.checkable = false;
 		widgets.add(b);
 		

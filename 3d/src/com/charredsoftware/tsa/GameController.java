@@ -54,8 +54,8 @@ public class GameController {
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
 	private int dialogToAdd = 0;
-	public int totalChests = 10;
-	public int totalMobs = 20;
+	public int totalChests = 27;
+	public int totalMobs = 28;
 	
 	
 	/**
@@ -141,7 +141,7 @@ public class GameController {
 		font.drawString(xStart, yStart + 30, Main.getInstance().player.getPosition().toStringWithIntegers());
 		font.drawString(xStart, yStart + 50, "FPS: " + Main.getInstance().displayFPS);
 		font.drawString(xStart, yStart + 70, "Lighting: " + lighting);
-		font.drawString(xStart, yStart + 90, "Building: " + buildingMode);
+		font.drawString(xStart, yStart + 90, "Building: " + buildingMode + ((buildingMode) ? " (" + Main.getInstance().player.selectedBlock.toString() + ")" : ""));
 		font.drawString(xStart, yStart + 110, "RemoveMobMode: " + removeMobMode);
 		font.drawString(xStart, yStart + 130, "Entities: " + Main.getInstance().player.world.existingEntities.size());
 		font.drawString(xStart, yStart + 150, "Rendered Blocks: " + Main.getInstance().player.world.renderedBlocks + " (" + Main.getInstance().player.world.regionsRendered + ")");
