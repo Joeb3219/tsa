@@ -40,7 +40,7 @@ public class Spinner extends Mob{
 
 	public static Texture texture = null;
 	private Random r = new Random();
-	public static final float _FOV_TO_SHOOT = 30, _DISTANCE_TO_SHOOT = 5f;
+	public static final float _FOV_TO_SHOOT = 40, _DISTANCE_TO_SHOOT = 6.5f, _DISTANCE_TO_TRACK = 8f;
 	public Model model;
 	
 	/**
@@ -92,9 +92,9 @@ public class Spinner extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
-		if(determineIfShouldShoot()){
+		if(determineIfShouldTrack()){
 			facing += 2;
-			if(!determineIfShouldShoot()) facing -= 4;
+			if(!determineIfShouldTrack()) facing -= 4;
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
 				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;
@@ -129,12 +129,10 @@ public class Spinner extends Mob{
 	}
 	
 	/**
-	 * @return Returns <tt>true</tt> if should shoot the bow.
+	 * @return Returns <tt>true</tt> if should track the player.
 	 */
-	public boolean determineIfShouldShoot(){
-		if(getRelativeAngle() <= _FOV_TO_SHOOT) return true;
-		
-		return false;
+	public boolean determineIfShouldTrack(){
+		return (getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_TRACK && getRelativeAngle() <= _FOV_TO_SHOOT);
 	}
 	
 	/**
