@@ -53,7 +53,7 @@ public class GameController {
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
-	private int dialogToAdd = 0;
+	public int dialogToAdd = 0;
 	public int totalChests = 27;
 	public int totalMobs = 28;
 	

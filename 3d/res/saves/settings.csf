@@ -1,7 +1,7 @@
 <Settings>
 <setting>
 <id>main_developer_mode</id>
-<value>false</value>
+<value>true</value>
 </setting>
 <setting>
 <id>main_difficulty</id>
@@ -29,7 +29,7 @@
 </setting>
 <setting>
 <id>graphics_fullscreen</id>
-<value>false</value>
+<value>true</value>
 </setting>
 <setting>
 <id>graphics_vsync</id>

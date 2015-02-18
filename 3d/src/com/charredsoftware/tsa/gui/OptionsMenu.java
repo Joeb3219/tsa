@@ -176,6 +176,7 @@ public class OptionsMenu extends Menu{
 					try {
 						if(Main.getInstance().controller.fullscreen) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
 						else Display.setFullscreen(false);
+						Main.getInstance().HUDDialog.resetDialogLines();
 					} catch (LWJGLException e) {new CrashReport(e);}
 				}
 				if(w.identifier.contains("vsync")){

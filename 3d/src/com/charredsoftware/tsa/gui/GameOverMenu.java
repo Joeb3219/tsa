@@ -69,6 +69,7 @@ public class GameOverMenu extends Menu{
 				if(b.identifier.equalsIgnoreCase("play")){
 					Main.getInstance().player.world = new World(0);
 					Main.getInstance().player.reset();
+					Main.getInstance().controller.dialogToAdd = 0;
 					Main.getInstance().gameState = GameState.GAME;
 				}
 				if(b.identifier.equalsIgnoreCase("quit")){
