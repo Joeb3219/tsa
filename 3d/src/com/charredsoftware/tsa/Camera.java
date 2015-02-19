@@ -95,7 +95,17 @@ public class Camera {
 		glEnable(GL_COLOR_MATERIAL);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 		
-		glClearColor(0 / 255f, 0 / 255f, 0 / 255f, 1f);
+		glEnable(GL_FOG);
+		FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
+	    fogColor.put(0.05f).put(0.05f).put(0.05f).put(1.0f).flip();
+
+	    glFogi(GL_FOG_MODE, GL_LINEAR);
+	    glFog(GL_FOG_COLOR, fogColor);
+	    glFogf(GL_FOG_DENSITY, 1f);
+	    glHint(GL_FOG_HINT, GL_NICEST);
+	    glFogf(GL_FOG_START, 4.0f);
+	    glFogf(GL_FOG_END, farClip);
+		glClearColor(0.05f, 0.05f, 0.05f, 1f);
 		
 		frustum.calculateFrustum(fov, Display.getWidth() * 1f / Display.getHeight(), nearClip, farClip);
 	}

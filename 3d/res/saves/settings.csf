@@ -29,7 +29,7 @@
 </setting>
 <setting>
 <id>graphics_fullscreen</id>
-<value>true</value>
+<value>false</value>
 </setting>
 <setting>
 <id>graphics_vsync</id>

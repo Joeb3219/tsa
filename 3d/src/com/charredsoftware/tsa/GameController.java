@@ -55,7 +55,7 @@ public class GameController {
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
 	public int dialogToAdd = 0;
 	public int totalChests = 27;
-	public int totalMobs = 28;
+	public int totalMobs = 29;
 	
 	
 	/**
