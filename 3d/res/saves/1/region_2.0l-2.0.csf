@@ -2,6 +2,11 @@
 <settings>
 </settings>
 <mobs>
+<mob>
+<id>3</id>
+<position>36.0:3.0:-22.0</position>
+<json>[x/y/z] {31/3/-22}</json>
+</mob>
 </mobs>
 <blocks>
 <block>

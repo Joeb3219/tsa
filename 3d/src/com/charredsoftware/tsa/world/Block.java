@@ -1,26 +1,6 @@
 package com.charredsoftware.tsa.world;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glDisableClientState;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnableClientState;
-import static org.lwjgl.opengl.GL11.glPopAttrib;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushAttrib;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glTexCoordPointer;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -190,11 +170,11 @@ public class Block {
 	 * @param z Z-position
 	 * @param alpha Alpha value
 	 */
-	public void draw(float x, float y, float z, int alpha){
+	public void draw(float x, float y, float z, float facing, int alpha){
 		if(vboHandler == -1 || textHandler == -1) generateRenderBuffers();
 		glPushAttrib(GL_CURRENT_BIT);
 		glColor4f(.1f, .1f, .1f, alpha);
-		draw(x, y, z);
+		draw(x, y, z, facing);
 		glClear(GL_ALPHA);
 		glPopAttrib();
 	}
@@ -237,11 +217,12 @@ public class Block {
 	 * @param z Z-position
 	 * @see #drawBlock(float, float, float)
 	 */
-	public void drawBlock(float x, float y, float z){
+	public void drawBlock(float x, float y, float z, float facing){
 		if(this == Block.air) return;
 		
 		glPushMatrix();
 		glTranslatef(x, y, z);
+		glRotatef(facing, 0f, 1f, 0f);
 		
 		glDrawArrays(GL_QUADS, 0, _VERTICES);
 		
@@ -255,11 +236,11 @@ public class Block {
 	 * @param y Y-position
 	 * @param z Z-position
 	 */
-	public void draw(float x, float y, float z){
+	public void draw(float x, float y, float z, float facing){
 		if(texture == null) return;
 		if(vboHandler == -1 || textHandler == -1) generateRenderBuffers();
 		drawSetup();
-		drawBlock(x, y, z);
+		drawBlock(x, y, z, facing);
 		drawCleanup();
 	}
 	

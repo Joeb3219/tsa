@@ -13,6 +13,7 @@ public class BlockInstance {
 	public float x, y, z = 0;
 	public float special = -1;
 	public String initJson = ""; //Used to give json data on load.
+	public float facing = 0f;
 	
 	/**
 	 * Creates a BlockInstance
@@ -43,7 +44,7 @@ public class BlockInstance {
 	 * @param alpha Alpha value to draw the block with.
 	 */
 	public void draw(int alpha){
-		base.draw(x, y, z, alpha);
+		base.draw(x, y, z, facing, alpha);
 	}
 	
 	/**
@@ -51,7 +52,7 @@ public class BlockInstance {
 	 * @see com.charredsoftware.tsa.world.Block#draw(float, float, float)
 	 */
 	public void draw(){
-		base.draw(x, y, z);
+		base.draw(x, y, z, facing);
 	}
 	
 	/**

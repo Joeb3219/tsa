@@ -43,7 +43,7 @@ public class GameController {
 
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
-	public String version = "1.1.5";
+	public String version = "1.2.1";
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false, vsync = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;

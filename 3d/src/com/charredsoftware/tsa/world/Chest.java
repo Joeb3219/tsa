@@ -38,10 +38,11 @@ public class Chest extends BlockInstance{
 	public String generateChestJson(){
 		String json = "{";
 		json += "\"arrows\":\"" + arrows + "\",";
-		json += "\"coins\":\"" + coins + "\"";
+		json += "\"coins\":\"" + coins + "\"" + "\",";
+		json += "\"facing\":\"" + facing + "\"";
 		return json + "}";
 	}
-	
+
 	/**
 	 * Sets arrow and coin count to data in json.
 	 */
@@ -49,10 +50,11 @@ public class Chest extends BlockInstance{
 		if(!initJson.contains("{")) return;
 		while(initJson.charAt(0) == '{') initJson = initJson.substring(1, initJson.length() - 1);
 		String[] sections = initJson.split(",");
-		if(sections.length != 2) return;
+		if(sections.length != 3) return;
 		
 		arrows = Integer.parseInt(sections[0].split(":")[1].replace("\"", ""));
 		coins = Integer.parseInt(sections[1].split(":")[1].replace("\"", ""));
+		facing = Float.parseFloat(sections[2].split(":")[1].replace("\"", ""));
 	}
 	
 }

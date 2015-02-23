@@ -235,7 +235,12 @@ public class Main {
 		}
 		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_C) && player.world.lookingAt.base.solid && cooldown == 0){
 			BlockInstance adjacent = player.world.getBlockAdjectLookingAt();
-			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\"}"));
+			float angle = 360 - camera.rx;
+			if(angle < 90) angle = 0;
+			else if(angle < 180) angle = 90;
+			else if(angle < 270) angle = 180;
+			else if(angle < 360) angle = 270;
+			player.world.addBlock(new Chest(adjacent.x, adjacent.y, adjacent.z, "{\"ARROWS\":\"5\",\"COINS\":\"5\",\"FACING\":\"" + angle + "\"}"));
 			cooldown += 10f;
 		}
 		if(controller.developerMode && controller.buildingMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_M) && player.world.lookingAt.base.solid && cooldown == 0){
@@ -482,7 +487,7 @@ public class Main {
 			glRotatef(60, 1, 0, 0);
 			glRotatef(60, 0, 1, 0);
 			glRotatef(60, 0, 0, 1);
-			player.selectedBlock.draw(0f,0f,0f);
+			player.selectedBlock.draw(0f, 0f, 0f, 0f);
 			glPopMatrix();
 		}
 		
