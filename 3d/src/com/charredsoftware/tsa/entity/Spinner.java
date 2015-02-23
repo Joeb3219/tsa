@@ -24,6 +24,7 @@ import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 public class Spinner extends Mob{
 
@@ -37,8 +38,8 @@ public class Spinner extends Mob{
 	 * @param y Y-Position
 	 * @param z Z-Position
 	 */
-	public Spinner(float x, float y, float z){
-		super();
+	public Spinner(World world, float x, float y, float z){
+		super(world);
 		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "spinner.obj"));
 		identifier = MobType.SPINNER;
 		killBonus = 5f;
@@ -74,7 +75,7 @@ public class Spinner extends Mob{
 			facing += 2;
 			if(!determineIfShouldTrack()) facing -= 4;
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
-				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
+				Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();
 			}
@@ -92,7 +93,7 @@ public class Spinner extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(a.calculateDamage(this));
-		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
+		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}
 	

@@ -80,7 +80,7 @@ public class Main {
 		controller = GameController.getInstance();
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 14f);
-		player = new Player(new World(0), camera);
+		player = new Player(new World(1), camera);
 		
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
@@ -264,10 +264,10 @@ public class Main {
 				}
 			}while(!keyFound);
 			value = Integer.parseInt(Keyboard.getKeyName(value));
-			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 3) player.world.addMob(new Worker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z, player.getPosition().clone()));
-			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 1) player.world.addMob(new Spinner(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 2) player.world.addMob(new Stalker(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 3) player.world.addMob(new Worker(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z, player.getPosition().clone()));
+			if(value == 4) player.world.addMob(new Spinner(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 		}
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_K) && cooldown == 0){
 			cooldown = 10f;

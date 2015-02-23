@@ -15,6 +15,7 @@ import com.charredsoftware.tsa.obj.Loader;
 import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * A Stalker mob!
@@ -35,7 +36,8 @@ public class Stalker extends Mob{
 	public float speed = 2f; //in m/s
 	public static Model model;
 	
-	public Stalker(float startingX, float startingY, float startingZ){
+	public Stalker(World world, float startingX, float startingY, float startingZ){
+		super(world);
 		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "stalker.obj"));
 		startingPoint = new Position(startingX, startingY, startingZ);
 		this.x = startingX;
@@ -54,7 +56,7 @@ public class Stalker extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(a.calculateDamage(this));
-		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
+		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}
 	
@@ -74,12 +76,13 @@ public class Stalker extends Mob{
 		if(followingPlayer){
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_SHOOT){
 				if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
-					Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
+					Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, facing - 270 , 0);
 					a.shouldBeLit = false;
 					Sound.BOW_SHOT.playSfx();
 				}
 			}else attemptMovement();
 		}else{
+			jump(false);
 			boolean changedDirection = false;
 			if(r.nextInt(65) == 1 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){
 				changedDirection = true;
@@ -120,6 +123,9 @@ public class Stalker extends Mob{
 			}
 		}
 
+		if(dest.y > current.y) jump(true);
+		else jump(false);
+		
 		this.x = closest.x;
 		this.z = closest.z;
 	}
@@ -129,8 +135,8 @@ public class Stalker extends Mob{
 		float fY = dY + y;
 		float fZ = dZ + z;
 
-		if(!Main.getInstance().player.world.getBlock(new Position(fX, fY, fZ)).base.solid){
-			if(Main.getInstance().player.world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
+		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
+			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
 			x = fX;
 			z = fZ;
 			y = fY;

@@ -239,9 +239,9 @@ public class Region {
 					json = value;
 				}
 			}
-			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(bx, by, bz));
-			if(type == MobType.STALKER) entitiesToLoad.add(new Stalker(bx, by, bz));
-			if(type == MobType.WORKER) entitiesToLoad.add(new Worker(bx, by, bz, Position.createPositionFromString(json)));
+			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(world, bx, by, bz));
+			if(type == MobType.STALKER) entitiesToLoad.add(new Stalker(world, bx, by, bz));
+			if(type == MobType.WORKER) entitiesToLoad.add(new Worker(world, bx, by, bz, Position.createPositionFromString(json)));
 			
 		}
 	}

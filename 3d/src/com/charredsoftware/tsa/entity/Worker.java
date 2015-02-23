@@ -15,6 +15,7 @@ import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * A Worker mob!
@@ -41,8 +42,8 @@ public class Worker extends Mob{
 	 * @param y Y-Position
 	 * @param z Z-Position
 	 */
-	public Worker(float x, float y, float z, Position pos2){
-		super();
+	public Worker(World world, float x, float y, float z, Position pos2){
+		super(world);
 		this.pos2 = pos2;
 		this.pos2.normalizeCoords();
 		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "worker.obj"));
@@ -94,7 +95,7 @@ public class Worker extends Mob{
 		System.out.println("SPAWNING A NEW ONE!!");
 		ticksSinceLastCall = _TICKS_BETWEEN_CALLS;
 		henchmenCalled ++;
-		Main.getInstance().player.world.existingEntities.add(new Henchman(Main.getInstance().player.world.getNearbyEmptyBlock(getPosition(), 2)));
+		world.existingEntities.add(new Henchman(world, world.getNearbyEmptyBlock(getPosition(), 2)));
 	}
 	
 	/**
@@ -131,7 +132,7 @@ public class Worker extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(this.health);
-		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
+		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}
 	

@@ -1,7 +1,13 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL11.GL_CURRENT_BIT;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glPopAttrib;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushAttrib;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,10 +16,12 @@ import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.obj.Loader;
 import com.charredsoftware.tsa.obj.Model;
+import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.BlockInstance;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * Mob class.
@@ -39,8 +47,9 @@ public class Mob extends Entity{
 	/**
 	 * Creates a new Mob.
 	 */
-	public Mob(){
+	public Mob(World world){
 		super();
+		this.world = world;
 		if(bowModel == null) bowModel = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "bow.obj"));
 	}
 	
@@ -86,19 +95,45 @@ public class Mob extends Entity{
 	}
 	
 	/**
+	 * Makes the mob jump
+	 */
+	public void jump(boolean startJump){
+		if(startJump && !isJumping && standingOnSolid()){
+			isJumping = true;
+			currentJumpingVelocity = defaultStartJumpingVelocity;
+			beginningJumpingVelocity = defaultStartJumpingVelocity;
+			jumpingTime = 0;
+		}
+		else if(isJumping){
+			jumpingTime += .5f / Main.DESIRED_TPS;
+			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Physics.DOWNWARD_ACCELERATION, jumpingTime);
+			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
+			checkCanJump(currentJumpingVelocity / 2);
+			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
+				if(this instanceof Player) {
+					Sound.HIT_GROUND.playSfx();
+					if(potentialDamage > 0) Sound.DAMAGE_GROUND.playSfx();
+					if(!Main.getInstance().controller.buildingMode) health -= potentialDamage;
+				}
+				y = (float) ((int) y);
+				isJumping = false;
+			}
+		}if(!isJumping && !standingOnSolid()){
+			isJumping = true;
+			currentJumpingVelocity = 0;
+			beginningJumpingVelocity = currentJumpingVelocity;
+			jumpingTime = 0;
+		}
+	}
+	
+	/**
 	 * Check if the mob is getting damaged.
 	 */
 	protected void checkGettingHurt() {
 		if(y < -50 && ((int) y) % 4 == 0) health --;
 		if(stuckInBlock()){
-			//At first, attempt to push player away.
 			Position startingPosition = getPosition();
 			if(canMove(0, 1, 0)) move(0, 1, 0);
-			/*if(canMove(1, 0, 0)) move(1, 0, 0);
-			else if(canMove(0, 0, 1)) move(0, 0, 1);
-			else if(canMove(-1, 0, 0)) move(-1, 0, 0);
-			else if(canMove(0, 0, -1)) move(0, 0, -1);*/
-			if(startingPosition.equals(getPosition()) && (this instanceof Player && !Main.getInstance().controller.buildingMode)) health -= 1f; //Didn't move -> start suffocating!
 		}
 	}
 	

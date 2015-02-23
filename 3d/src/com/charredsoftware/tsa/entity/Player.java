@@ -49,7 +49,7 @@ public class Player extends Mob{
 	 * @param camera Camera that will follow the player.
 	 */
 	public Player(World world, Camera camera){
-		super();
+		super(world);
 		this.world = world;
 		this.camera = camera;
 		health = 20;
@@ -66,7 +66,7 @@ public class Player extends Mob{
 		
 		checkMovement((isCrouching || bow.drawBackTime > 0) ? 4f : 1f);
 		
-		checkJumping();
+		jump(Keyboard.isKeyDown(Main.getInstance().controller.control_jump));
 		
 		if(getBlockUnder().base == Block.end){
 			Main.getInstance().puzzleMenu = new Puzzle();
@@ -85,36 +85,6 @@ public class Player extends Mob{
 		if(health > 20) health = 20;
 	}
 	
-	/**
-	 * Handles all jumping code.
-	 */
-	private void checkJumping() {
-		if(Keyboard.isKeyDown(Main.getInstance().controller.control_jump) && !isJumping && standingOnSolid()){
-			isJumping = true;
-			currentJumpingVelocity = defaultStartJumpingVelocity;
-			beginningJumpingVelocity = defaultStartJumpingVelocity;
-			jumpingTime = 0;
-		}
-		else if(isJumping){
-			jumpingTime += .5f / Main.DESIRED_TPS;
-			currentJumpingVelocity = Physics.calculateFinalVelocity(beginningJumpingVelocity, Physics.DOWNWARD_ACCELERATION, jumpingTime);
-			float potentialDamage = Physics.calculateDamage(currentJumpingVelocity / 2);
-			checkCanJump(currentJumpingVelocity / 2);
-			if(standingOnSolid() && jumpingTime > .5f / Main.DESIRED_TPS){
-				Sound.HIT_GROUND.playSfx();
-				if(potentialDamage > 0) Sound.DAMAGE_GROUND.playSfx();
-				if(!Main.getInstance().controller.buildingMode) health -= potentialDamage;
-				y = (float) ((int) y);
-				isJumping = false;
-			}
-		}if(!isJumping && !standingOnSolid()){
-			isJumping = true;
-			currentJumpingVelocity = 0;
-			beginningJumpingVelocity = currentJumpingVelocity;
-			jumpingTime = 0;
-		}
-	}
-
 	/**
 	 * Moves the player if indicated keyboard/mouse events occur.
 	 * @param speedModifier SpeedModifier, such that it is slower to move and crouch.

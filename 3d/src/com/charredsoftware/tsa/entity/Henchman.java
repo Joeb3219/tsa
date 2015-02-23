@@ -15,6 +15,7 @@ import com.charredsoftware.tsa.obj.Loader;
 import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
+import com.charredsoftware.tsa.world.World;
 
 /**
  * A Henchman mob!
@@ -33,7 +34,8 @@ public class Henchman extends Mob{
 	public float speed = 2f; //in m/s
 	public static Model model;
 	
-	public Henchman(Position p){
+	public Henchman(World world, Position p){
+		super(world);
 		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "henchman.obj"));
 		startingPoint = new Position(p.x, p.y, p.z);
 		this.x = p.x;
@@ -52,7 +54,7 @@ public class Henchman extends Mob{
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
 		if(hit) damageMob(a.calculateDamage(this));
-		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
+		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}
 	
@@ -71,7 +73,7 @@ public class Henchman extends Mob{
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
 			if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
-				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
+				Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, facing - 270 , 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();
 			}
@@ -105,8 +107,8 @@ public class Henchman extends Mob{
 		float fY = dY + y;
 		float fZ = dZ + z;
 
-		if(!Main.getInstance().player.world.getBlock(new Position(fX, fY, fZ)).base.solid){
-			if(Main.getInstance().player.world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
+		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
+			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
 			x = fX;
 			z = fZ;
 			y = fY;
