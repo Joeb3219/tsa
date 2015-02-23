@@ -1,25 +1,17 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Random;
 
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-
-import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
-import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
+import com.charredsoftware.tsa.obj.Loader;
+import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
@@ -35,38 +27,37 @@ import com.charredsoftware.tsa.world.Position;
  */
 public class Worker extends Mob{
 
-	public Position pos2;
-	public static Texture texture = null;
+	public Position pos2, startingPoint;
 	private Random r = new Random();
-	public static final float _FOV_TO_CALL = 30, _DISTANCE_TO_CALL = 2f;
+	public static final float _FOV_TO_CALL = 30, _DISTANCE_TO_CALL = 3.5f;
+	public int henchmenCalled = 0, ticksSinceLastCall = 0;
+	public static final int _MAX_HECNHMEN_CAN_CALL = 4, _TICKS_BETWEEN_CALLS = Main.DESIRED_TPS * 2;
 	public boolean walkingTowardsPos2 = true;
+	public static Model model;
 	
 	/**
-	 * Creates a new Spinner Mob
+	 * Creates a new Worker Mob
 	 * @param x X-Position
 	 * @param y Y-Position
 	 * @param z Z-Position
 	 */
-	public Worker(float x, float y, float z){
+	public Worker(float x, float y, float z, Position pos2){
 		super();
+		this.pos2 = pos2;
+		this.pos2.normalizeCoords();
+		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "worker.obj"));
 		identifier = MobType.WORKER;
 		killBonus = 2f;
-		texture = getTexture();
+		startingPoint = new Position(x, y, z);
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.startingX = x;
+		this.startingY = y;
+		this.startingZ = z;
 		this.height = 2f;
 		this.shielding = 0.0f;
 		this.mass = 50f;
-	}
-	
-	public Texture getTexture(){
-		if(texture == null){
-			try {
-				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
-			} catch (IOException e) {new CrashReport(e);}
-		}
-		return texture;
 	}
 	
 	/**
@@ -86,18 +77,48 @@ public class Worker extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
-		if(determineIfShouldShoot()){
-			facing += 2;
-			if(!determineIfShouldShoot()) facing -= 4;
-			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_CALL && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
-				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
-				a.shouldBeLit = false;
-				Sound.BOW_SHOT.playSfx();
+		
+		callHenchman();
+		
+		attemptMovement();
+	}
+	
+	/**
+	 * Calls a henchman if the player is within the required view.
+	 */
+	private void callHenchman(){
+		if(ticksSinceLastCall > 0 || henchmenCalled > _MAX_HECNHMEN_CAN_CALL) return;
+		if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) > _DISTANCE_TO_CALL) return; //Too far away
+		if(getRelativeAngle() > _FOV_TO_CALL) return; //Not within angle
+		Main.getInstance().player.world.existingEntities.add(new Henchman(Main.getInstance().player.world.getNearbyEmptyBlock(getPosition(), 2)));
+		ticksSinceLastCall = _TICKS_BETWEEN_CALLS;
+		henchmenCalled ++;
+	}
+	
+	/**
+	 * Attempts to move the mob in some direction.
+	 */
+	private void attemptMovement(){
+		float stepSize = 0.125f / 4;
+		Position dest = (walkingTowardsPos2) ? pos2 : startingPoint;
+		Position current = getPosition();
+		
+		Position closest = current;
+		for(float x = current.x - stepSize; x <= current.x + stepSize; x += stepSize){
+			for(float z = current.z - stepSize; z <= current.z + stepSize; z += stepSize){
+				Position testingPos = new Position(x, y, z);
+				if(testingPos.calculateDistance(dest) < closest.calculateDistance(dest)) closest = testingPos;
 			}
-		}else{
-			facing -= 1;
+		}
+
+		if(closest.calculateDistance(dest) <= 0.125f){
+			walkingTowardsPos2 = !walkingTowardsPos2;
+			if(facing == 360) facing = 180;
+			else facing = 360;
 		}
 		
+		this.x = closest.x;
+		this.z = closest.z;
 	}
 	
 	/**
@@ -107,7 +128,7 @@ public class Worker extends Mob{
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
-		if(hit) damageMob(a.calculateDamage(this));
+		if(hit) damageMob(this.health);
 		if(hit && Main.getInstance().controller.removeMobMode) Main.getInstance().player.world.removeMobFromWorld(this);
 		return hit;
 	}
@@ -122,71 +143,18 @@ public class Worker extends Mob{
 		return f;
 	}
 	
-	/**
-	 * @return Returns <tt>true</tt> if should shoot the bow.
-	 */
-	public boolean determineIfShouldShoot(){
-		if(getRelativeAngle() <= _FOV_TO_CALL) return true;
-		
-		return false;
-	}
-	
 	public void render(){
-		texture.bind();
-		
 		glPushMatrix();
+
 		glTranslatef(x, y, z);
 		glRotatef(90 - facing, 0, 1, 0);
+		glRotatef(270, 1, 0, 0);
 		if(ticksSinceDeath > 0){
 			glRotatef(90, 1, 0, 0);
 			glRotatef(facing, 0, 0, 1);
 		}
 		
-		glBegin(GL_QUADS);
-		
-		float leftBound = -0.5f;
-		float rightBound = 0.5f;
-		float heightMultiplier = height;
-		
-		//Front
-		glTexCoord2f(0, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(0, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-
-		//Right
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-
-		//Left
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Back
-		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Bottom
-		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-
-		//Top
-		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-	
-		glEnd();
-		
-		renderBow();
+		model.render();
 		
 		glPopMatrix();
 	}

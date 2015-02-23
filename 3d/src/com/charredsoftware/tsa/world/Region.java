@@ -19,6 +19,7 @@ import com.charredsoftware.tsa.entity.MobType;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
 import com.charredsoftware.tsa.entity.Stalker;
+import com.charredsoftware.tsa.entity.Worker;
 
 /**
  * Region class.
@@ -80,7 +81,9 @@ public class Region {
 				writer.println("<mob>");
 				writer.println("<id>" + m.identifier.id + "</id>");
 				writer.println("<position>" + m.startingX + ":" + m.startingY + ":" + m.startingZ + "</position>");
-				writer.println("<json></json>");
+				String json = "";
+				if(m instanceof Worker) json += ((Worker) m).pos2.toStringWithIntegers();
+				writer.println("<json>" + json + "</json>");
 				writer.println("</mob>");
 			}
 			writer.println("</mobs>");
@@ -238,6 +241,7 @@ public class Region {
 			}
 			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(bx, by, bz));
 			if(type == MobType.STALKER) entitiesToLoad.add(new Stalker(bx, by, bz));
+			if(type == MobType.WORKER) entitiesToLoad.add(new Worker(bx, by, bz, Position.createPositionFromString(json)));
 			
 		}
 	}

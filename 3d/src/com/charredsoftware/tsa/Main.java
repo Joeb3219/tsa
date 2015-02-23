@@ -261,7 +261,7 @@ public class Main {
 			value = Integer.parseInt(Keyboard.getKeyName(value));
 			if(value == 1) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 			if(value == 2) player.world.addMob(new Stalker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
-			if(value == 3) player.world.addMob(new Worker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 3) player.world.addMob(new Worker(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z, player.getPosition().clone()));
 			if(value == 4) player.world.addMob(new Spinner(player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 		}
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_K) && cooldown == 0){

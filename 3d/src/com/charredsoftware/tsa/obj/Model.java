@@ -1,12 +1,6 @@
 package com.charredsoftware.tsa.obj;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glNormal3f;
-import static org.lwjgl.opengl.GL11.glVertex3f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 
@@ -17,11 +11,14 @@ public class Model {
 	public ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
 	public ArrayList<Vector3f> normals = new ArrayList<Vector3f>();
 	public ArrayList<Face> faces = new ArrayList<Face>();
+	public ArrayList<Material> materials = new ArrayList<Material>();
 	
 	public void render(){
+		glPushAttrib(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_TEXTURE_2D);
 		glBegin(GL_TRIANGLES);
 		for(Face f : faces){
+			glColor3f(f.material.diffuse.x, f.material.diffuse.y, f.material.diffuse.z);
 			Vector3f n1 = normals.get((int) f.normals.y - 1);
 			glNormal3f(n1.x, n1.y, n1.z);
 			Vector3f v1 = vertices.get((int) f.vertex.x - 1);
@@ -36,6 +33,8 @@ public class Model {
 			glVertex3f(v3.x, v3.y, v3.z);
 		}
 		glEnd();
+		
+		glPopAttrib();
 	}
 	
 }

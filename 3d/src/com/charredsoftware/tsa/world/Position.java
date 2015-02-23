@@ -52,6 +52,17 @@ public class Position {
 	}
 	
 	/**
+	 * @param s String to create position from
+	 * @return Returns a position object with the coordinates in the string
+	 */
+	public static Position createPositionFromString(String s){
+		String coords = s.split("\\{")[1].split("\\}")[0];
+		return new Position(Float.parseFloat(coords.split("/")[0]),
+				Float.parseFloat(coords.split("/")[1]),
+				Float.parseFloat(coords.split("/")[2]));
+	}
+	
+	/**
 	 * Converts decimal to whole number.
 	 */
 	public void normalizeCoords(){
@@ -77,6 +88,13 @@ public class Position {
 		Position p = (Position) o;
 		if(p.x == x && p.y == y && p.z == z) return true;
 		return false;
+	}
+	
+	/**
+	 * @return Returns a copy of the position.
+	 */
+	public Position clone(){
+		return new Position(x, y, z);
 	}
 	
 	/**

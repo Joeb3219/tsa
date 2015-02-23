@@ -8,25 +8,14 @@ package com.charredsoftware.tsa.entity;
  * @since December 12th, 2014
  */
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-
-import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
@@ -38,10 +27,9 @@ import com.charredsoftware.tsa.world.Position;
 
 public class Spinner extends Mob{
 
-	public static Texture texture = null;
 	private Random r = new Random();
 	public static final float _FOV_TO_SHOOT = 40, _DISTANCE_TO_SHOOT = 6.5f, _DISTANCE_TO_TRACK = 8f;
-	public Model model;
+	public static Model model;
 	
 	/**
 	 * Creates a new Spinner Mob
@@ -51,10 +39,9 @@ public class Spinner extends Mob{
 	 */
 	public Spinner(float x, float y, float z){
 		super();
-		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "testing_model.obj"));
+		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "spinner.obj"));
 		identifier = MobType.SPINNER;
 		killBonus = 5f;
-		texture = getTexture();
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -64,15 +51,6 @@ public class Spinner extends Mob{
 		this.height = 2f;
 		this.shielding = 0.25f;
 		this.mass = 50f;
-	}
-	
-	public Texture getTexture(){
-		if(texture == null){
-			try {
-				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
-			} catch (IOException e) {new CrashReport(e);}
-		}
-		return texture;
 	}
 	
 	/**
@@ -151,68 +129,6 @@ public class Spinner extends Mob{
 		}
 		
 		model.render();
-		
-		glPopMatrix();
-		
-		renderBow();
-		
-		
-		if(1 == 1) return;
-		texture.bind();
-		
-		glPushMatrix();
-		glTranslatef(x, y, z);
-		glRotatef(90 - facing, 0, 1, 0);
-		if(ticksSinceDeath > 0){
-			glRotatef(90, 1, 0, 0);
-			glRotatef(facing, 0, 0, 1);
-		}
-		
-		glBegin(GL_QUADS);
-		
-		float leftBound = -0.5f;
-		float rightBound = 0.5f;
-		float heightMultiplier = height;
-		
-		//Front
-		glTexCoord2f(0, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(0, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-
-		//Right
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-
-		//Left
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Back
-		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Bottom
-		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-
-		//Top
-		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-	
-		glEnd();
-
-		renderBow();
 		
 		glPopMatrix();
 	}

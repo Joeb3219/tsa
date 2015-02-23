@@ -1,26 +1,18 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex3f;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Random;
 
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-
-import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
-import com.charredsoftware.tsa.physics.Physics;
+import com.charredsoftware.tsa.obj.Loader;
+import com.charredsoftware.tsa.obj.Model;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
@@ -36,14 +28,15 @@ import com.charredsoftware.tsa.world.Position;
 
 public class Stalker extends Mob{
 	
-	public static Texture texture = null;
-	public static final float _DISTANCE_TO_STALK = 5f, _FOV_TO_STALK = 60f, _CHAIN_TO_STARTING_POINT = 5f;
+	public static final float _DISTANCE_TO_STALK = 5f, _FOV_TO_STALK = 90f, _CHAIN_TO_STARTING_POINT = 5f, _DISTANCE_TO_SHOOT = 1.5f;
 	private Random r = new Random();
 	public Position startingPoint;
 	public boolean followingPlayer = false;
 	public float speed = 2f; //in m/s
+	public static Model model;
 	
 	public Stalker(float startingX, float startingY, float startingZ){
+		if(model == null) model = Loader.load(new File(FileUtilities.getBaseDirectory() + "res/" + FileUtilities.texturesPath + "stalker.obj"));
 		startingPoint = new Position(startingX, startingY, startingZ);
 		this.x = startingX;
 		this.y = startingY;
@@ -52,19 +45,9 @@ public class Stalker extends Mob{
 		this.startingY = y;
 		this.startingZ = z;
 		identifier = MobType.STALKER;
-		texture = getTexture();
 		height = 2f;
 		shielding = 0.5f;
 		killBonus = 10f;
-	}
-	
-	public Texture getTexture(){
-		if(texture == null){
-			try {
-				texture = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "henchman.png"));
-			} catch (IOException e) {new CrashReport(e);}
-		}
-		return texture;
 	}
 	
 	public boolean arrowHit(Arrow a){
@@ -89,11 +72,13 @@ public class Stalker extends Mob{
 		}
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
-			if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
-				Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
-				a.shouldBeLit = false;
-				Sound.BOW_SHOT.playSfx();
-			}
+			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_SHOOT){
+				if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
+					Arrow a = new Arrow(this, Main.getInstance().player.world, new Position(x, y + 1, z), 5, facing - 270 , 0);
+					a.shouldBeLit = false;
+					Sound.BOW_SHOT.playSfx();
+				}
+			}else attemptMovement();
 		}else{
 			boolean changedDirection = false;
 			if(r.nextInt(65) == 1 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){
@@ -117,6 +102,26 @@ public class Stalker extends Mob{
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Attempts to move the mob in some direction.
+	 */
+	private void attemptMovement(){
+		float stepSize = 0.1f;
+		Position dest = Main.getInstance().player.getPosition();
+		Position current = getPosition();
+		
+		Position closest = current;
+		for(float x = current.x - stepSize; x <= current.x + stepSize; x += stepSize){
+			for(float z = current.z - stepSize; z <= current.z + stepSize; z += stepSize){
+				Position testingPos = new Position(x, y, z);
+				if(testingPos.calculateDistance(dest) < closest.calculateDistance(dest)) closest = testingPos;
+			}
+		}
+
+		this.x = closest.x;
+		this.z = closest.z;
 	}
 	
 	public void move(float dX, float dY, float dZ){
@@ -145,61 +150,17 @@ public class Stalker extends Mob{
 	}
 	
 	public void render(){
-		texture.bind();
-		
 		glPushMatrix();
+
 		glTranslatef(x, y, z);
 		glRotatef(90 - facing, 0, 1, 0);
+		glRotatef(270, 1, 0, 0);
 		if(ticksSinceDeath > 0){
 			glRotatef(90, 1, 0, 0);
 			glRotatef(facing, 0, 0, 1);
 		}
 		
-		glBegin(GL_QUADS);
-		
-		float leftBound = -0.5f;
-		float rightBound = 0.5f;
-		float heightMultiplier = height;
-		
-		//Front
-		glTexCoord2f(0, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(0, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-
-		//Right
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-
-		//Left
-		glTexCoord2f(2/4f, 2/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(2/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Back
-		glTexCoord2f(4/4f, 2/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(3/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(3/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(4/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-
-		//Bottom
-		glTexCoord2f(0/4f, 3/4f); glVertex3f(leftBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 3/4f); glVertex3f(rightBound,leftBound,leftBound);
-		glTexCoord2f(1/4f, 2/4f); glVertex3f(rightBound,leftBound,rightBound);
-		glTexCoord2f(0/4f, 2/4f); glVertex3f(leftBound,leftBound,rightBound);
-
-		//Top
-		glTexCoord2f(0/4f, 0/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 0/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,leftBound);
-		glTexCoord2f(1/4f, 1/4f); glVertex3f(rightBound,rightBound * heightMultiplier + 0.5f,rightBound);
-		glTexCoord2f(0/4f, 1/4f); glVertex3f(leftBound,rightBound * heightMultiplier + 0.5f,rightBound);
-	
-		glEnd();
-		
-		renderBow();
+		model.render();
 		
 		glPopMatrix();
 	}

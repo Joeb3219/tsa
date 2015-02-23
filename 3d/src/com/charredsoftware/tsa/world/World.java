@@ -532,4 +532,19 @@ public class World {
 		existingEntities.remove(m);
 	}
 	
+	/**
+	 * @return Returns a nearby position on the same y layer that has no other blocks in it, excluding base position. Returns base if no empty spaces.
+	 * @param base Position to consider relative to. Will not return this position.
+	 * @param searchRange maximum range to search from the base.
+	 */
+	public Position getNearbyEmptyBlock(Position base, float searchRange){
+		float halfRange = searchRange / 2;
+		for(float x = base.x - halfRange; x < base.x + halfRange; x ++){
+			for(float z = base.z - halfRange; z < base.z + halfRange; z ++){
+				if(getBlock(x, base.y, z).base == Block.air) return new Position(x, base.y, z);
+			}
+		}
+		
+		return base;
+	}
 }

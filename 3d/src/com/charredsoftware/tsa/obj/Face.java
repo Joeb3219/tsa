@@ -6,8 +6,10 @@ public class Face {
 
 	public Vector3f vertex = new Vector3f();
 	public Vector3f normals = new Vector3f();
+	public Material material;
 	
-	public Face(Vector3f v, Vector3f n){
+	public Face(Material material, Vector3f v, Vector3f n){
+		this.material = material;
 		this.vertex = v;
 		this.normals = n;
 	}
