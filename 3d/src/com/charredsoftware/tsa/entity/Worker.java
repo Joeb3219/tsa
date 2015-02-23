@@ -29,9 +29,9 @@ public class Worker extends Mob{
 
 	public Position pos2, startingPoint;
 	private Random r = new Random();
-	public static final float _FOV_TO_CALL = 30, _DISTANCE_TO_CALL = 3.5f;
+	public static final float _FOV_TO_CALL = 45, _DISTANCE_TO_CALL = 4.5f;
 	public int henchmenCalled = 0, ticksSinceLastCall = 0;
-	public static final int _MAX_HECNHMEN_CAN_CALL = 4, _TICKS_BETWEEN_CALLS = Main.DESIRED_TPS * 2;
+	public static final int _MAX_HECNHMEN_CAN_CALL = 4, _TICKS_BETWEEN_CALLS = Main.DESIRED_TPS * 4;
 	public boolean walkingTowardsPos2 = true;
 	public static Model model;
 	
@@ -65,13 +65,14 @@ public class Worker extends Mob{
 	 */
 	public void update(){
 		if(Main.getInstance().controller.buildingMode) return;
+		ticksSinceLastCall = Math.max(0, ticksSinceLastCall - 1);
 		if(facing <= 0) facing = 360;
 		if(facing > 360) facing = 0;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.mobsKilled ++;
 				Main.getInstance().player.score += killBonus;
-				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Spinner and received " + killBonus + " points!"));
+				Main.getInstance().HUDText.popups.add(new TextPopup("Killed a Worker and received " + killBonus + " points!"));
 			}
 			if(ticksSinceDeath > _TICKS_AFTER_DEATH_TILL_DELETION) markedForDeletion = true;
 			else ticksSinceDeath ++;
@@ -87,12 +88,13 @@ public class Worker extends Mob{
 	 * Calls a henchman if the player is within the required view.
 	 */
 	private void callHenchman(){
-		if(ticksSinceLastCall > 0 || henchmenCalled > _MAX_HECNHMEN_CAN_CALL) return;
-		if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) > _DISTANCE_TO_CALL) return; //Too far away
+		if(ticksSinceLastCall > 0 || henchmenCalled >= _MAX_HECNHMEN_CAN_CALL) return;
+		if(Math.abs(getPosition().calculateDistance(Main.getInstance().player.getPosition())) > _DISTANCE_TO_CALL) return; //Too far away
 		if(getRelativeAngle() > _FOV_TO_CALL) return; //Not within angle
-		Main.getInstance().player.world.existingEntities.add(new Henchman(Main.getInstance().player.world.getNearbyEmptyBlock(getPosition(), 2)));
+		System.out.println("SPAWNING A NEW ONE!!");
 		ticksSinceLastCall = _TICKS_BETWEEN_CALLS;
 		henchmenCalled ++;
+		Main.getInstance().player.world.existingEntities.add(new Henchman(Main.getInstance().player.world.getNearbyEmptyBlock(getPosition(), 2)));
 	}
 	
 	/**

@@ -44,7 +44,7 @@ public class Henchman extends Mob{
 		this.startingZ = z;
 		identifier = MobType.STALKER;
 		height = 2f;
-		shielding = 0.7f;
+		shielding = 0.55f;
 		killBonus = 20f;
 	}
 	
