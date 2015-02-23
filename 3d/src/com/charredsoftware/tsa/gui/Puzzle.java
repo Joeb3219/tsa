@@ -93,10 +93,13 @@ public class Puzzle extends Menu{
 	 */
 	public void generatePuzzle(){
 		String puzzle = "";
+		int lastDigit = 0;
 		for(int i = 0; i < length; i ++){
 			int a = r.nextInt(10);
 			if((i == 0 || i == length) && a == 0) a ++;
+			if(a == lastDigit) a ++;
 			puzzle += a;
+			lastDigit = a;
 		}
 		this.puzzle = Long.parseLong(puzzle);
 	}
