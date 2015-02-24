@@ -23,6 +23,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
+import com.charredsoftware.tsa.Jukebox;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
@@ -151,6 +152,7 @@ public class OptionsMenu extends Menu{
 		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && cooldown == 0){
 			tabName = "main";
 			Main.getInstance().gameState = Main.getInstance().previousState;
+			Jukebox.getInstance().resume();
 		}
 		if(Mouse.isButtonDown(0) && cooldown == 0){
 			for(Widget w : widgets){
@@ -196,6 +198,7 @@ public class OptionsMenu extends Menu{
 					Slider s = (Slider) w;
 					s.update();
 					Main.getInstance().controller.musicVolume = s.value / 100f;
+					Jukebox.getInstance().changeVolume();
 				}
 				if(w.identifier.contains("fov_slider")){
 					Slider s = (Slider) w;
@@ -223,7 +226,10 @@ public class OptionsMenu extends Menu{
 					System.exit(0);
 				}
 				if(w.identifier.contains("goback")){
-					if(w.identifier.split("_")[0].equals(("main"))) Main.getInstance().gameState = Main.getInstance().previousState;
+					if(w.identifier.split("_")[0].equals(("main"))){
+						Main.getInstance().gameState = Main.getInstance().previousState;
+						Jukebox.getInstance().resume();
+					}
 					else tabName = "main";
 				}
 			}

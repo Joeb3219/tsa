@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.Random;
 
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.TextPopup;
 import com.charredsoftware.tsa.obj.Loader;
 import com.charredsoftware.tsa.obj.Model;
@@ -92,7 +93,7 @@ public class Worker extends Mob{
 		if(ticksSinceLastCall > 0 || henchmenCalled >= _MAX_HECNHMEN_CAN_CALL) return;
 		if(Math.abs(getPosition().calculateDistance(Main.getInstance().player.getPosition())) > _DISTANCE_TO_CALL) return; //Too far away
 		if(getRelativeAngle() > _FOV_TO_CALL) return; //Not within angle
-		System.out.println("SPAWNING A NEW ONE!!");
+		Sound.GUARDS_GUARDS.playSfx();
 		ticksSinceLastCall = _TICKS_BETWEEN_CALLS;
 		henchmenCalled ++;
 		world.existingEntities.add(new Henchman(world, world.getNearbyEmptyBlock(getPosition(), 2)));

@@ -21,6 +21,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.GameState;
+import com.charredsoftware.tsa.Jukebox;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
@@ -77,6 +78,7 @@ public class MainMenu extends Menu{
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
 				if(b.identifier.equalsIgnoreCase("play")){
 					Main.getInstance().gameState = GameState.GAME;
+					Jukebox.getInstance().playSong(Jukebox._GAME_MUSIC, true);
 				}
 				if(b.identifier.equalsIgnoreCase("level_editor")){
 									

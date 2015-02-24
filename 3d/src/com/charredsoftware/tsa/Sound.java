@@ -29,6 +29,7 @@ public class Sound {
 	public static Sound OUT_OF_ARROWS = new Sound("out_of_arrows.wav");
 	public static Sound OPENING_CHEST = new Sound("chest_open.wav");
 	public static Sound PUZZLE_SOLVED = new Sound("chest_open.wav");
+	public static Sound GUARDS_GUARDS = new Sound("guards_guards.wav");
 	
 	private String path;
 	public Audio audio;
