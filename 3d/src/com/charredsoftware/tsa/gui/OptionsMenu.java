@@ -76,10 +76,10 @@ public class OptionsMenu extends Menu{
 		widgets.add(b);
 		
 		//Sounds settings
-		Slider s = new Slider(this, startingButtonHeight, "Sound Volume", 0, 100, Main.getInstance().controller.soundVolume);
+		Slider s = new Slider(this, startingButtonHeight, "Sound Volume", 0, 100, Main.getInstance().controller.soundVolume * 100f);
 		s.identifier = "sound_volume_slider";
 		widgets.add(s);
-		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, Main.getInstance().controller.musicVolume);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Music Volume", 0, 100, Main.getInstance().controller.musicVolume * 100f);
 		s.identifier = "sound_music_slider";
 		widgets.add(s);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");

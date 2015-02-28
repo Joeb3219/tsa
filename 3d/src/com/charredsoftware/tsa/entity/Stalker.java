@@ -84,18 +84,18 @@ public class Stalker extends Mob{
 		}else{
 			jump(false);
 			boolean changedDirection = false;
-			if(r.nextInt(65) == 1 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){
+			if(r.nextInt(100) == 3 || (startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT && r.nextInt(25) == 1)){
 				changedDirection = true;
-				facing += 90f;
+				
+				if(r.nextInt(2) == 0) facing += 30;
+				else facing -= 30;
+				
 				if(facing >= 360f) facing = 0f;
 			}
 			if(!changedDirection || startingPoint.calculateDistance(getPosition()) + 0.5f >= _CHAIN_TO_STARTING_POINT){
-				if(r.nextInt(25) == 1){
+				if(r.nextInt(100) == 50){
 					Position beginMovement = new Position(x, y, z);
-					if(facing == 0) move(1, 0, 0);
-					if(facing == 90) move(0, 0, 1);
-					if(facing == 180) move(-1, 0, 0);
-					if(facing == 270) move(0, 0, -1);
+					move((float) Math.cos(Math.toRadians(facing)), 0, (float) Math.sin(Math.toRadians(facing)));
 					if(startingPoint.calculateDistance(beginMovement) - 0.5f > _CHAIN_TO_STARTING_POINT){
 						//Moved to far!
 						x = beginMovement.x;
@@ -137,6 +137,7 @@ public class Stalker extends Mob{
 
 		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
 			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
+			//facing = (float) (Math.atan2(fZ - z, fX - x) * 180 / Math.PI);
 			x = fX;
 			z = fZ;
 			y = fY;

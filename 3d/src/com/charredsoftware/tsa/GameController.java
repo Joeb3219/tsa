@@ -47,7 +47,7 @@ public class GameController {
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false, vsync = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;
-	public float soundVolume = 0.5f, musicVolume = 0.5f;
+	public float soundVolume = 0.5f, musicVolume = 0.35f;
 	public int control_forward = Keyboard.KEY_W, control_backward = Keyboard.KEY_S, control_strafe_left = Keyboard.KEY_A, control_strafe_right = Keyboard.KEY_D, control_jump = Keyboard.KEY_SPACE, control_crouch = Keyboard.KEY_LCONTROL, control_buy = Keyboard.KEY_Z;
 	public int difficulty = 2; //1 = easy, 2 = normal, 3 = hard
 	public int lightInUse = GL_LIGHT1;
@@ -214,8 +214,8 @@ public class GameController {
 							vsync = Boolean.parseBoolean(value);
 							Display.setVSyncEnabled(vsync);
 						}
-						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value); 
-						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value); 
+						if(identifier.contains("volume_slider")) soundVolume = Float.parseFloat(value) / 100f; 
+						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value) / 100f; 
 						if(identifier.contains("fov_slider")){
 						}
 						if(identifier.contains("control_forward")) control_forward = Integer.parseInt(value);

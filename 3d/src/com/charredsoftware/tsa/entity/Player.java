@@ -7,7 +7,6 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushAttrib;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import org.lwjgl.input.Keyboard;
@@ -17,10 +16,7 @@ import com.charredsoftware.tsa.Camera;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
-import com.charredsoftware.tsa.gui.Dialog;
-import com.charredsoftware.tsa.gui.DialogAuthor;
 import com.charredsoftware.tsa.gui.Puzzle;
-import com.charredsoftware.tsa.physics.Physics;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
