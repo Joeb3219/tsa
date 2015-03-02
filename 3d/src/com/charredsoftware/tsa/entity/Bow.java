@@ -1,6 +1,6 @@
 package com.charredsoftware.tsa.entity;
 
-import org.lwjgl.input.Mouse;
+import com.charredsoftware.tsa.Mouse;
 
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;

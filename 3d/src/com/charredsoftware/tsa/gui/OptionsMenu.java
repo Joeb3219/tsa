@@ -16,7 +16,6 @@ import java.util.Arrays;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
@@ -25,6 +24,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Jukebox;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Mouse;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;

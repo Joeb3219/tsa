@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
-import org.lwjgl.input.Mouse;
+import com.charredsoftware.tsa.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.Main;

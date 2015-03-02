@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
@@ -23,6 +22,7 @@ import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Jukebox;
 import com.charredsoftware.tsa.Main;
+import com.charredsoftware.tsa.Mouse;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
@@ -73,6 +73,7 @@ public class MainMenu extends Menu{
 	 */
 	public void update(){
 		if(Mouse.isButtonDown(0)){
+			System.out.println("DOWn");
 			for(Button b : buttons){
 				if(!b.mouseInBounds()) continue;
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();

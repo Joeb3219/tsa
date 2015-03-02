@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import com.charredsoftware.tsa.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;

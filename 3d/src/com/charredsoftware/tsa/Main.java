@@ -39,7 +39,6 @@ import java.util.Random;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -165,6 +164,7 @@ public class Main {
 				Display.setTitle("CharredSoftware: " + controller.gameName + " v." + controller.version + " [Joe B, 2014]");
 			}
 			Display.create();
+			Display.setDisplayConfiguration(1f, -0.1f, 1f);
 		}catch(Exception e){new CrashReport(e);}
 	}
 	
@@ -173,6 +173,7 @@ public class Main {
 	 * Tick/update method.
 	 */
 	public void tick(){
+		com.charredsoftware.tsa.Mouse.update();
 		if(controller.timeLeft <= 0 || player.health <= 0){
 			Mouse.setGrabbed(false);
 			gameState = GameState.GAME_OVER;
