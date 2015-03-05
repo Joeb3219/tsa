@@ -1,14 +1,6 @@
 package com.charredsoftware.tsa.gui;
 
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,7 +65,6 @@ public class MainMenu extends Menu{
 	 */
 	public void update(){
 		if(Mouse.isButtonDown(0)){
-			System.out.println("DOWn");
 			for(Button b : buttons){
 				if(!b.mouseInBounds()) continue;
 				Sound.BUTTON_CLICKED.playSfxIfNotPlaying();
@@ -117,8 +108,8 @@ public class MainMenu extends Menu{
 		
 		for(Button b : buttons) b.render();
 		
-		glEnable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_LIGHTING);
 		
 		logo.bind();
 		glBegin(GL_QUADS);

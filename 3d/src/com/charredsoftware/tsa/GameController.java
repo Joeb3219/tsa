@@ -7,8 +7,6 @@ import static org.lwjgl.opengl.GL11.glDisable;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -31,7 +29,6 @@ import com.charredsoftware.tsa.gui.Slider;
 import com.charredsoftware.tsa.gui.ToggleSwitcher;
 import com.charredsoftware.tsa.gui.Widget;
 import com.charredsoftware.tsa.util.FileUtilities;
-import com.charredsoftware.tsa.world.World;
 
 /**
  * GameController class. Used to have a single place to store info about the current game session.
@@ -49,6 +46,7 @@ public class GameController {
 	public boolean applet = false;
 	public float soundVolume = 0.5f, musicVolume = 0.35f;
 	public int control_forward = Keyboard.KEY_W, control_backward = Keyboard.KEY_S, control_strafe_left = Keyboard.KEY_A, control_strafe_right = Keyboard.KEY_D, control_jump = Keyboard.KEY_SPACE, control_crouch = Keyboard.KEY_LCONTROL, control_buy = Keyboard.KEY_Z;
+	public float gamma = 1f, brightness = 0f, contrast = 1f;
 	public int difficulty = 2; //1 = easy, 2 = normal, 3 = hard
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
@@ -218,6 +216,9 @@ public class GameController {
 						if(identifier.contains("music_slider")) musicVolume = Float.parseFloat(value) / 100f; 
 						if(identifier.contains("fov_slider")){
 						}
+						if(identifier.contains("gamma_slider")) gamma = Float.parseFloat(value) / 100f;
+						if(identifier.contains("brightness_slider")) brightness = (Float.parseFloat(value) - 50)/ 100f;
+						if(identifier.contains("contrast_slider")) contrast = Float.parseFloat(value) / 100f;
 						if(identifier.contains("control_forward")) control_forward = Integer.parseInt(value);
 						if(identifier.contains("control_backward")) control_backward = Integer.parseInt(value);
 						if(identifier.contains("control_strafe_left")) control_strafe_left = Integer.parseInt(value);
@@ -228,6 +229,7 @@ public class GameController {
 					}
 				}
 			}
+			Display.setDisplayConfiguration(gamma, brightness, contrast);
 		}catch(Exception e){new CrashReport(e);}
 	}
 	

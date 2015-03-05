@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -14,7 +15,9 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
+
 import com.charredsoftware.tsa.Mouse;
+
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
@@ -127,7 +130,7 @@ public class StoreMenu extends Menu{
 		for(Widget w : widgets) w.render();
 		
 		
-		glEnable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		
 		logo.bind();

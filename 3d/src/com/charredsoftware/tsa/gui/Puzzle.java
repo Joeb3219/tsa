@@ -192,6 +192,7 @@ public class Puzzle extends Menu{
 		glVertex2f(getXStart(), getYStart() +  barHeight);
 		glEnd();
 		
+		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		
 		String val = ((enteredValue == -1) ? "" : enteredValue + "");

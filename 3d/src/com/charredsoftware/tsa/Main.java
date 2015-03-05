@@ -1,37 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHT1;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glIsEnabled;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glVertex2f;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -385,7 +354,14 @@ public class Main {
 	 * Renders the player's flashlight.
 	 */
 	private void playerFlashlight(){
-		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ (float) (player.x + Math.cos(Math.toRadians(camera.rx))), player.y + ((player.isCrouching) ? player.height / 2 : player.height), (float) (player.z + Math.sin(Math.toRadians(camera.rx))), 1f }))).flip());
+		float rx = (float) Math.cos(Math.toRadians(camera.rx)) * ((player.x < 0) ? 1 : -1);
+		float ry = (float) Math.sin(Math.toRadians(camera.ry)) * ((player.y < 0) ? 1 : -1);
+		float rz = (float) Math.sin(Math.toRadians(camera.rz)) * ((player.z < 0) ? 1 : -1);
+		float drx = (float) Math.cos(Math.toRadians(360 - camera.rx)) * ((player.world.lookingAt.x < 0) ? -1 : 1);
+		float dry = (float) Math.sin(Math.toRadians(360 - camera.ry)) * ((player.world.lookingAt.y < 0) ? -1 : 1);
+		float drz = (float) Math.sin(Math.toRadians(360 - camera.rz)) * ((player.world.lookingAt.z < 0) ? -1 : 1);
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ player.x - rx, -ry + player.y + ((player.isCrouching) ? player.height / 4 : player.height / 2),  player.z - rz, 1f }))).flip());
+	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) camera.buffer.put( (new float[]{ player.world.lookingAt.x - player.x - drx, -dry + player.world.lookingAt.y - player.y, player.world.lookingAt.z - player.z - drz, 1f }) ). flip() );
 	}
 	
 	/**
@@ -396,6 +372,7 @@ public class Main {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		
+		glDisable(GL_LIGHTING);
 		
 		if(gameState == GameState.MENU){
 			renderMenu("main");
@@ -426,12 +403,6 @@ public class Main {
 		glLoadIdentity();
 		camera.useView();
 		
-		if(controller.lighting){
-			if(!glIsEnabled(GL_LIGHTING)) glEnable(GL_LIGHTING);
-			playerFlashlight();
-		}else{
-			if(glIsEnabled(GL_LIGHTING)) glDisable(GL_LIGHTING);
-		}
 		
 		ArrayList<Arrow> arrows = new ArrayList<Arrow>();
 		ArrayList<Mob> mobs = new ArrayList<Mob>();
@@ -441,6 +412,13 @@ public class Main {
 				continue;
 			}
 			mobs.add((Mob) player.world.existingEntities.get(i));
+		}
+		
+		if(controller.lighting && gameState == GameState.GAME){
+			glEnable(GL_LIGHTING);
+			playerFlashlight();
+		}else{
+			glDisable(GL_LIGHTING);
 		}
 		
 		if(arrows.size() > 0){
@@ -453,14 +431,13 @@ public class Main {
 			arrows.get(0).postRender();
 		}
 		
-		for(Mob m : mobs){
-			glEnable(GL_TEXTURE_2D);
-			m.render();
-		}
+		for(Mob m : mobs) m.render();
 		
 		player.world.render();
 		
 		controller.lightInUse = GL_LIGHT1; //Arrows use last 7 light blocks.
+		
+		glDisable(GL_LIGHTING);
 		
 		player.renderBow();
 		

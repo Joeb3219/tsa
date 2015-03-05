@@ -64,8 +64,6 @@ public class Camera {
 		glEnable(GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		glEnable(GL_LIGHTING);
-		
 		buffer = BufferUtils.createFloatBuffer(4);
 		
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
@@ -84,15 +82,17 @@ public class Camera {
 			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0f, Region._HEIGHT + 16f, 0f, 1f}))).flip());
 		}
 
-		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ .4f, 0.4f, 0.4f, 1f }))).flip());
-		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 0.9f, 0.4f, 0.4f, 1f }))).flip());
+		glLight(GL_LIGHT0, GL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 1f, 1f, 1f, 1f }))).flip()); //Surface
+		glLight(GL_LIGHT0, GL_DIFFUSE, (FloatBuffer) (buffer.put((new float[]{ 1f, 1f, 1f, 1f }))).flip()); //Brightness
+		glLight(GL_LIGHT0, GL_SPECULAR, (FloatBuffer) (buffer.put((new float[]{ 1f, 1f, 1f, 1f }))).flip()); //Shiny
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0.0f, 0.0f, 0.0f, 0.0f }))).flip());
 		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
-		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);
-		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2f);
+		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.05f);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.05f);
+		GL11.glLightf( GL11.GL_LIGHT0, GL11.GL_SPOT_CUTOFF, 60f );
+	    GL11.glLight( GL11.GL_LIGHT0, GL11.GL_SPOT_DIRECTION, (FloatBuffer) buffer.put( (new float[]{ 0f, 0f, 0f, 1f }) ). flip() );
+	    GL11.glLightf( GL11.GL_LIGHT0, GL11.GL_SPOT_EXPONENT, 128 / 12f );
 		
-		glEnable(GL_COLOR_MATERIAL);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 		
 		glEnable(GL_FOG);

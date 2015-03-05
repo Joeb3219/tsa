@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.charredsoftware.tsa.Main;
+
 public class Model {
 
 	public ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
@@ -16,6 +18,7 @@ public class Model {
 	public void render(){
 		glPushAttrib(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_COLOR_MATERIAL);
 		glBegin(GL_TRIANGLES);
 		for(Face f : faces){
 			glColor3f(f.material.diffuse.x, f.material.diffuse.y, f.material.diffuse.z);
@@ -33,7 +36,7 @@ public class Model {
 			glVertex3f(v3.x, v3.y, v3.z);
 		}
 		glEnd();
-		
+		glDisable(GL_COLOR_MATERIAL);
 		glPopAttrib();
 	}
 	

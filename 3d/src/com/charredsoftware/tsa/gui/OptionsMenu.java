@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -98,6 +99,15 @@ public class OptionsMenu extends Menu{
 		widgets.add(b);
 		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Field of View", 0, 150, Main.getInstance().camera.fov);
 		s.identifier = "graphics_fov_slider";
+		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Gamma", 0, 100, Main.getInstance().controller.gamma * 100f);
+		s.identifier = "graphics_gamma_slider";
+		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Brightness", 0, 100, Main.getInstance().controller.brightness * 100f + 50);
+		s.identifier = "graphics_brightness_slider";
+		widgets.add(s);
+		s = new Slider(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Contrast", 0, 100, Main.getInstance().controller.contrast * 100f);
+		s.identifier = "graphics_contrast_slider";
 		widgets.add(s);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10 + 60, "Back");
 		b.identifier = "graphics_goback";
@@ -206,6 +216,30 @@ public class OptionsMenu extends Menu{
 					Main.getInstance().camera.fov = s.value;
 					Main.getInstance().camera.resetAspectRatio(Main.getInstance().camera.aspectRatio);
 				}
+				if(w.identifier.contains("gamma_slider")){
+					Slider s = (Slider) w;
+					s.update();
+					Main.getInstance().controller.gamma = s.value / 100f;
+					try{
+						Display.setDisplayConfiguration(Main.getInstance().controller.gamma, Main.getInstance().controller.brightness, Main.getInstance().controller.contrast);
+					}catch(Exception e){}
+				}
+				if(w.identifier.contains("brightness_slider")){
+					Slider s = (Slider) w;
+					s.update();
+					Main.getInstance().controller.brightness = ((s.value - 50) / 100f);
+					try{
+						Display.setDisplayConfiguration(Main.getInstance().controller.gamma, Main.getInstance().controller.brightness, Main.getInstance().controller.contrast);
+					}catch(Exception e){}
+				}
+				if(w.identifier.contains("contrast_slider")){
+					Slider s = (Slider) w;
+					s.update();
+					Main.getInstance().controller.contrast = s.value / 100f;
+					try{
+						Display.setDisplayConfiguration(Main.getInstance().controller.gamma, Main.getInstance().controller.brightness, Main.getInstance().controller.contrast);
+					}catch(Exception e){}
+				}
 				if(w.identifier.contains("control_") && !w.identifier.contains("tab")){
 					if(w instanceof ControlSwitcher){
 						ControlSwitcher cs = (ControlSwitcher) w;
@@ -263,7 +297,7 @@ public class OptionsMenu extends Menu{
 		}
 		
 		
-		glEnable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		
 		logo.bind();
