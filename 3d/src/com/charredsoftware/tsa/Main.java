@@ -133,7 +133,6 @@ public class Main {
 				Display.setTitle("CharredSoftware: " + controller.gameName + " v." + controller.version + " [Joe B, 2014]");
 			}
 			Display.create();
-			Display.setDisplayConfiguration(1f, -0.1f, 1f);
 		}catch(Exception e){new CrashReport(e);}
 	}
 	
@@ -354,14 +353,8 @@ public class Main {
 	 * Renders the player's flashlight.
 	 */
 	private void playerFlashlight(){
-		float rx = (float) Math.cos(Math.toRadians(camera.rx)) * ((player.x < 0) ? 1 : -1);
-		float ry = (float) Math.sin(Math.toRadians(camera.ry)) * ((player.y < 0) ? 1 : -1);
-		float rz = (float) Math.sin(Math.toRadians(camera.rz)) * ((player.z < 0) ? 1 : -1);
-		float drx = (float) Math.cos(Math.toRadians(360 - camera.rx)) * ((player.world.lookingAt.x < 0) ? -1 : 1);
-		float dry = (float) Math.sin(Math.toRadians(360 - camera.ry)) * ((player.world.lookingAt.y < 0) ? -1 : 1);
-		float drz = (float) Math.sin(Math.toRadians(360 - camera.rz)) * ((player.world.lookingAt.z < 0) ? -1 : 1);
-		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ player.x - rx, -ry + player.y + ((player.isCrouching) ? player.height / 4 : player.height / 2),  player.z - rz, 1f }))).flip());
-	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) camera.buffer.put( (new float[]{ player.world.lookingAt.x - player.x - drx, -dry + player.world.lookingAt.y - player.y, player.world.lookingAt.z - player.z - drz, 1f }) ). flip() );
+		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ player.world.behindEyes.x, player.world.behindEyes.y, player.world.behindEyes.z, 1f }))).flip());
+	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) camera.buffer.put( (new float[]{ player.world.lookingAtExtended.x - player.x, player.world.lookingAtExtended.y - player.y, player.world.lookingAtExtended.z - player.z, 1f }) ). flip() );
 	}
 	
 	/**
@@ -398,7 +391,7 @@ public class Main {
 			return;
 		}
 
-		camera.shader.renderShader();
+		//camera.shader.renderShader();
 		
 		glLoadIdentity();
 		camera.useView();

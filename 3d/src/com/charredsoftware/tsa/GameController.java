@@ -229,8 +229,10 @@ public class GameController {
 					}
 				}
 			}
-			Display.setDisplayConfiguration(gamma, brightness, contrast);
 		}catch(Exception e){new CrashReport(e);}
+		try{
+			Display.setDisplayConfiguration(gamma, brightness, contrast);
+		}catch(Exception e){}
 	}
 	
 	/**
