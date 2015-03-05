@@ -354,7 +354,7 @@ public class Main {
 	 */
 	private void playerFlashlight(){
 		glLight(GL_LIGHT0, GL_POSITION, (FloatBuffer) (camera.buffer.put((new float[]{ player.world.behindEyes.x, player.world.behindEyes.y, player.world.behindEyes.z, 1f }))).flip());
-	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) camera.buffer.put( (new float[]{ player.world.lookingAtExtended.x - player.x, player.world.lookingAtExtended.y - player.y, player.world.lookingAtExtended.z - player.z, 1f }) ). flip() );
+	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) camera.buffer.put( (new float[]{ player.world.lookingAtExtended.x - player.world.behindEyes.x, player.world.lookingAtExtended.y - player.world.behindEyes.y, player.world.lookingAtExtended.z - player.world.behindEyes.z, 1f }) ). flip() );
 	}
 	
 	/**
