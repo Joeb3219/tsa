@@ -70,8 +70,8 @@ public class Camera {
 		
 		for(int i = GL_LIGHT0 - 1; i <= GL_LIGHT7; i ++){
 			glLightf(i, GL_CONSTANT_ATTENUATION, 1.25f);
-			glLightf(i, GL_LINEAR_ATTENUATION, .5f);
-			glLightf(i, GL_QUADRATIC_ATTENUATION, 1.0f);
+			glLightf(i, GL_LINEAR_ATTENUATION, .3f);
+			glLightf(i, GL_QUADRATIC_ATTENUATION, 0.175f);
 			glEnable(i);
 		}
 		
@@ -89,9 +89,9 @@ public class Camera {
 		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4f);
 		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.05f);
 		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.05f);
-		GL11.glLightf( GL11.GL_LIGHT0, GL11.GL_SPOT_CUTOFF, 60f );
-	    GL11.glLight( GL11.GL_LIGHT0, GL11.GL_SPOT_DIRECTION, (FloatBuffer) buffer.put( (new float[]{ 0f, 0f, 0f, 1f }) ). flip() );
-	    GL11.glLightf( GL11.GL_LIGHT0, GL11.GL_SPOT_EXPONENT, 128 / 12f );
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 60f );
+	    glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer) buffer.put( (new float[]{ 0f, 0f, 0f, 1f }) ). flip() );
+	    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 128 / 12f );
 		
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 		
@@ -120,17 +120,6 @@ public class Camera {
 	}
 	
 	/**
-	 * Moves the camera.
-	 * @param dir Direction to move in (-1 - 1)
-	 * @param speed Velocity to move at.
-	 * @deprecated All movement is now in the player class. Camera followers player.
-	 */
-	public void move(float dir, float speed){
-		this.z += speed * Math.sin(Math.toRadians(ry + 90 * dir));
-		this.x += speed * Math.cos(Math.toRadians(ry + 90 * dir));
-	}
-	
-	/**
 	 * Sets the camera to be at the position specified (player's pos).
 	 * Resets the frustum.
 	 */
@@ -142,16 +131,13 @@ public class Camera {
 		
 		glLoadIdentity();
 
-		for(int i = GL_LIGHT0 + 1; i <= GL_LIGHT7; i ++){
-			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ -1000f, -1000f, -1000f, 1f }))).flip());
-			glDisable(i);
-		}
+		for(int i = GL_LIGHT0 + 1; i <= GL_LIGHT7; i ++) glDisable(i);
 		
 		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS && !Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED){
 			for(int i = GL_LIGHT0 + 1; i < GL_LIGHT7; i ++){
-				glLightf(i, GL_CONSTANT_ATTENUATION, .75f / 1f);
-				glLightf(i, GL_LINEAR_ATTENUATION, .25f / 1f);
-				glLightf(i, GL_QUADRATIC_ATTENUATION, .5f / 2f);
+				glLightf(i, GL_CONSTANT_ATTENUATION, 1.25f);
+				glLightf(i, GL_LINEAR_ATTENUATION, .1f);
+				glLightf(i, GL_QUADRATIC_ATTENUATION, .05f);
 			}
 			Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED = true;
 		}

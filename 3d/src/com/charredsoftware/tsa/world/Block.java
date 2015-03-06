@@ -48,8 +48,8 @@ public class Block {
 	public static Block keypad = new Block(11, 0, "Keypad", Block.loadTexture("keypad.png"));
 	public static Block charredBlock = new Block(-2, 0, "charredblock", Block.loadTexture("charredsoftware.png"));
 	public static int _VERTICES = 6 * 4, _VERTEX_SIZE = 3, _TEXTURE_SIZE = 2;
-	public static int vboHandler = -1, textHandler = -1;
-	public static FloatBuffer vertexData, texData;
+	public static int vboHandler = -1, textHandler = -1, normalHandler = -1;
+	public static FloatBuffer vertexData, texData, normalData;
 	
 	/**
 	 * Creates a textureless block.
@@ -103,7 +103,7 @@ public class Block {
 	 * Generates Block VBOs.
 	 */
 	public void generateRenderBuffers(){
-		if(vertexData != null && texData != null) return;
+		if(vertexData != null && texData != null && normalData != null) return;
 		float leftBound = -0.5f;
 		float rightBound = 0.5f;
 		
@@ -117,13 +117,23 @@ public class Block {
 		vertexData.flip();
 		
 		texData = BufferUtils.createFloatBuffer(_TEXTURE_SIZE * _VERTICES);
-		texData.put(new float[]{0, 2/4f, 0, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
-				2/4f, 2/4f, 2/4f, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f,
-				2/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 2/4f, 1/4f,
-				4/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 4/4f, 1/4f,
-				0/4f, 3/4f, 1/4f, 3/4f, 1/4f, 2/4f, 0/4f, 2/4f,
-				0/4f, 0/4f, 1/4f, 0/4f, 1/4f, 1/4f, 0/4f, 1/4f});
+		texData.put(new float[]{0, 2/4f, 0, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f, //front
+				2/4f, 2/4f, 2/4f, 1/4f, 1/4f, 1/4f, 1/4f, 2/4f, //right
+				2/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 2/4f, 1/4f, //left
+				4/4f, 2/4f, 3/4f, 2/4f, 3/4f, 1/4f, 4/4f, 1/4f, //back
+				0/4f, 3/4f, 1/4f, 3/4f, 1/4f, 2/4f, 0/4f, 2/4f, //bottom
+				0/4f, 0/4f, 1/4f, 0/4f, 1/4f, 1/4f, 0/4f, 1/4f}); //top
 		texData.flip();
+		
+		normalData = BufferUtils.createFloatBuffer(_VERTICES * 3);
+		normalData.put(new float[]{0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+				1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+				-1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,
+				0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
+		});
+		normalData.flip();
 		
 		vboHandler = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandler);
@@ -133,6 +143,11 @@ public class Block {
 		textHandler = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
 		glBufferData(GL_ARRAY_BUFFER, texData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		normalHandler = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, normalHandler);
+		glBufferData(GL_ARRAY_BUFFER, normalData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	
@@ -171,7 +186,7 @@ public class Block {
 	 * @param alpha Alpha value
 	 */
 	public void draw(float x, float y, float z, float facing, int alpha){
-		if(vboHandler == -1 || textHandler == -1) generateRenderBuffers();
+		if(vboHandler == -1 || textHandler == -1 || normalHandler == -1) generateRenderBuffers();
 		glPushAttrib(GL_CURRENT_BIT);
 		glColor4f(.1f, .1f, .1f, alpha);
 		draw(x, y, z, facing);
@@ -192,9 +207,13 @@ public class Block {
 			
 		glBindBuffer(GL_ARRAY_BUFFER, textHandler);
 		glTexCoordPointer(_TEXTURE_SIZE, GL_FLOAT, 0, 0L);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, normalHandler);
+		glNormalPointer(GL_FLOAT, 0, 0L);
 			
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
 		
 	}
 	
@@ -205,6 +224,7 @@ public class Block {
 	public void drawCleanup(){
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisable(GL_TEXTURE_2D);
