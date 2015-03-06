@@ -27,10 +27,6 @@ import com.charredsoftware.tsa.world.World;
 
 public class Arrow extends Entity{
 
-	/*
-	 * TODO: FIGURE OUT WHY ARROWS SHOOT SO SLOW NOW!!!
-	 */
-
 	public float beginningVerticalVelocity = 0f, verticalVelocity = 0f, horizontalVelocity = 0f;
 	public static final float DRAWBACK_MULTIPLIER = 2.3f, _STEPS = 10; //Number of steps to take in movement.
 	public float drawBackTime, flyingTime = 0f;

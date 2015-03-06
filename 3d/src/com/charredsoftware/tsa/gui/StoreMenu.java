@@ -40,15 +40,19 @@ public class StoreMenu extends Menu{
 	 */
 	public StoreMenu() {
 		super(new Position(0, 0, 0), Display.getWidth(), Display.getHeight());
-		TransactionButton tb = new TransactionButton(1, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Light radius upgrade", "Increases radius of arrow light!", 45);
+		TransactionButton tb = new TransactionButton(1, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Light Radius Upgrade", "Increases radius of arrow light!", 45);
 		tb.identifier = "upgrade_radius";
 		widgets.add(tb);
-		tb = new TransactionButton(2, 180, FileUtilities.texturesPath + "upgrade_radius.png", "More Damage", "Arrows cause more damage!", 45);
+		tb = new TransactionButton(2, 180, FileUtilities.texturesPath + "upgrade_damage.png", "More Damage", "Arrows cause more damage!", 85);
 		tb.identifier = "upgrade_damage";
 		widgets.add(tb);
-		tb = new TransactionButton(3, 180, FileUtilities.texturesPath + "upgrade_radius.png", "Range upgrade", "Increases range of arrow", 45);
+		tb = new TransactionButton(3, 180, FileUtilities.texturesPath + "upgrade_range.png", "Arrow Range upgrade", "Increases range of arrow", 65);
 		tb.identifier = "upgrade_range";
 		widgets.add(tb);
+		Button back = new Button(this, 350, "Back");
+		back.identifier = "back";
+		back.checkable = false;
+		widgets.add(back);
 		try {
 			logo = TextureLoader.getTexture("png", ClassLoader.getSystemResourceAsStream(FileUtilities.texturesPath + "charredsoftware.png"));
 		} catch (IOException e) {new CrashReport(e);}
@@ -92,11 +96,10 @@ public class StoreMenu extends Menu{
 						Main.getInstance().player.bow.UPGRADE_FURTHER_SHOTS = true;
 						Main.getInstance().player.coins -= tb.cost;
 					}
-				}else if(b.identifier.equalsIgnoreCase("quit")){
-					Main.getInstance().controller.saveSettings();
-					AL.destroy();
-					Display.destroy();
-					System.exit(0);
+				}else if(b.identifier.equalsIgnoreCase("back")){
+					GameState s = Main.getInstance().previousState;
+					Main.getInstance().previousState = Main.getInstance().gameState;
+					Main.getInstance().gameState = s;
 				}
 			}
 		}

@@ -108,6 +108,8 @@ public class Camera {
 		glClearColor(0.0f, 0.0f, 0.0f, 1f);
 		
 		frustum.calculateFrustum(fov, Display.getWidth() * 1f / Display.getHeight(), nearClip, farClip);
+		
+		glEnable(GL_CULL_FACE);
 	}
 	
 	/**
@@ -148,6 +150,7 @@ public class Camera {
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);
+		glCullFace(GL_FRONT_AND_BACK);
 	}
 	
 	/**
