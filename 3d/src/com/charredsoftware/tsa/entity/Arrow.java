@@ -1,13 +1,6 @@
 package com.charredsoftware.tsa.entity;
 
-import static org.lwjgl.opengl.GL11.GL_LIGHT7;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 import java.nio.FloatBuffer;
@@ -196,9 +189,11 @@ public class Arrow extends Entity{
 	public void lightArrow(boolean isVisible){
 		if(stuck() && Main.getInstance().controller.lightInUse > GL_LIGHT7) markedForDeletion = true;
 		
-		if(!markedForDeletion){
-			if(isVisible) glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
-			else glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, -1000f, z, 1f }))).flip());
+		if(!markedForDeletion && shooter instanceof Player){
+			if(isVisible){
+				glEnable(Main.getInstance().controller.lightInUse);
+				glLight(Main.getInstance().controller.lightInUse, GL_POSITION, (FloatBuffer) (Main.getInstance().camera.buffer.put((new float[]{ x, y, z, 1f }))).flip());
+			}
 			Main.getInstance().controller.lightInUse ++;
 		}
 	}

@@ -391,11 +391,10 @@ public class Main {
 			return;
 		}
 
-		//camera.shader.renderShader();
+		camera.shader.renderShader();
 		
 		glLoadIdentity();
 		camera.useView();
-		
 		
 		ArrayList<Arrow> arrows = new ArrayList<Arrow>();
 		ArrayList<Mob> mobs = new ArrayList<Mob>();
@@ -419,7 +418,6 @@ public class Main {
 			for(Arrow a : arrows){
 				glDisable(GL_TEXTURE_2D);
 				if(Physics.getDistance(new Position(a.x, a.y, a.z), player.getPosition()) <= camera.farClip - 2) a.render();
-				else a.lightArrow(false);
 			}
 			arrows.get(0).postRender();
 		}

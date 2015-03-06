@@ -68,7 +68,7 @@ public class Camera {
 		
 		glLightModel(GL_LIGHT_MODEL_AMBIENT, (FloatBuffer) (buffer.put((new float[]{ 0f, 0f, 0f, 0f }))).flip());
 		
-		for(int i = GL_LIGHT0 - 1; i < GL_LIGHT7; i ++){
+		for(int i = GL_LIGHT0 - 1; i <= GL_LIGHT7; i ++){
 			glLightf(i, GL_CONSTANT_ATTENUATION, 1.25f);
 			glLightf(i, GL_LINEAR_ATTENUATION, .5f);
 			glLightf(i, GL_QUADRATIC_ATTENUATION, 1.0f);
@@ -142,8 +142,9 @@ public class Camera {
 		
 		glLoadIdentity();
 
-		for(int i = GL_LIGHT0 + 1; i < GL_LIGHT7; i ++){
-			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ 0f, Region._HEIGHT + 16f, 0f, 1f }))).flip());
+		for(int i = GL_LIGHT0 + 1; i <= GL_LIGHT7; i ++){
+			glLight(i, GL_POSITION, (FloatBuffer) (buffer.put((new float[]{ -1000f, -1000f, -1000f, 1f }))).flip());
+			glDisable(i);
 		}
 		
 		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS && !Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS_APPLIED){
