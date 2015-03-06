@@ -461,7 +461,7 @@ public class World {
 	 * @return Returns the block that the player is looking at.
 	 */
 	public BlockInstance getBlockLookingAt(){
-		float stepSize = 0.1f;
+		float stepSize = 0.2f;
 		Vector3f behindEyesVector = Main.getInstance().player.getLookingAt((float) (-stepSize * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
 		if(getBlock(new Position(behindEyesVector.x, behindEyesVector.y, behindEyesVector.z)).base.solid){
 			behindEyesVector = Main.getInstance().player.getLookingAt((float) (stepSize * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
@@ -472,7 +472,7 @@ public class World {
 		}
 		for(float i = 0; i < 6; i += stepSize){
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
-			BlockInstance b = getBlock((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
+			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
 			if(b.base != Block.air){
 				if(b.base == Block.water && !Main.getInstance().controller.buildingMode) continue;
@@ -494,7 +494,7 @@ public class World {
 	 * @return Returns the block directly in front of the block the player is looking at.
 	 */
 	public BlockInstance getBlockAdjectLookingAt(){
-		for(float i = 0; i < 6; i += 0.25f){
+		for(float i = 0; i < 6; i += 0.2f){
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock(new Position((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ())));
 			
