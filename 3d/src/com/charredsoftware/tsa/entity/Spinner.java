@@ -29,7 +29,7 @@ import com.charredsoftware.tsa.world.World;
 public class Spinner extends Mob{
 
 	private Random r = new Random();
-	public static final float _FOV_TO_SHOOT = 40, _DISTANCE_TO_SHOOT = 6.5f, _DISTANCE_TO_TRACK = 8f;
+	public static final float _FOV_TO_SHOOT = 30, _DISTANCE_TO_SHOOT = 6.5f, _DISTANCE_TO_TRACK = 8f;
 	public static Model model;
 	
 	/**
@@ -59,8 +59,8 @@ public class Spinner extends Mob{
 	 */
 	public void update(){
 		if(Main.getInstance().controller.buildingMode) return;
-		if(facing <= 0) facing = 360;
-		if(facing > 360) facing = 0;
+		if(facing <= 0) facing = 360 + facing;
+		if(facing > 360) facing = facing - 360;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.mobsKilled ++;
@@ -74,7 +74,7 @@ public class Spinner extends Mob{
 		if(determineIfShouldTrack()){
 			facing += 2;
 			if(!determineIfShouldTrack()) facing -= 4;
-			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
+			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_SHOOT && r.nextInt(100) <= 2 * Main.getInstance().controller.difficulty){
 				Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 				a.shouldBeLit = false;
 				Sound.BOW_SHOT.playSfx();
@@ -92,7 +92,11 @@ public class Spinner extends Mob{
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
-		if(hit) damageMob(a.calculateDamage(this));
+		if(hit){
+			damageMob(a.calculateDamage(this));
+			if(Math.abs(facing - (a.rX + 90)) > _FOV_TO_SHOOT)
+			facing = (a.rX + 90) - 10;
+		}
 		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}

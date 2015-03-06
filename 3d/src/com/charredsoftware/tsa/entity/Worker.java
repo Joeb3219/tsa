@@ -31,7 +31,7 @@ public class Worker extends Mob{
 
 	public Position pos2, startingPoint;
 	private Random r = new Random();
-	public static final float _FOV_TO_CALL = 45, _DISTANCE_TO_CALL = 4.5f;
+	public static final float _FOV_TO_CALL = 60, _DISTANCE_TO_CALL = 5.5f;
 	public int henchmenCalled = 0, ticksSinceLastCall = 0;
 	public static final int _MAX_HECNHMEN_CAN_CALL = 4, _TICKS_BETWEEN_CALLS = Main.DESIRED_TPS * 4;
 	public boolean walkingTowardsPos2 = true;

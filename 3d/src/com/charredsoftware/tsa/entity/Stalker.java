@@ -52,10 +52,18 @@ public class Stalker extends Mob{
 		killBonus = 10f;
 	}
 	
+	/**
+	 * Detects if an arrow has hit the mob, and damages the mob if so.
+	 * @return Returns <tt>true</tt> if an arrow has hit the mob.
+	 */
 	public boolean arrowHit(Arrow a){
 		boolean hit = super.arrowHit(a);
 		if(!(a.shooter instanceof Player)) hit = false; //If hit by another mob, no damage.
-		if(hit) damageMob(a.calculateDamage(this));
+		if(hit){
+			damageMob(a.calculateDamage(this));
+			if(Math.abs(facing - (a.rX + 90)) > _FOV_TO_STALK)
+			facing = (a.rX + 90) - 10;
+		}
 		if(hit && Main.getInstance().controller.removeMobMode) world.removeMobFromWorld(this);
 		return hit;
 	}

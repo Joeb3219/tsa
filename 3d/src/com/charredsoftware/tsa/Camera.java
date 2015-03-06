@@ -150,7 +150,7 @@ public class Camera {
 		glRotatef(rz, 0, 0, 1);
 		glTranslatef(-x, -y, -z);
 		glMatrixMode(GL_MODELVIEW);
-		glCullFace(GL_FRONT_AND_BACK);
+		glCullFace(GL_BACK);
 	}
 	
 	/**

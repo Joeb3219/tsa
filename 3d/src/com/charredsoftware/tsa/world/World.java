@@ -461,21 +461,22 @@ public class World {
 	 * @return Returns the block that the player is looking at.
 	 */
 	public BlockInstance getBlockLookingAt(){
-		Vector3f behindEyesVector = Main.getInstance().player.getLookingAt((float) (-0.25 * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
+		float stepSize = 0.1f;
+		Vector3f behindEyesVector = Main.getInstance().player.getLookingAt((float) (-stepSize * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
 		if(getBlock(new Position(behindEyesVector.x, behindEyesVector.y, behindEyesVector.z)).base.solid){
-			behindEyesVector = Main.getInstance().player.getLookingAt((float) (0.25 * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
+			behindEyesVector = Main.getInstance().player.getLookingAt((float) (stepSize * Math.cos(Math.toRadians(Main.getInstance().camera.rx))));
 			if(getBlock(new Position(behindEyesVector.x, behindEyesVector.y, behindEyesVector.z)).base.solid){
 				behindEyesVector = Main.getInstance().player.getLookingAt(0f);
 				if(getBlock(new Position(behindEyesVector.x, behindEyesVector.y, behindEyesVector.z)).base.solid) behindEyesVector = Main.getInstance().player.getLookingAt(1f);
 			}
 		}
-		for(float i = 0; i < 6; i += 0.25f){
+		for(float i = 0; i < 6; i += stepSize){
 			Vector3f looking = Main.getInstance().player.getLookingAt(i);
 			BlockInstance b = getBlock((float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));
 			
 			if(b.base != Block.air){
 				if(b.base == Block.water && !Main.getInstance().controller.buildingMode) continue;
-				Vector3f nextStep = Main.getInstance().player.getLookingAt(i + 0.25f);
+				Vector3f nextStep = Main.getInstance().player.getLookingAt(i + stepSize);
 				this.lookingAtExtended = new Position((float) (nextStep.getX()), (float) (nextStep.getY()), (float) (nextStep.getZ()));
 				this.behindEyes = new Position(behindEyesVector.getX(), behindEyesVector.getY(), behindEyesVector.getZ());
 				return b;
@@ -483,7 +484,7 @@ public class World {
 		}
 		
 		Vector3f looking = Main.getInstance().player.getLookingAt(6);
-		Vector3f lookingExtended = Main.getInstance().player.getLookingAt(6.25f);
+		Vector3f lookingExtended = Main.getInstance().player.getLookingAt(6 + stepSize);
 		this.lookingAtExtended = new Position(lookingExtended.getX(), lookingExtended.getY(), lookingExtended.getZ());
 		this.behindEyes = new Position(behindEyesVector.getX(), behindEyesVector.getY(), behindEyesVector.getZ());
 		return new BlockInstance(Block.air, (float) (looking.getX()), (float) (looking.getY()), (float) (looking.getZ()));

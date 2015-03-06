@@ -155,7 +155,7 @@ public class Arrow extends Entity{
 		glRotatef(-rY, 1, 0, 0);
 		glRotatef(180, 1, 0, 0);
 		glRotatef((rX > 180) ? rX : -rX, 0, 1f, 0);
-		if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1, 0);
+		if(rX >= 60 && rX <= 160) glRotatef(180, 0, 1f, 0);
 
 		glScalef(1f, 1f, 1f);
 		
