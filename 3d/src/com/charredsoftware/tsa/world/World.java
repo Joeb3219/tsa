@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Vector3f;
@@ -34,6 +35,7 @@ public class World {
 
 	public ArrayList<Region> regions = new ArrayList<Region>();
 	public float renderedBlocks = 0f;
+	private Random r = new Random();
 	public BlockInstance lookingAt = new BlockInstance(Block.air, 0, -10000, 0);
 	public Position lookingAtExtended = new Position(0, -10000, 0), behindEyes = new Position(0, -10000, 0);
 	public int id;
@@ -553,14 +555,11 @@ public class World {
 	 * @param base Position to consider relative to. Will not return this position.
 	 * @param searchRange maximum range to search from the base.
 	 */
-	public Position getNearbyEmptyBlock(Position base, float searchRange){
-		float halfRange = searchRange / 2;
-		for(float x = base.x - halfRange; x < base.x + halfRange; x ++){
-			for(float z = base.z - halfRange; z < base.z + halfRange; z ++){
-				if(getBlock(x, base.y, z).base == Block.air) return new Position(x, base.y, z);
-			}
-		}
+	public Position getNearbyEmptyBlock(Position base, int searchRange){
+		int x = (r.nextInt(searchRange * 2 + 1)) - (searchRange + 1);
+		int z = (r.nextInt(searchRange * 2 + 1)) - (searchRange + 1);
 		
-		return base;
+		if(getBlock(base.x + x, base.y, base.z + z).base != Block.air) return getNearbyEmptyBlock(base, searchRange);
+		return new Position(base.x + x, base.y, base.z + z);
 	}
 }

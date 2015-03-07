@@ -59,8 +59,7 @@ public class Spinner extends Mob{
 	 */
 	public void update(){
 		if(Main.getInstance().controller.buildingMode) return;
-		if(facing <= 0) facing = 360 + facing;
-		if(facing > 360) facing = facing - 360;
+		facing = correctAngle(facing);
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.mobsKilled ++;

@@ -37,8 +37,8 @@ public class TextPopup {
 	 * @param y Y-position
 	 */
 	public void render(float x, float y, float alpha){
-//		Main.getInstance().font.drawString(x, y, text, new Color(1f, 1f, 1f, alpha));
-		Main.getInstance().font.drawString(x, y, text, Color.white);
+		Main.getInstance().font.drawString(x, y, text, new Color(1f, 1f, 1f, alpha));
+		//Main.getInstance().font.drawString(x, y, text, Color.white);
 	}
 	
 }

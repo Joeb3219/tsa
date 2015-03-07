@@ -1,6 +1,37 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHT1;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SPOT_DIRECTION;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.opengl.GL11.glVertex2d;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -23,6 +54,7 @@ import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
+import com.charredsoftware.tsa.entity.Sputnik;
 import com.charredsoftware.tsa.entity.Stalker;
 import com.charredsoftware.tsa.entity.Worker;
 import com.charredsoftware.tsa.gui.DialogHUD;
@@ -77,7 +109,7 @@ public class Main {
 		controller = GameController.getInstance();
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 14f);
-		player = new Player(new World(0), camera);
+		player = new Player(new World(3), camera);
 		
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
@@ -266,7 +298,7 @@ public class Main {
 			if(value == 1) player.world.addMob(new Spinner(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 			if(value == 2) player.world.addMob(new Stalker(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 			if(value == 3) player.world.addMob(new Worker(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z, player.getPosition().clone()));
-			if(value == 4) player.world.addMob(new Spinner(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
+			if(value == 4) player.world.addMob(new Sputnik(player.world, player.world.lookingAt.x, player.world.lookingAt.y + 1, player.world.lookingAt.z));
 		}
 		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_K) && cooldown == 0){
 			cooldown = 10f;
