@@ -77,11 +77,11 @@ public class Sputnik extends Mob{
 		calculateFacingDirection(Main.getInstance().player.getPosition());
 		facing = correctAngle(facing);
 		
-		if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_CALL && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
+		/*if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_CALL && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
 			Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 			a.shouldBeLit = false;
 			Sound.BOW_SHOT.playSfx();
-		}
+		}*/
 		
 		if(ticksSinceLastCall >= _TICKS_BETWEEN_CALLS){
 			totalSummons ++;
@@ -114,7 +114,7 @@ public class Sputnik extends Mob{
 	
 	private void callMobs(MobType type){
 		if(type == null) return;
-		Position p = world.getNearbyEmptyBlock(getPosition(), r.nextInt(8) + 1);
+		Position p = world.getNearbyEmptyBlock(getPosition(), r.nextInt(4) + 1);
 		if(type == MobType.SPINNER) world.existingEntities.add(new Spinner(world, p.x, p.y, p.z));
 		if(type == MobType.STALKER) world.existingEntities.add(new Stalker(world, p.x, p.y, p.z));
 		if(type == MobType.WORKER) world.existingEntities.add(new Worker(world, x, y, z, p));

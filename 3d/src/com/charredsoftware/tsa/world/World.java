@@ -562,4 +562,5 @@ public class World {
 		if(getBlock(base.x + x, base.y, base.z + z).base != Block.air) return getNearbyEmptyBlock(base, searchRange);
 		return new Position(base.x + x, base.y, base.z + z);
 	}
+	
 }
