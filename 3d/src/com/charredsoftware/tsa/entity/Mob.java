@@ -210,4 +210,28 @@ public class Mob extends Entity{
 		glPopMatrix();
 	}
 	
+	/**
+	 * Calculates the direction the Worker should face.
+	 */
+	protected void calculateFacingDirection(Position destination){
+		facing = Physics.calculate2DAngle(getPosition(), destination) + 180;
+	}
+	
+	/**
+	 * @return Returns the angle, relative to facing direction.
+	 * @param angle Angle at which shooting will occur.
+	 */
+	protected float getRelativeAngle(float angle){
+		float f = Math.abs(facing - Math.abs(Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition())));
+		if(f > 180) f -= angle / 2;
+		else f += angle / 2;
+		return f;
+	}
+	
+	protected float correctAngle(float facing){
+		while(facing < 0) facing = 360 - facing;
+		while(facing > 360) facing -= 360;
+		return facing;
+	}
+	
 }

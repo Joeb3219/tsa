@@ -102,20 +102,10 @@ public class Spinner extends Mob{
 	}
 	
 	/**
-	 * @return Returns the angle, relative to facing direction.
-	 */
-	public float getRelativeAngle(){
-		float f = Math.abs(facing - Math.abs(Physics.calculate2DAngle(Main.getInstance().player.getPosition(), getPosition())));
-		if(f > 180) f -= _FOV_TO_SHOOT / 2;
-		else f += _FOV_TO_SHOOT / 2;
-		return f;
-	}
-	
-	/**
 	 * @return Returns <tt>true</tt> if should track the player.
 	 */
 	public boolean determineIfShouldTrack(){
-		return (getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_TRACK && getRelativeAngle() <= _FOV_TO_SHOOT);
+		return (getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_TRACK && getRelativeAngle(_FOV_TO_SHOOT) <= _FOV_TO_SHOOT);
 	}
 	
 	/**

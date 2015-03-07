@@ -84,14 +84,17 @@ public class Worker extends Mob{
 		callHenchman();
 		
 		attemptMovement();
+		
+		calculateFacingDirection(getDestination());
 	}
-	
+
 	/**
 	 * Calls a henchman if the player is within the required view.
 	 */
 	private void callHenchman(){
 		if(ticksSinceLastCall > 0 || henchmenCalled >= _MAX_HECNHMEN_CAN_CALL) return;
 		if(Math.abs(getPosition().calculateDistance(Main.getInstance().player.getPosition())) > _DISTANCE_TO_CALL) return; //Too far away
+		if(Math.abs(y - Main.getInstance().player.y) > 2) return; //Above view-range (y).
 		if(getRelativeAngle() > _FOV_TO_CALL) return; //Not within angle
 		Sound.GUARDS_GUARDS.playSfx();
 		ticksSinceLastCall = _TICKS_BETWEEN_CALLS;
@@ -104,7 +107,7 @@ public class Worker extends Mob{
 	 */
 	private void attemptMovement(){
 		float stepSize = 0.125f / 4;
-		Position dest = (walkingTowardsPos2) ? pos2 : startingPoint;
+		Position dest = getDestination();
 		Position current = getPosition();
 		
 		Position closest = current;
@@ -123,6 +126,10 @@ public class Worker extends Mob{
 		
 		this.x = closest.x;
 		this.z = closest.z;
+	}
+	
+	private Position getDestination(){
+		return (walkingTowardsPos2) ? pos2 : startingPoint;
 	}
 	
 	/**

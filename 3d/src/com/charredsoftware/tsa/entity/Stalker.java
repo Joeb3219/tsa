@@ -29,7 +29,7 @@ import com.charredsoftware.tsa.world.World;
 
 public class Stalker extends Mob{
 	
-	public static final float _DISTANCE_TO_STALK = 5f, _FOV_TO_STALK = 90f, _CHAIN_TO_STARTING_POINT = 5f, _DISTANCE_TO_SHOOT = 1.5f;
+	public static final float _DISTANCE_TO_STALK = 5f, _FOV_TO_STALK = 90f, _CHAIN_TO_STARTING_POINT = 5f, _DISTANCE_TO_SHOOT = 2.5f;
 	private Random r = new Random();
 	public Position startingPoint;
 	public boolean followingPlayer = false;
@@ -80,6 +80,7 @@ public class Stalker extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
+		Position originalPosition = getPosition().clone();
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
 			if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= _DISTANCE_TO_SHOOT){
@@ -113,6 +114,12 @@ public class Stalker extends Mob{
 				}
 			}
 		}
+		Position finalPosition = getPosition();
+		if(!originalPosition.equals(finalPosition)){
+			calculateFacingDirection(originalPosition);
+			facing += 180;
+			facing = correctAngle(facing);
+		}
 	}
 	
 	/**
@@ -136,6 +143,8 @@ public class Stalker extends Mob{
 		
 		this.x = closest.x;
 		this.z = closest.z;
+		
+		
 	}
 	
 	public void move(float dX, float dY, float dZ){
@@ -145,7 +154,6 @@ public class Stalker extends Mob{
 
 		if(!world.getBlock(new Position(fX, fY, fZ)).base.solid){
 			if(world.getBlock(new Position(fX, fY + height / 2, fZ)).base.solid) return; //Hit yer head!
-			//facing = (float) (Math.atan2(fZ - z, fX - x) * 180 / Math.PI);
 			x = fX;
 			z = fZ;
 			y = fY;
@@ -154,12 +162,11 @@ public class Stalker extends Mob{
 	
 	public boolean determineIfFollowingPlayer(){
 		if((Main.getInstance().player.getPosition().calculateDistance(getPosition()) > _DISTANCE_TO_STALK)) return false;
-		float angle = (float) Math.atan2(Main.getInstance().player.z - z, Main.getInstance().player.x - x);
 		
-		angle = (float) Math.toDegrees(angle);
-		if(angle < 0) angle += 360;
-		
-		if(Math.abs(facing - Math.abs(angle)) <= _FOV_TO_STALK) return true;
+		float angle = getRelativeAngle(_FOV_TO_STALK);
+		angle = correctAngle(angle);
+
+		if(angle <= _FOV_TO_STALK) return true;
 		
 		return false;
 	}

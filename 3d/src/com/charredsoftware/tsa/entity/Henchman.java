@@ -78,6 +78,7 @@ public class Henchman extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
+		jump(false);
 		followingPlayer = determineIfFollowingPlayer();
 		if(followingPlayer){
 			if(r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
