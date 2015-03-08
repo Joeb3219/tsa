@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 
 import com.charredsoftware.tsa.entity.Entity;
 import com.charredsoftware.tsa.entity.Mob;
+import com.charredsoftware.tsa.entity.Sputnik;
 import com.charredsoftware.tsa.gui.Button;
 import com.charredsoftware.tsa.gui.ControlSwitcher;
 import com.charredsoftware.tsa.gui.Dialog;
@@ -51,7 +52,7 @@ public class GameController {
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
-	public int dialogToAdd = 0;
+	public int dialogToAdd = 4;
 	public int totalChests = 51;
 	public int totalMobs = 55;
 	
@@ -119,12 +120,16 @@ public class GameController {
 		}else if(dialogToAdd == 3 && Main.getInstance().player.world.id == 3){
 			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Listen, kid, you're in the very bottom of the Enigma Machine. All you need to do now is destroy Dr. Sputnik!"));
 			dialogToAdd ++; 
-		}else if(dialogToAdd == 4 && Main.getInstance().player.world.id == 3 && (true)){
-			//TODO: Implement code to detect how far from Dr. Sputnik
-			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Who... Whaa... Ho... WHO ARE YOU?!"));
-			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "I'm here to foil your evil plans! Direct order of the President!"));
-			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Haha! YOU? Stop me? That's laughable!"));
-			dialogToAdd ++; 
+		}else if(dialogToAdd == 4 && Main.getInstance().player.world.id == 3){
+			for(Entity m : Main.getInstance().player.world.existingEntities){
+				if(m instanceof Sputnik && (((Sputnik) m).getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= Sputnik._DISTANCE_TO_CALL)){
+					System.out.println((((Sputnik) m).getPosition().calculateDistance(Main.getInstance().player.getPosition())));
+					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Who... Whaa... Ho... WHO ARE YOU?!"));
+					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "I'm here to foil your evil plans! Direct order of the President!"));
+					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Haha! YOU? Stop me? That's laughable!"));
+					dialogToAdd ++; 
+				}
+			}
 		}
 	}
 	

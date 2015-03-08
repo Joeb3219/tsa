@@ -57,11 +57,11 @@ public class Sputnik extends Mob{
 		this.height = 2f;
 		this.shielding = 0.6f;
 		this.mass = 50f;
-		_TICKS_BETWEEN_CALLS *= ((Main.getInstance().controller.difficulty == 1) ? 10 : ((Main.getInstance().controller.difficulty == 2) ? 8 : 6));
+		_TICKS_BETWEEN_CALLS *= 12;
 	}
 	
 	public void update(){
-		if(Main.getInstance().controller.buildingMode) return;
+		if(Main.getInstance().controller.buildingMode || (getPosition().calculateDistance(Main.getInstance().player.getPosition()) > _DISTANCE_TO_CALL)) return;
 		if(health <= 0){
 			if(ticksSinceDeath == 0){
 				Main.getInstance().player.mobsKilled ++;

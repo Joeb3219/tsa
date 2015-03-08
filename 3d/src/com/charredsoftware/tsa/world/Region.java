@@ -18,6 +18,7 @@ import com.charredsoftware.tsa.entity.Mob;
 import com.charredsoftware.tsa.entity.MobType;
 import com.charredsoftware.tsa.entity.Player;
 import com.charredsoftware.tsa.entity.Spinner;
+import com.charredsoftware.tsa.entity.Sputnik;
 import com.charredsoftware.tsa.entity.Stalker;
 import com.charredsoftware.tsa.entity.Worker;
 
@@ -242,6 +243,7 @@ public class Region {
 			if(type == MobType.SPINNER) entitiesToLoad.add(new Spinner(world, bx, by, bz));
 			if(type == MobType.STALKER) entitiesToLoad.add(new Stalker(world, bx, by, bz));
 			if(type == MobType.WORKER) entitiesToLoad.add(new Worker(world, bx, by, bz, Position.createPositionFromString(json)));
+			if(type == MobType.SPUTNIK) entitiesToLoad.add(new Sputnik(world, bx, by, bz));
 			
 		}
 	}
