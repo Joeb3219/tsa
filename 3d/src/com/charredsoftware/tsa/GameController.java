@@ -53,8 +53,8 @@ public class GameController {
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
 	public int dialogToAdd = 4;
-	public int totalChests = 51;
-	public int totalMobs = 55;
+	public int totalChests = 89;
+	public int totalMobs = 76;
 	
 	
 	/**
