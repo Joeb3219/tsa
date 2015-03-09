@@ -183,6 +183,7 @@ public class Block {
 	 * @param x X-position
 	 * @param y Y-position
 	 * @param z Z-position
+	 * @param facing The direction the block is facing.
 	 * @param alpha Alpha value
 	 */
 	public void draw(float x, float y, float z, float facing, int alpha){
@@ -196,7 +197,7 @@ public class Block {
 	
 	/**
 	 * Sets up the drawing of block.
-	 * @see #drawBlock(float, float, float)
+	 * @see #drawBlock(float, float, float, float)
 	 */
 	public void drawSetup(){
 		glEnable(GL_TEXTURE_2D);
@@ -219,7 +220,7 @@ public class Block {
 	
 	/**
 	 * Cleans up the block, for after drawing.
-	 * @see #drawBlock(float, float, float)
+	 * @see #drawBlock(float, float, float, float)
 	 */
 	public void drawCleanup(){
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -235,7 +236,8 @@ public class Block {
 	 * @param x X-position
 	 * @param y Y-position
 	 * @param z Z-position
-	 * @see #drawBlock(float, float, float)
+	 * @param facing The direction the block is facing.
+	 * @see #drawBlock(float, float, float, float)
 	 */
 	public void drawBlock(float x, float y, float z, float facing){
 		if(this == Block.air) return;
@@ -255,6 +257,7 @@ public class Block {
 	 * @param x X-position
 	 * @param y Y-position
 	 * @param z Z-position
+	 * @param facing The direction the block is facing.
 	 */
 	public void draw(float x, float y, float z, float facing){
 		if(texture == null) return;

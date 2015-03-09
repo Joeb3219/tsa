@@ -30,6 +30,13 @@ import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * A StoreMenu!
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 4, 2015
+ */
+
 public class StoreMenu extends Menu{
 
 	private Texture logo;

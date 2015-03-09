@@ -1,12 +1,5 @@
 package com.charredsoftware.tsa.gui;
 
-/**
- * The Dialog class. Used to hold actual dialog messages.
- * All authors are as below specified (joeb3219) unless otherwise specified above method.
- * @author joeb3219
- * @since December 10th, 2014
- */
-
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.Display;
@@ -14,6 +7,13 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 
 import com.charredsoftware.tsa.Main;
+
+/**
+ * The Dialog class. Used to hold actual dialog messages.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 10th, 2014
+ */
 
 public class Dialog {
 

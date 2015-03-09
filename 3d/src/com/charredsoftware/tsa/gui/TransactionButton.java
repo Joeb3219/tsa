@@ -20,6 +20,13 @@ import com.charredsoftware.tsa.CrashReport;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * A TransactionButton!
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 4, 2015
+ */
+
 public class TransactionButton extends Widget{
 
 	public String item, description;
@@ -30,6 +37,15 @@ public class TransactionButton extends Widget{
 	public static final int _FAR_SIDE_PADDING = 120;
 	public static final int _MAX_PER_ROW = 3;
 	
+	/**
+	 * Creates a new TransactionButton
+	 * @param xPosition x-Position of the button
+	 * @param yPosition y-Position of the button
+	 * @param icon Path to the icon which represents the button.
+	 * @param itemName Name of the item
+	 * @param description Description of the item
+	 * @param cost Cost, in coins, of the item.
+	 */
 	public TransactionButton(float xPosition, float yPosition, String icon, String itemName, String description, int cost){
 		super(new Position(xPosition, yPosition, -1), 0 / 255f, 0 / 255f, 0 / 255f, 0 / 255f);
 		this.item = itemName;
@@ -40,6 +56,9 @@ public class TransactionButton extends Widget{
 		}catch(Exception e){new CrashReport(e);}
 	}
 
+	/**
+	 * Renders the transactionbutton.
+	 */
 	public void render(){
 		float textHeight = Main.getInstance().font.getHeight(item);
 		float individualPadding = 8f;
@@ -88,24 +107,39 @@ public class TransactionButton extends Widget{
 		
 	}
 	
+	/**
+	 * @return Returns the height of the button.
+	 */
 	public float getHeight(){
 		return iconSize + Main.getInstance().font.getHeight(item) + Main.getInstance().font.getHeight(cost + " coins");
 	}
 	
+	/**
+	 * @return Returns the amount of padding.
+	 */
 	private float getPadding(){
 		return Display.getWidth() / 3f / 2;
 	}
 	
+	/**
+	 * @return Returns the total amount of drawable width.
+	 */
 	private float getDrawWidth(){
 		return Display.getWidth() - (getPadding() * 2);
 	}
 
+	/**
+	 * @return Returns the real xPosition of the button.
+	 */
 	public float getXPos(){
 		float drawWidth = getDrawWidth();
 		float chunkSize = drawWidth / _MAX_PER_ROW;
 		return chunkSize * (pos.x - 1) + getPadding() + (0.5f * getPadding());
 	}
 	
+	/**
+	 * @return Returns the true width of the button.
+	 */
 	public float getWidth(){
 		float w = Main.getInstance().font.getWidth(item);
 		return (w > iconSize + 8) ? w : iconSize + 8;

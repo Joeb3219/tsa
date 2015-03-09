@@ -11,6 +11,14 @@ import org.lwjgl.opengl.Display;
 
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * The Widget class.
+ * Base class for all other widgets
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 7, 2014
+ */
+
 public class Widget {
 
 	public Position pos;
@@ -19,6 +27,14 @@ public class Widget {
 	public String identifier = "null";
 	public float padding = 16f;
 
+	/**
+	 * Creates a new widget
+	 * @param p Position to draw the widget at
+	 * @param red Red bg-colour
+	 * @param green Green bg-colour
+	 * @param blue Blue bg-colour
+	 * @param alpha Alpha bg-colour
+	 */
 	public Widget(Position p, float red, float green, float blue, float alpha){
 		this.pos = p;
 		this.red = red;
@@ -27,6 +43,9 @@ public class Widget {
 		this.alpha = alpha;
 	}
 	
+	/**
+	 * @return Returns <tt>true</tt> if the mouse is within the bounds of the widget
+	 */
 	public boolean mouseInBounds(){
 		float x = getXPos();
 		float y = getYPos();
@@ -42,6 +61,9 @@ public class Widget {
 		return false;
 	}
 	
+	/**
+	 * Renders the widget. Generic render method.
+	 */
 	public void render(){
 		glBegin(GL_QUADS);
 		glColor4f(red, green, blue, alpha);
@@ -52,18 +74,32 @@ public class Widget {
 		glEnd();
 	}
 	
+	/**
+	 * Generic width method.
+	 * @return Returns the width of the widget.
+	 */
 	public float getWidth(){
 		return 1f;
 	}
 	
+	/**
+	 * Generic height method.
+	 * @return Returns the height of the widget.
+	 */
 	public float getHeight(){
 		return 1f;
 	}
 	
+	/**
+	 * @return Returns the x position of the widget.
+	 */
 	public float getXPos(){
 		return (Display.getWidth() - getWidth()) / 2 - padding / 2;
 	}
 	
+	/**
+	 * @return Returns the y-position of the widget.
+	 */
 	public float getYPos(){
 		return Display.getHeight() - pos.y;
 	}

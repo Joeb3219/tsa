@@ -39,9 +39,11 @@ public class Worker extends Mob{
 	
 	/**
 	 * Creates a new Worker Mob
+	 * @param world the world the player will live in.
 	 * @param x X-Position
 	 * @param y Y-Position
 	 * @param z Z-Position
+	 * @param pos2 The position that the worker is walking towards.
 	 */
 	public Worker(World world, float x, float y, float z, Position pos2){
 		super(world);

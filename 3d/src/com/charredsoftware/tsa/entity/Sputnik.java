@@ -37,6 +37,7 @@ public class Sputnik extends Mob{
 	
 	/**
 	 * Creates a new Sputnik Mob!
+	 * @param world the world the player will live in.
 	 * @param x X-Position
 	 * @param y Y-Position
 	 * @param z Z-Position

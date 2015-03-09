@@ -8,6 +8,14 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.tsa.Main;
 
+/**
+ * Model class!
+ * Represents an OBJ model.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 24, 2015
+ */
+
 public class Model {
 
 	public ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
@@ -15,6 +23,9 @@ public class Model {
 	public ArrayList<Face> faces = new ArrayList<Face>();
 	public ArrayList<Material> materials = new ArrayList<Material>();
 	
+	/**
+	 * Renders the model.
+	 */
 	public void render(){
 		glPushAttrib(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_TEXTURE_2D);

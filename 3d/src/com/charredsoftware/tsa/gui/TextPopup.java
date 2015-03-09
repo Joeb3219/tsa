@@ -35,10 +35,10 @@ public class TextPopup {
 	 * Render the text.
 	 * @param x X-position
 	 * @param y Y-position
+	 * @param alpha Alpha value of the popup.
 	 */
 	public void render(float x, float y, float alpha){
 		Main.getInstance().font.drawString(x, y, text, new Color(1f, 1f, 1f, alpha));
-		//Main.getInstance().font.drawString(x, y, text, Color.white);
 	}
 	
 }

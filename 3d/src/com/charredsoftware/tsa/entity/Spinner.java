@@ -1,13 +1,5 @@
 package com.charredsoftware.tsa.entity;
 
-/**
- * A Spinner mob!
- * This mob spins and shoots arrows.
- * All authors are as below specified (joeb3219) unless otherwise specified above method.
- * @author joeb3219
- * @since December 12th, 2014
- */
-
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
@@ -26,6 +18,14 @@ import com.charredsoftware.tsa.util.FileUtilities;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
 
+/**
+ * A Spinner mob!
+ * This mob spins and shoots arrows.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since December 12th, 2014
+ */
+
 public class Spinner extends Mob{
 
 	private Random r = new Random();
@@ -34,6 +34,7 @@ public class Spinner extends Mob{
 	
 	/**
 	 * Creates a new Spinner Mob
+	 * @param world the world the player will live in.
 	 * @param x X-Position
 	 * @param y Y-Position
 	 * @param z Z-Position

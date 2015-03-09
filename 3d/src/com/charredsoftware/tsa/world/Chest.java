@@ -17,7 +17,7 @@ public class Chest extends BlockInstance{
 	 * @param x X-position
 	 * @param y Y-position
 	 * @param z Z-position
-	 * @param json Json data, containing arrows & coin count.
+	 * @param json Json data, containing arrows and coin count.
 	 */
 	public Chest(float x, float y, float z, String json) {
 		super(Block.chest, x, y, z);

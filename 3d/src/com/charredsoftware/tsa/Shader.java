@@ -18,10 +18,21 @@ import org.lwjgl.input.Keyboard;
 
 import com.charredsoftware.tsa.util.FileUtilities;
 
+/**
+ * Shader class.
+ * Creates a shader which shades the environment.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since February 10, 2015
+ */
+
 public class Shader {
 
 	public int programId, vertexShaderId, fragmentShaderId;
 	
+	/**
+	 * Creates a new Shader
+	 */
 	public Shader(){
 		programId = glCreateProgram();
 		vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
@@ -61,15 +72,24 @@ public class Shader {
 		glDeleteShader(fragmentShaderId);
 	}
 	
+	/**
+	 * Renders the shader
+	 */
 	public void renderShader(){
 		if(Keyboard.isKeyDown(Keyboard.KEY_0)) return;
 		glUseProgram(programId);
 	}
 	
+	/**
+	 * Closes the shader at the end of the render loop.
+	 */
 	public void closeShader(){
 		glUseProgram(0);
 	}
 	
+	/**
+	 * Deletes shader from the memory.
+	 */
 	public void cleanUp(){
 		glDeleteShader(vertexShaderId);
 		glDeleteShader(fragmentShaderId);

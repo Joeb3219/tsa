@@ -41,6 +41,9 @@ public class Arrow extends Entity{
 	/**
 	 * Creates a new Arrow.
 	 * Calculates velocities, rotations, etc.
+	 * @param shooter Entity which shot the arorw.
+	 * @param rX x-rotation of the shooter.
+	 * @param rY y-rotation of the shooter.
 	 * @param w World to place the arrow in.
 	 * @param p Position at which the arrow starts.
 	 * @param drawBackTime How long the bow was pulled back.
@@ -166,6 +169,7 @@ public class Arrow extends Entity{
 	
 	/**
 	 * @return Returns the amount of damage that the arrow will do.
+	 * @param m Mob the arrow is hitting.
 	 */
 	public int calculateDamage(Mob m){
 		int maxDamage = 5;

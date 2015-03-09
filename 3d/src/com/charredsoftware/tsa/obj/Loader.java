@@ -9,8 +9,21 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.charredsoftware.tsa.CrashReport;
 
+/**
+ * Loader class!
+ * Static class that makes models and materials.
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 24, 2015
+ */
+
 public class Loader {
 
+	/**
+	 * Creates a new model.
+	 * @param file File to load the model from.
+	 * @return Returns a new Model
+	 */
 	public static Model load(File file){
 		Model m = new Model();
 		try{
@@ -41,6 +54,11 @@ public class Loader {
 		return m;
 	}
 	
+	/**
+	 * @param m Model to search 
+	 * @param name Material name to search for
+	 * @return Returns the material with the given name in a model.
+	 */
 	private static Material getMaterial(Model m, String name){
 		for(Material mat : m.materials){
 			if(mat.name.equals(name)) return mat;
@@ -48,6 +66,11 @@ public class Loader {
 		return null;
 	}
 	
+	/**
+	 * Creates an ArrayList of Materials from a file
+	 * @param file File to create models from.
+	 * @return Returns an ArrayList of Materials.
+	 */
 	private static ArrayList<Material> parseMaterials(File file){
 		ArrayList<Material> materials = new ArrayList<Material>();
 		try{

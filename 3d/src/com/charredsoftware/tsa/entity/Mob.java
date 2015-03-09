@@ -46,6 +46,7 @@ public class Mob extends Entity{
 	
 	/**
 	 * Creates a new Mob.
+	 * @param world World which world the mob will live in.
 	 */
 	public Mob(World world){
 		super();
@@ -96,6 +97,7 @@ public class Mob extends Entity{
 	
 	/**
 	 * Makes the mob jump
+	 * @param startJump whether or not is starting a jump.
 	 */
 	public void jump(boolean startJump){
 		if(startJump && !isJumping && standingOnSolid()){

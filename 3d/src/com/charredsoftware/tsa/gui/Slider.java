@@ -15,6 +15,14 @@ import org.lwjgl.opengl.Display;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.world.Position;
 
+/**
+ * Slider class
+ * A widget that has a changable value (left/right).
+ * All authors are as below specified (joeb3219) unless otherwise specified above method.
+ * @author joeb3219
+ * @since January 2, 2015
+ */
+
 public class Slider extends Widget{
 
 	public String text;
@@ -40,24 +48,39 @@ public class Slider extends Widget{
 		
 	}
 	
+	/**
+	 * @return Returns the display text of the slider.
+	 */
 	private String getDisplayText(){
 		return text + ": " + ((int) value) + "/" + ((int) max);
 	}
 	
+	/**
+	 * @return Returns the width of the slider.
+	 */
 	public float getWidth(){
 		return Main.getInstance().font.getWidth(getDisplayText()) + padding;
 	}
 	
+	/**
+	 * @return Returns the height of the slider.
+	 */
 	public float getHeight(){
 		return Main.getInstance().font.getHeight(getDisplayText());
 	}
 	
+	/**
+	 * Updates the slider.
+	 */
 	public void update(){
 		float xPos = (Display.getWidth() - getWidth()) / 2 - padding / 2;
 		float relativeX = (Mouse.getX() - xPos);
 		value = convertWidthToValue(relativeX);
 	}
 	
+	/**
+	 * Renders the slider.
+	 */
 	public void render(){
 		glDisable(GL_TEXTURE_2D);
 		String displayText = getDisplayText();
@@ -84,11 +107,19 @@ public class Slider extends Widget{
 		Main.getInstance().font.drawString(xPos + padding / 2, pos.y, displayText);
 	}
 	
+	/**
+	 * @param value Value to convert to a width
+	 * @return Converts a value to a width of the slider to be coloured.
+	 */
 	private float convertValueToWidth(float value){
 		float width = getWidth();
 		return (value / (max - min)) * (width);
 	}
 	
+	/**
+	 * @param width Width to be converted to a value.
+	 * @return Converts a width into a representative value.
+	 */
 	private float convertWidthToValue(float width){
 		float totalWidth = getWidth();
 		return (width / totalWidth) * (max - min);

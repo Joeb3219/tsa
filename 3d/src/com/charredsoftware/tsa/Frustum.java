@@ -123,7 +123,7 @@ public class Frustum {
 	/**
 	 * @param b Block to test
 	 * @return Returns <tt>true</tt> if the block is in the frustum.
-	 * @see #blockInFrustum(BlockInstance)
+	 * @see #blockInFrustum(BlockInstance, boolean)
 	 */
 	public boolean BlockInFrustum(BlockInstance b){
 		return blockInFrustum(b, true);

@@ -49,7 +49,7 @@ public class BlockInstance {
 	
 	/**
 	 * Draws the block at its position.
-	 * @see com.charredsoftware.tsa.world.Block#draw(float, float, float)
+	 * @see com.charredsoftware.tsa.world.Block#draw(float, float, float, float)
 	 */
 	public void draw(){
 		base.draw(x, y, z, facing);
