@@ -180,9 +180,7 @@ public class Player extends Mob{
 		this.score = 0;
 		Main.getInstance().controller.timeLeft = Main.DESIRED_TPS * (60 * 15);
 		spawn();
-		bow.UPGRADE_CONTINUOUS_DAMAGE = false;
 		bow.UPGRADE_FURTHER_SHOTS = false;
-		bow.UPGRADE_INCREASED_ACCURACY = false;
 		bow.UPGRADE_LARGER_RADIUS = false;
 		bow.UPGRADE_LARGER_RADIUS_APPLIED = false;
 		bow.UPGRADE_MORE_DAMAGE = false;

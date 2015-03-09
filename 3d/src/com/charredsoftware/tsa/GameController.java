@@ -41,7 +41,7 @@ public class GameController {
 
 	private static GameController _INSTANCE;
 	public String gameName = "The Enigma Machine";
-	public String version = "1.2.1";
+	public String version = "2.0.0 (Beta bug testing)";
 	public boolean developerMode = true, buildingMode = false, lighting = true, displayDialogs = true, showMainMenu = true, removeMobMode = false, vsync = false;
 	public boolean fullscreen = false;
 	public boolean applet = false;
@@ -52,7 +52,7 @@ public class GameController {
 	public int lightInUse = GL_LIGHT1;
 	private float cooldown = 0f;
 	public int timeLeft = Main.DESIRED_TPS * (60 * 15); // 15 minutes.
-	public int dialogToAdd = 4;
+	public int dialogToAdd = 0;
 	public int totalChests = 89;
 	public int totalMobs = 76;
 	
@@ -304,8 +304,17 @@ public class GameController {
 	 */
 	public float calculateFinalScore(){
 		float score = Main.getInstance().player.score;
-		if(Main.getInstance().player.health > 0) score += (((Main.DESIRED_TPS * (60 * 15)) - timeLeft) / Main.DESIRED_TPS) / (2 * 5);
-		return score;
+		float mobBonus = 300f * (Main.getInstance().player.mobsKilled / totalMobs);
+		float chestBonus = 250f * (Main.getInstance().player.chestsFound / totalChests);
+		if(Main.getInstance().player.bow.UPGRADE_FURTHER_SHOTS) score += 25f;
+		if(Main.getInstance().player.bow.UPGRADE_MORE_DAMAGE) score += 35f;
+		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS) score += 15f;
+		if(Main.getInstance().player.health > 0){
+			float totalTime = (60 * 15);
+			float remainingTime = timeLeft / Main.DESIRED_TPS;
+			score += 500 * (remainingTime / totalTime);
+		}
+		return score + mobBonus + chestBonus;
 	}
 	
 }

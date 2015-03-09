@@ -20,7 +20,7 @@ public class Bow {
 	public static final int default_maxArrows = 26;
 	public int maxArrows = 0;
 	public int arrows = 26;
-	public boolean UPGRADE_LARGER_RADIUS = false, UPGRADE_MORE_DAMAGE = false, UPGRADE_CONTINUOUS_DAMAGE, UPGRADE_FURTHER_SHOTS = false, UPGRADE_INCREASED_ACCURACY = false;
+	public boolean UPGRADE_LARGER_RADIUS = false, UPGRADE_MORE_DAMAGE = false, UPGRADE_FURTHER_SHOTS = false;
 	public boolean UPGRADE_LARGER_RADIUS_APPLIED = false; //A flag used in the camera class. Will be set to true if gl calls for glLight have been updated for radius.
 	
 	/**

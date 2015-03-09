@@ -1,7 +1,7 @@
 <Settings>
 <setting>
 <id>main_developer_mode</id>
-<value>true</value>
+<value>false</value>
 </setting>
 <setting>
 <id>main_difficulty</id>
@@ -17,7 +17,7 @@
 </setting>
 <setting>
 <id>sound_volume_slider</id>
-<value>79.62963</value>
+<value>92.59259</value>
 </setting>
 <setting>
 <id>sound_music_slider</id>
@@ -41,7 +41,7 @@
 </setting>
 <setting>
 <id>graphics_gamma_slider</id>
-<value>99.31507</value>
+<value>100.0</value>
 </setting>
 <setting>
 <id>graphics_brightness_slider</id>
@@ -49,7 +49,7 @@
 </setting>
 <setting>
 <id>graphics_contrast_slider</id>
-<value>98.3871</value>
+<value>100.0</value>
 </setting>
 <setting>
 <id>graphics_goback</id>

@@ -109,7 +109,7 @@ public class Main {
 		controller = GameController.getInstance();
 		initializeDisplay();
 		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 14f);
-		player = new Player(new World(3), camera);
+		player = new Player(new World(0), camera);
 		
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
 		font = new TrueTypeFont(awtFont, false);
