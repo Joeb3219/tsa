@@ -231,8 +231,8 @@ public class Mob extends Entity{
 	}
 	
 	protected float correctAngle(float facing){
-		while(facing < 0) facing = 360 - facing;
-		while(facing > 360) facing -= 360;
+		while(facing < 0) facing = 360 + facing;
+		while(facing >= 360) facing -= 360;
 		return facing;
 	}
 	

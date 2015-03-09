@@ -17,6 +17,7 @@ import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
 import com.charredsoftware.tsa.Sound;
 import com.charredsoftware.tsa.gui.Puzzle;
+import com.charredsoftware.tsa.gui.StoreMenu;
 import com.charredsoftware.tsa.world.Block;
 import com.charredsoftware.tsa.world.Position;
 import com.charredsoftware.tsa.world.World;
@@ -184,6 +185,7 @@ public class Player extends Mob{
 		bow.UPGRADE_LARGER_RADIUS = false;
 		bow.UPGRADE_LARGER_RADIUS_APPLIED = false;
 		bow.UPGRADE_MORE_DAMAGE = false;
+		Main.getInstance().transactions_menu = new StoreMenu();
 	}
 	
 	/**

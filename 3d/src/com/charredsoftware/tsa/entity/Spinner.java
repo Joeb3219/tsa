@@ -71,6 +71,7 @@ public class Spinner extends Mob{
 			else ticksSinceDeath ++;
 			return;
 		}
+		if(Main.getInstance().player.getPosition().calculateDistance(getPosition()) <= 5) System.out.println(facing);
 		if(determineIfShouldTrack()){
 			facing += 2;
 			if(!determineIfShouldTrack()) facing -= 4;
