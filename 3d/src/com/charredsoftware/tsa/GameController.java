@@ -119,6 +119,7 @@ public class GameController {
 			dialogToAdd ++;
 		}else if(dialogToAdd == 3 && Main.getInstance().player.world.id == 3){
 			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "Listen, kid, you're in the very bottom of the Enigma Machine. All you need to do now is destroy Dr. Sputnik!"));
+			Main.getInstance().player.heal(100);
 			dialogToAdd ++; 
 		}else if(dialogToAdd == 4 && Main.getInstance().player.world.id == 3){
 			for(Entity m : Main.getInstance().player.world.existingEntities){

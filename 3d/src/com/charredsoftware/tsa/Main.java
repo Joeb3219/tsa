@@ -248,7 +248,7 @@ public class Main {
 			cooldown = 10f;
 		}
 		controller.keyboardTick();
-		if(gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)){
+		if(controller.developerMode && gameState == GameState.GAME && Keyboard.isKeyDown(Keyboard.KEY_R)){
 			player.world = new World(player.world.id);
 			player.spawn();
 		}
