@@ -134,10 +134,7 @@ public class Stalker extends Mob{
 		for(float x = current.x - stepSize; x <= current.x + stepSize; x += stepSize){
 			for(float z = current.z - stepSize; z <= current.z + stepSize; z += stepSize){
 				Position testingPos = new Position(x, y, z);
-				if(world.getBlock(new Position(x, y + 1, z)).base.solid) {
-					System.out.println("BLOCK IN THE WAY");
-					continue;
-				}
+				if(world.getBlock(new Position(x, y + 1, z)).base.solid) continue;
 				if(testingPos.calculateDistance(dest) < closest.calculateDistance(dest)) closest = testingPos;
 			}
 		}

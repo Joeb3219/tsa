@@ -78,11 +78,11 @@ public class Sputnik extends Mob{
 		calculateFacingDirection(Main.getInstance().player.getPosition());
 		facing = correctAngle(facing);
 		
-		/*if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) < _DISTANCE_TO_CALL && r.nextInt(100) <= 2.5 * Main.getInstance().controller.difficulty){
+		if(getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= 4 && r.nextInt(100) <= 5 * Main.getInstance().controller.difficulty){
 			Arrow a = new Arrow(this, world, new Position(x, y + 1, z), 5, (float) (facing - 270), 0);
 			a.shouldBeLit = false;
 			Sound.BOW_SHOT.playSfx();
-		}*/
+		}
 		
 		if(ticksSinceLastCall >= _TICKS_BETWEEN_CALLS){
 			totalSummons ++;
