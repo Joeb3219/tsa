@@ -35,7 +35,7 @@ public class Camera {
 	/**
 	 * 
 	 * @param fov The Field of View
-	 * @param aspectRatio Aspect rtaio in terms of width:height.
+	 * @param aspectRatio Aspect ratio in terms of width:height.
 	 * @param farClip Far distance to clip at.
 	 */
 	public Camera(float fov, float aspectRatio, float farClip){

@@ -55,6 +55,7 @@ public class GameController {
 	public int dialogToAdd = 0;
 	public int totalChests = 89;
 	public int totalMobs = 76;
+	public int ticks_since_damage = 30;
 	
 	
 	/**

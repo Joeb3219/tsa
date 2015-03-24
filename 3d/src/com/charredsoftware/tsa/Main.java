@@ -1,37 +1,6 @@
 package com.charredsoftware.tsa;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_LIGHT0;
-import static org.lwjgl.opengl.GL11.GL_LIGHT1;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_POSITION;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_SPOT_DIRECTION;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLight;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glVertex2f;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -174,6 +143,7 @@ public class Main {
 	 */
 	public void tick(){
 		com.charredsoftware.tsa.Mouse.update();
+		controller.ticks_since_damage += 1;
 		if(controller.timeLeft <= 0 || player.health <= 0){
 			Mouse.setGrabbed(false);
 			gameState = GameState.GAME_OVER;
@@ -371,7 +341,7 @@ public class Main {
 		player.world.removeBlock(c);
 		HUDText.popups.add(new TextPopup("You found " + c.arrows + " arrows!"));
 		HUDText.popups.add(new TextPopup("You found " + c.coins + " coins!"));
-		if(r.nextInt(2) == 0){
+		if(r.nextInt(100) <= (((20f - player.health) / 20f) * 100f)){
 			HUDText.popups.add(new TextPopup("You found a heart of health!"));
 			player.heal(2);
 		}
@@ -424,7 +394,7 @@ public class Main {
 		}
 
 		camera.shader.renderShader();
-		
+
 		glLoadIdentity();
 		camera.useView();
 		
