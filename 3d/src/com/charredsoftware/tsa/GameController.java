@@ -125,14 +125,31 @@ public class GameController {
 		}else if(dialogToAdd == 4 && Main.getInstance().player.world.id == 3){
 			for(Entity m : Main.getInstance().player.world.existingEntities){
 				if(m instanceof Sputnik && (((Sputnik) m).getPosition().calculateDistance(Main.getInstance().player.getPosition()) <= Sputnik._DISTANCE_TO_CALL)){
-					System.out.println((((Sputnik) m).getPosition().calculateDistance(Main.getInstance().player.getPosition())));
 					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Who... Whaa... Ho... WHO ARE YOU?!"));
 					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PLAYER, "I'm here to foil your evil plans! Direct order of the President!"));
 					Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.SPUTNIK, "Haha! YOU? Stop me? That's laughable!"));
 					dialogToAdd ++; 
 				}
 			}
+		}else if(dialogToAdd == 5 && Main.getInstance().player.world.id == 3 && !isSputnikAlive()){
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "YOU DID IT! YOU KILLED DR. SPUTNIK!"));
+			Main.getInstance().HUDDialog.dialogs.add(new Dialog(DialogAuthor.PRESIDENT, "We are forever in your debt! Take these coins as a token of gratitude."));
+			Main.getInstance().player.coins += 125;
+			dialogToAdd ++; 
 		}
+	}
+	
+	/**
+	 * @return Returns <tt>false</tt> if is level 4 and sputnik is dead.
+	 */
+	private boolean isSputnikAlive(){
+		if(Main.getInstance().player.world.id == 3){
+			for(Entity m : Main.getInstance().player.world.existingEntities){
+				if(m instanceof Sputnik && ((Sputnik) m).markedForDeletion) return false;
+			}
+			return true;
+		}
+		return true;
 	}
 	
 	/**
@@ -306,8 +323,9 @@ public class GameController {
 	 */
 	public float calculateFinalScore(){
 		float score = Main.getInstance().player.score;
-		float mobBonus = 300f * (Main.getInstance().player.mobsKilled / totalMobs);
-		float chestBonus = 250f * (Main.getInstance().player.chestsFound / totalChests);
+		float mobBonus = 300f * (Main.getInstance().player.mobsKilled * 1f / totalMobs);
+		float chestBonus = 250f * (Main.getInstance().player.chestsFound * 1f / totalChests);
+		
 		if(Main.getInstance().player.bow.UPGRADE_FURTHER_SHOTS) score += 25f;
 		if(Main.getInstance().player.bow.UPGRADE_MORE_DAMAGE) score += 35f;
 		if(Main.getInstance().player.bow.UPGRADE_LARGER_RADIUS) score += 15f;
@@ -317,6 +335,18 @@ public class GameController {
 			score += 500 * (remainingTime / totalTime);
 		}
 		return score + mobBonus + chestBonus;
+	}
+	
+	/**
+	 * @return Returns Time bonus.
+	 */
+	public float getTimeBonus(){
+		if(Main.getInstance().player.health > 0){
+			float totalTime = (60 * 15);
+			float remainingTime = timeLeft / Main.DESIRED_TPS;
+			return 500 * (remainingTime / totalTime);
+		}
+		return 0;
 	}
 	
 }

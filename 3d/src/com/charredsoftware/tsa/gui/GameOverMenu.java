@@ -38,13 +38,19 @@ public class GameOverMenu extends Menu{
 		Button b = new Button(this, 100, "The game is over! Here's how you did:");
 		b.checkable = false;
 		widgets.add(b);
-		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Score: " + Main.getInstance().player.score);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Base score: " + Main.getInstance().player.score);
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Mobs killed: " + Main.getInstance().player.mobsKilled + "/" + Main.getInstance().controller.totalMobs + " (" + (((int) (100 * Main.getInstance().player.mobsKilled / Main.getInstance().controller.totalMobs)) + "%)"));
 		b.checkable = false;
 		widgets.add(b);
 		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Chests looted: " + Main.getInstance().player.chestsFound + "/" + Main.getInstance().controller.totalChests + " (" + ((int) (100 * Main.getInstance().player.chestsFound / Main.getInstance().controller.totalChests) + "%)"));
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Time bonus: " + Main.getInstance().controller.getTimeBonus());
+		b.checkable = false;
+		widgets.add(b);
+		b = new Button(this, widgets.get(widgets.size() - 1).pos.y + textHeight +  10, "Final Score: " + Main.getInstance().controller.calculateFinalScore());
 		b.checkable = false;
 		widgets.add(b);
 		
@@ -62,6 +68,7 @@ public class GameOverMenu extends Menu{
 	 * Updates the menu.
 	 */
 	public void update(){
+		Main.getInstance().controller.calculateFinalScore();
 		if(Mouse.isButtonDown(0)){
 			for(Widget b : widgets){
 				if(!b.mouseInBounds()) continue;

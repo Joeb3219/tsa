@@ -77,7 +77,7 @@ public class Main {
 	private Main(){
 		controller = GameController.getInstance();
 		initializeDisplay();
-		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 14f);
+		camera = new Camera(65, Display.getWidth() * 1.0f / Display.getHeight(), 13);
 		player = new Player(new World(0), camera);
 		
 		java.awt.Font awtFont = new java.awt.Font("Monospaced", java.awt.Font.BOLD, 16);
@@ -111,6 +111,7 @@ public class Main {
 		}catch(Throwable t){
 			new CrashReport(t);
 		}
+		
 		game.cleanDisplay();
 	}
 	
@@ -143,7 +144,6 @@ public class Main {
 	 */
 	public void tick(){
 		com.charredsoftware.tsa.Mouse.update();
-		controller.ticks_since_damage += 1;
 		if(controller.timeLeft <= 0 || player.health <= 0){
 			Mouse.setGrabbed(false);
 			gameState = GameState.GAME_OVER;
@@ -162,6 +162,7 @@ public class Main {
 			transactions_menu.update();
 		}
 		if(gameState == GameState.GAME_OVER){
+			Mouse.setGrabbed(false);
 			if(gameOver_menu == null) gameOver_menu = new GameOverMenu();
 			gameOver_menu.update();
 		}
@@ -172,6 +173,8 @@ public class Main {
 		}
 		
 		controller.addDialogs();
+		
+		if(!HUDDialog.hasDialogs() && GameController.getInstance().dialogToAdd == 6) gameState = GameState.GAME_OVER;
 		
 		if(gameState == GameState.GAME && (!HUDDialog.hasDialogs())){
 			player.update();
@@ -393,7 +396,6 @@ public class Main {
 			return;
 		}
 
-		camera.shader.renderShader();
 
 		glLoadIdentity();
 		camera.useView();
@@ -491,9 +493,7 @@ public class Main {
 			player.selectedBlock.draw(0f, 0f, 0f, 0f);
 			glPopMatrix();
 		}
-		
-		camera.shader.closeShader();
-		
+
 		glEnable(GL_LIGHTING);
 		glMatrixMode(GL_MODELVIEW);
 

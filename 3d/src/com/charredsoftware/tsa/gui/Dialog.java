@@ -39,7 +39,7 @@ public class Dialog {
 	private void splitIntoLines(String slide){
 		int usableWidth = getUsableWidth();
 		ArrayList<String> slideLines = new ArrayList<String>();
-		String currentLine = author.name + ":";
+		String currentLine = "";
 		for(String word : slide.split(" ")){
 			if(Main.font.getWidth(currentLine + " " + word) > usableWidth){
 				slideLines.add(currentLine);
@@ -97,7 +97,8 @@ public class Dialog {
 	 * @return Returns the starting X-position of the text.
 	 */
 	public int getTextStartX(){
-		return sidePadding + 64 + sidePadding;
+		return sidePadding;
+		//return sidePadding + 64 + sidePadding;
 	}
 	
 	/**

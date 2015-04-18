@@ -160,7 +160,6 @@ public class Player extends Mob{
 	 */
 	public void damageMob(int damage){
 		super.damageMob(damage);
-		Main.getInstance().controller.ticks_since_damage = 0;
 	}
 	
 	/**

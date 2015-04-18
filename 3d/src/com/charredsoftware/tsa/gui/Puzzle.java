@@ -24,7 +24,9 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import java.util.Random;
 
 import com.charredsoftware.tsa.Mouse;
+
 import org.lwjgl.opengl.Display;
+import org.newdawn.slick.Color;
 
 import com.charredsoftware.tsa.GameState;
 import com.charredsoftware.tsa.Main;
@@ -196,7 +198,7 @@ public class Puzzle extends Menu{
 		glEnable(GL_TEXTURE_2D);
 		
 		String val = ((enteredValue == -1) ? "" : enteredValue + "");
-		Main.getInstance().font.drawString(getXStart() + (getUsableWidth() - Main.getInstance().font.getWidth(val)) / 2, getYStart() + (barHeight - Main.getInstance().font.getHeight(val)) / 2, val);
+		Main.getInstance().font.drawString(getXStart() + (getUsableWidth() - Main.getInstance().font.getWidth(val)) / 2, getYStart() + (barHeight - Main.getInstance().font.getHeight(val)) / 2, val, Color.black);
 		
 		Main.getInstance().controller.drawRemainingTime();
 		

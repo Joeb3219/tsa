@@ -36,7 +36,7 @@ public class Arrow extends Entity{
 	public Entity shooter;
 	public static int _LIFESPAN_AFTER_STUCK = Main.DESIRED_TPS * 2;
 	public int ticksSinceStuck = 0;
-	public Model model;
+	public static Model model;
 	
 	/**
 	 * Creates a new Arrow.

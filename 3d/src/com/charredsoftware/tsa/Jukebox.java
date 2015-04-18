@@ -12,8 +12,6 @@ package com.charredsoftware.tsa;
 public class Jukebox {
 
 	public static Sound _GAME_MUSIC = new Sound("static_motion.wav");
-	public static Sound _CREDITS_SONG = new Sound("carefree_credits.wav");
-	public static Sound _MESMERIZE = new Sound("mesmerize.wav");
 	private Sound currentlyPlaying = null;
 	private static Jukebox _INSTANCE = null;
 	private float position = 0;

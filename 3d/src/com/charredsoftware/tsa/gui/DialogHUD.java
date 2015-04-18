@@ -97,18 +97,21 @@ public class DialogHUD {
 		
 		glPopMatrix();
 		
-		float imageTopPadding = (height - 64) / 2;
+		float nameTabTop = Main.font.getHeight("ABCDEF") + 8;
 		glPushMatrix();
-		glColor3f(0f, 0f, 0f);
+		glColor3f(0.75f, 0.75f, 0.75f);
 		glBegin(GL_QUADS);
-		glVertex2f(x + 16, y + imageTopPadding);
-		glVertex2f(x + 16 + 64, y + imageTopPadding);
-		glVertex2f(x + 16 + 64, y + imageTopPadding + 64);
-		glVertex2f(x + 16, y + imageTopPadding + 64);
+		glVertex2f(x, y);
+		glVertex2f(x + 192, y);
+		glVertex2f(x + 192, y - nameTabTop);
+		glVertex2f(x, y - nameTabTop);
 		glEnd();
 		glPopMatrix();
 		
 		glEnable(GL_TEXTURE_2D);
+		
+		String authorText = dialogs.get(0).author.name + ":";
+		Main.font.drawString(8, y - nameTabTop + 4, authorText, Color.black);
 		
 		dialogs.get(0).render(x + 10, y + 10);
 		String continueText = "Press Enter to continue...";

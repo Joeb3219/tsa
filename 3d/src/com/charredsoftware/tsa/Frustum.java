@@ -32,7 +32,7 @@ public class Frustum {
 	 * @return Returns an instance of Frustum.
 	 */
 	public static Frustum getInstance(){
-		if(_INSTANCE == null) _INSTANCE = new Frustum();;
+		if(_INSTANCE == null) _INSTANCE = new Frustum();
 		return _INSTANCE;
 	}
 	
